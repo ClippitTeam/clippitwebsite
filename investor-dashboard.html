@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Clippit Investor Lounge - Discover and invest in emerging opportunities.">
+    <title>Investor Lounge - Clippit</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <!-- Dashboard Header -->
+    <header class="dashboard-header investor">
+        <div class="dashboard-header-content">
+            <div class="dashboard-logo">
+                <span class="logo-icon">📎</span>
+                <span class="logo-text">Clippit Investor Lounge</span>
+            </div>
+            <div class="dashboard-quick-actions">
+                <button class="quick-action-btn investor" title="Subscription">
+                    <span>💳</span> Subscription
+                </button>
+                <button class="quick-action-btn investor" title="Upgrade Tier">
+                    <span>⭐</span> Upgrade
+                </button>
+            </div>
+            <div class="dashboard-user">
+                <div class="notification-icon investor">
+                    <span>🔔</span>
+                    <span class="notification-badge">2</span>
+                </div>
+                <div class="user-avatar investor">IV</div>
+                <span class="user-name">Investor</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dashboard Layout -->
+    <div class="dashboard-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="dashboard-sidebar investor">
+            <nav class="dashboard-nav">
+                <a href="#dashboard" class="nav-item active">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a href="#opportunities" class="nav-item">
+                    <span class="nav-icon">💡</span>
+                    <span class="nav-label">Opportunities</span>
+                    <span class="nav-badge">8</span>
+                </a>
+                <a href="#my-investments" class="nav-item">
+                    <span class="nav-icon">💼</span>
+                    <span class="nav-label">My Investments</span>
+                    <span class="nav-badge">3</span>
+                </a>
+                <a href="#messages" class="nav-item">
+                    <span class="nav-icon">💬</span>
+                    <span class="nav-label">Messages</span>
+                    <span class="nav-badge">2</span>
+                </a>
+                <a href="#subscription" class="nav-item">
+                    <span class="nav-icon">💳</span>
+                    <span class="nav-label">Subscription</span>
+                </a>
+                <a href="#settings" class="nav-item">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-label">Settings</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="investor-tier-badge">
+                    <div class="tier-icon">⭐</div>
+                    <div class="tier-info">
+                        <p class="tier-name">Standard Access</p>
+                        <p class="tier-detail">8 opportunities</p>
+                    </div>
+                </div>
+                <a href="index.html" class="logout-btn">
+                    <span>🚪</span> Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="dashboard-main">
+            <!-- Welcome Section -->
+            <section class="dashboard-welcome">
+                <h1>Welcome to the Investor Lounge 💼</h1>
+                <p>Discover exclusive investment opportunities built by Clippit</p>
+            </section>
+
+            <!-- Subscription Status Banner -->
+            <div class="subscription-banner">
+                <div class="banner-content">
+                    <div class="banner-icon">⭐</div>
+                    <div class="banner-text">
+                        <h3>Standard Access Active</h3>
+                        <p>Access to 8 opportunities • Next billing: Nov 21, 2025</p>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="showUpgradeTierModal()">Upgrade Tier</button>
+            </div>
+
+            <!-- Investment Portfolio Overview -->
+            <section class="investor-stats">
+                <div class="stat-card investor">
+                    <div class="stat-icon">💼</div>
+                    <div class="stat-info">
+                        <h3>3</h3>
+                        <p>Active Investments</p>
+                        <span class="stat-change">$125,000 total</span>
+                    </div>
+                </div>
+                <div class="stat-card investor">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-info">
+                        <h3>18.5%</h3>
+                        <p>Avg. ROI</p>
+                        <span class="stat-change positive">+5.2% this month</span>
+                    </div>
+                </div>
+                <div class="stat-card investor">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-info">
+                        <h3>5</h3>
+                        <p>Pending Offers</p>
+                        <span class="stat-change neutral">Awaiting response</span>
+                    </div>
+                </div>
+                <div class="stat-card investor">
+                    <div class="stat-icon">💡</div>
+                    <div class="stat-info">
+                        <h3>8</h3>
+                        <p>Available</p>
+                        <span class="stat-change">New opportunities</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Investment Opportunities Feed -->
+            <section class="opportunities-section">
+                <div class="section-header-inline">
+                    <h2>Investment Opportunities</h2>
+                    <div class="opportunity-filters">
+                        <button class="filter-chip active">All</button>
+                        <button class="filter-chip">Apps</button>
+                        <button class="filter-chip">Websites</button>
+                        <button class="filter-chip">Software</button>
+                        <button class="filter-chip">Companies</button>
+                    </div>
+                </div>
+
+                <div class="opportunities-grid">
+                    <!-- Opportunity Card 1 -->
+                    <div class="opportunity-card">
+                        <div class="opportunity-badge hot">🔥 Hot</div>
+                        <div class="opportunity-image">
+                            <div class="placeholder-img">📱</div>
+                        </div>
+                        <div class="opportunity-content">
+                            <div class="opportunity-header">
+                                <h3>FitTracker Pro</h3>
+                                <span class="opportunity-category">Mobile App</span>
+                            </div>
+                            <p class="opportunity-description">AI-powered fitness and nutrition tracking app with 5K+ beta users. Seeking seed funding for market launch.</p>
+                            
+                            <div class="opportunity-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">Investment Type</span>
+                                    <span class="detail-value">Equity Funding</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Seeking</span>
+                                    <span class="detail-value funding-goal">$150,000</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Valuation</span>
+                                    <span class="detail-value">$1.2M</span>
+                                </div>
+                            </div>
+
+                            <div class="funding-progress">
+                                <div class="progress-header">
+                                    <span>Funded: $95,000</span>
+                                    <span>63%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 63%"></div>
+                                </div>
+                            </div>
+
+                            <div class="opportunity-actions">
+                                <button class="opportunity-btn primary" onclick="showInvestModal('FitTracker Pro')">
+                                    <span>💰</span> Invest Now
+                                </button>
+                                <button class="opportunity-btn secondary" onclick="showQuestionModal('FitTracker Pro')">
+                                    <span>💬</span> Ask Question
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Opportunity Card 2 -->
+                    <div class="opportunity-card">
+                        <div class="opportunity-badge verified">✓ Verified</div>
+                        <div class="opportunity-image">
+                            <div class="placeholder-img">🌐</div>
+                        </div>
+                        <div class="opportunity-content">
+                            <div class="opportunity-header">
+                                <h3>EcoMarket Platform</h3>
+                                <span class="opportunity-category">E-Commerce</span>
+                            </div>
+                            <p class="opportunity-description">Sustainable products marketplace with integrated carbon offset tracking. Revenue: $45K/month.</p>
+                            
+                            <div class="opportunity-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">Investment Type</span>
+                                    <span class="detail-value">Full Buyout</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Asking Price</span>
+                                    <span class="detail-value funding-goal">$500,000</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Revenue</span>
+                                    <span class="detail-value">$540K/year</span>
+                                </div>
+                            </div>
+
+                            <div class="roi-estimate">
+                                <span class="roi-label">Estimated ROI:</span>
+                                <span class="roi-value">24% annually</span>
+                            </div>
+
+                            <div class="opportunity-actions">
+                                <button class="opportunity-btn primary" onclick="showOfferModal('EcoMarket Platform')">
+                                    <span>🤝</span> Make Offer
+                                </button>
+                                <button class="opportunity-btn secondary" onclick="showQuestionModal('EcoMarket Platform')">
+                                    <span>💬</span> Ask Question
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Opportunity Card 3 -->
+                    <div class="opportunity-card">
+                        <div class="opportunity-badge new">✨ New</div>
+                        <div class="opportunity-image">
+                            <div class="placeholder-img">⚙️</div>
+                        </div>
+                        <div class="opportunity-content">
+                            <div class="opportunity-header">
+                                <h3>TaskFlow SaaS</h3>
+                                <span class="opportunity-category">Software</span>
+                            </div>
+                            <p class="opportunity-description">B2B project management tool with 200+ paying customers. MRR growing 15% monthly.</p>
+                            
+                            <div class="opportunity-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">Investment Type</span>
+                                    <span class="detail-value">Equity Partnership</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Seeking</span>
+                                    <span class="detail-value funding-goal">$250,000</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Equity Offered</span>
+                                    <span class="detail-value">20%</span>
+                                </div>
+                            </div>
+
+                            <div class="funding-progress">
+                                <div class="progress-header">
+                                    <span>Funded: $180,000</span>
+                                    <span>72%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 72%"></div>
+                                </div>
+                            </div>
+
+                            <div class="opportunity-actions">
+                                <button class="opportunity-btn primary" onclick="showInvestModal('TaskFlow SaaS')">
+                                    <span>💰</span> Invest Now
+                                </button>
+                                <button class="opportunity-btn secondary" onclick="showQuestionModal('TaskFlow SaaS')">
+                                    <span>💬</span> Ask Question
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Locked Opportunity Card -->
+                    <div class="opportunity-card locked">
+                        <div class="locked-overlay">
+                            <div class="lock-icon">🔒</div>
+                            <h3>Upgrade to Unlock</h3>
+                            <p>Access 7 more opportunities with Enhanced Access</p>
+                            <button class="btn btn-primary" onclick="showUpgradeTierModal()">Upgrade Now</button>
+                        </div>
+                        <div class="opportunity-image blurred">
+                            <div class="placeholder-img">💼</div>
+                        </div>
+                        <div class="opportunity-content blurred">
+                            <div class="opportunity-header">
+                                <h3>Premium Opportunity</h3>
+                                <span class="opportunity-category">Company</span>
+                            </div>
+                            <p class="opportunity-description">Exclusive investment opportunity available to Enhanced and Top Tier members.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- My Investments Section -->
+            <section class="my-investments-section">
+                <h2>My Active Investments</h2>
+                <div class="investments-list">
+                    <div class="investment-item">
+                        <div class="investment-icon">🏥</div>
+                        <div class="investment-info">
+                            <h4>MediConnect App</h4>
+                            <p>Investment: $50,000 • 15% Equity</p>
+                            <div class="investment-meta">
+                                <span class="meta-tag">Healthcare</span>
+                                <span class="meta-date">Invested: Aug 2025</span>
+                            </div>
+                        </div>
+                        <div class="investment-performance">
+                            <span class="performance-label">Current Value</span>
+                            <span class="performance-value positive">$62,500 (+25%)</span>
+                        </div>
+                    </div>
+
+                    <div class="investment-item">
+                        <div class="investment-icon">🎓</div>
+                        <div class="investment-info">
+                            <h4>EduTech Platform</h4>
+                            <p>Investment: $75,000 • 20% Equity</p>
+                            <div class="investment-meta">
+                                <span class="meta-tag">Education</span>
+                                <span class="meta-date">Invested: Jul 2025</span>
+                            </div>
+                        </div>
+                        <div class="investment-performance">
+                            <span class="performance-label">Current Value</span>
+                            <span class="performance-value positive">$82,500 (+10%)</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="investor-dashboard.js"></script>
+</body>
+</html>

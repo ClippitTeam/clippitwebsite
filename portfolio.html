@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore Clippit's portfolio of successful projects - websites, apps, and software solutions.">
+    <title>Portfolio - Clippit</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <span class="logo-icon">📎</span>
+                <span class="logo-text">Clippit</span>
+            </div>
+            <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li class="dropdown">
+                    <a href="services.html">Services</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="services.html#websites">Websites</a></li>
+                        <li><a href="services.html#apps">Apps</a></li>
+                        <li><a href="services.html#software">Software</a></li>
+                        <li><a href="services.html#hosting">Hosting</a></li>
+                        <li><a href="services.html#domains">Domains</a></li>
+                        <li><a href="services.html#email">Email</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="pricing.html">Pricing</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="pricing.html#dreamlab">DreamLab</a></li>
+                        <li><a href="pricing.html#clippit-builds">Clippit Builds</a></li>
+                    </ul>
+                </li>
+                <li><a href="portfolio.html" class="active">Portfolio</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="login.html" class="login-btn">Login</a></li>
+                <li><a href="index.html#contact" class="cta-nav">Get Started</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Portfolio Hero -->
+    <section class="hero portfolio-hero">
+        <div class="hero-background"></div>
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="gradient-text">Our Work</span>
+                </h1>
+                <p class="hero-description">
+                    Explore our portfolio of successful projects across various industries and technologies.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Grid -->
+    <section class="portfolio-section">
+        <div class="container">
+            <div class="portfolio-filter">
+                <button class="filter-btn active" data-filter="all">All Projects</button>
+                <button class="filter-btn" data-filter="website">Websites</button>
+                <button class="filter-btn" data-filter="app">Apps</button>
+                <button class="filter-btn" data-filter="software">Software</button>
+            </div>
+
+            <div class="portfolio-grid">
+                <div class="portfolio-item" data-category="website">
+                    <div class="portfolio-image">
+                        <div class="placeholder-image">🌐</div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h3>E-Commerce Platform</h3>
+                        <p class="portfolio-category">Website Development</p>
+                        <p class="portfolio-description">A modern e-commerce platform with custom CMS, payment integration, and inventory management.</p>
+                        <div class="portfolio-tags">
+                            <span>React</span>
+                            <span>Node.js</span>
+                            <span>MongoDB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-item" data-category="app">
+                    <div class="portfolio-image">
+                        <div class="placeholder-image">📱</div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h3>Fitness Tracking App</h3>
+                        <p class="portfolio-category">Mobile Application</p>
+                        <p class="portfolio-description">Cross-platform fitness app with workout tracking, meal planning, and social features.</p>
+                        <div class="portfolio-tags">
+                            <span>React Native</span>
+                            <span>Firebase</span>
+                            <span>iOS/Android</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-item" data-category="software">
+                    <div class="portfolio-image">
+                        <div class="placeholder-image">⚙️</div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h3>Project Management System</h3>
+                        <p class="portfolio-category">Custom Software</p>
+                        <p class="portfolio-description">Enterprise project management solution with team collaboration and reporting tools.</p>
+                        <div class="portfolio-tags">
+                            <span>Vue.js</span>
+                            <span>Python</span>
+                            <span>PostgreSQL</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-item" data-category="website">
+                    <div class="portfolio-image">
+                        <div class="placeholder-image">🏢</div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h3>Corporate Website</h3>
+                        <p class="portfolio-category">Website Development</p>
+                        <p class="portfolio-description">Professional corporate website with multi-language support and content management.</p>
+                        <div class="portfolio-tags">
+                            <span>WordPress</span>
+                            <span>PHP</span>
+                            <span>SEO Optimized</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-item" data-category="app">
+                    <div class="portfolio-image">
+                        <div class="placeholder-image">💬</div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h3>Real-Time Chat Application</h3>
+                        <p class="portfolio-category">Mobile & Web App</p>
+                        <p class="portfolio-description">Secure messaging platform with end-to-end encryption and media sharing capabilities.</p>
+                        <div class="portfolio-tags">
+                            <span>Flutter</span>
+                            <span>WebSocket</span>
+                            <span>AWS</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-item" data-category="software">
+                    <div class="portfolio-image">
+                        <div class="placeholder-image">📊</div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h3>Analytics Dashboard</h3>
+                        <p class="portfolio-category">Custom Software</p>
+                        <p class="portfolio-description">Real-time analytics dashboard with data visualization and automated reporting.</p>
+                        <div class="portfolio-tags">
+                            <span>Angular</span>
+                            <span>D3.js</span>
+                            <span>API Integration</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-item" data-category="website">
+                    <div class="portfolio-image">
+                        <div class="placeholder-image">🎨</div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h3>Portfolio & Blog Platform</h3>
+                        <p class="portfolio-category">Website Development</p>
+                        <p class="portfolio-description">Creative portfolio website with integrated blog and contact management system.</p>
+                        <div class="portfolio-tags">
+                            <span>Next.js</span>
+                            <span>Tailwind CSS</span>
+                            <span>Headless CMS</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-item" data-category="app">
+                    <div class="portfolio-image">
+                        <div class="placeholder-image">🛒</div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h3>Food Delivery App</h3>
+                        <p class="portfolio-category">Mobile Application</p>
+                        <p class="portfolio-description">On-demand food delivery app with real-time tracking and payment integration.</p>
+                        <div class="portfolio-tags">
+                            <span>Swift</span>
+                            <span>Kotlin</span>
+                            <span>Google Maps</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-item" data-category="software">
+                    <div class="portfolio-image">
+                        <div class="placeholder-image">🔐</div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h3>Authentication System</h3>
+                        <p class="portfolio-category">Custom Software</p>
+                        <p class="portfolio-description">Secure multi-factor authentication system with SSO and OAuth integration.</p>
+                        <div class="portfolio-tags">
+                            <span>Node.js</span>
+                            <span>JWT</span>
+                            <span>Redis</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">What Our Clients Say</h2>
+                <p class="section-subtitle">Don't just take our word for it</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"</div>
+                    <p class="testimonial-text">Clippit transformed our outdated website into a modern, high-converting platform. The team was professional, responsive, and delivered beyond our expectations.</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">JD</div>
+                        <div>
+                            <p class="author-name">John Davis</p>
+                            <p class="author-title">CEO, TechStart Inc.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"</div>
+                    <p class="testimonial-text">The DreamLab package was perfect for our startup. Within a week, we had a stunning prototype to show investors. It helped us secure our seed funding!</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">SM</div>
+                        <div>
+                            <p class="author-name">Sarah Miller</p>
+                            <p class="author-title">Founder, FitLife App</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"</div>
+                    <p class="testimonial-text">Working with Clippit on a Clippit Builds partnership was the best decision we made. They believed in our vision and built an incredible product together with us.</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">MC</div>
+                        <div>
+                            <p class="author-name">Michael Chen</p>
+                            <p class="author-title">Co-Founder, ConnectHub</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Start Your Project?</h2>
+                <p>Let's create something amazing together. Get in touch today.</p>
+                <a href="index.html#contact" class="btn btn-primary">Start Your Project</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <span class="logo-icon">📎</span>
+                        <span class="logo-text">Clippit</span>
+                    </div>
+                    <p>Building digital futures, one project at a time.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Twitter">𝕏</a>
+                        <a href="#" aria-label="LinkedIn">in</a>
+                        <a href="#" aria-label="GitHub">⚡</a>
+                        <a href="#" aria-label="Instagram">📷</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="services.html#websites">Websites</a></li>
+                        <li><a href="services.html#apps">Apps</a></li>
+                        <li><a href="services.html#software">Software</a></li>
+                        <li><a href="services.html#hosting">Hosting</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="portfolio.html">Portfolio</a></li>
+                        <li><a href="pricing.html">Pricing</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Clippit. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="portfolio.js"></script>
+</body>
+</html>

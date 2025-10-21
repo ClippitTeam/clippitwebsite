@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Clippit Client Dashboard - Manage your projects, domains, billing, and support tickets.">
+    <title>Client Dashboard - Clippit</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <!-- Dashboard Header -->
+    <header class="dashboard-header">
+        <div class="dashboard-header-content">
+            <div class="dashboard-logo">
+                <span class="logo-icon">📎</span>
+                <span class="logo-text">Clippit</span>
+            </div>
+            <div class="dashboard-quick-actions">
+                <button class="quick-action-btn" title="New Ticket">
+                    <span>🎫</span> New Ticket
+                </button>
+                <button class="quick-action-btn" title="Join Video Call">
+                    <span>📹</span> Join Call
+                </button>
+                <button class="quick-action-btn" title="Upload File">
+                    <span>📤</span> Upload
+                </button>
+            </div>
+            <div class="dashboard-user">
+                <div class="notification-icon">
+                    <span>🔔</span>
+                    <span class="notification-badge">3</span>
+                </div>
+                <div class="user-avatar">JD</div>
+                <span class="user-name">John Davis</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dashboard Layout -->
+    <div class="dashboard-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="dashboard-sidebar">
+            <nav class="dashboard-nav">
+                <a href="#dashboard" class="nav-item active">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a href="#projects" class="nav-item">
+                    <span class="nav-icon">💼</span>
+                    <span class="nav-label">Projects</span>
+                    <span class="nav-badge">2</span>
+                </a>
+                <a href="#chat" class="nav-item">
+                    <span class="nav-icon">💬</span>
+                    <span class="nav-label">Live Chat</span>
+                </a>
+                <a href="#tickets" class="nav-item">
+                    <span class="nav-icon">🎫</span>
+                    <span class="nav-label">Tickets</span>
+                    <span class="nav-badge">1</span>
+                </a>
+                <a href="#billing" class="nav-item">
+                    <span class="nav-icon">💳</span>
+                    <span class="nav-label">Billing</span>
+                </a>
+                <a href="#domains" class="nav-item">
+                    <span class="nav-icon">🌐</span>
+                    <span class="nav-label">Domains</span>
+                </a>
+                <a href="#calendar" class="nav-item">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-label">Calendar</span>
+                </a>
+                <a href="#investor-opportunities" class="nav-item">
+                    <span class="nav-icon">💰</span>
+                    <span class="nav-label">Investor Opportunities</span>
+                </a>
+                <a href="#settings" class="nav-item">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-label">Settings</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="index.html" class="logout-btn">
+                    <span>🚪</span> Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="dashboard-main">
+            <!-- Welcome Section -->
+            <section class="dashboard-welcome">
+                <h1>Welcome back, John! 👋</h1>
+                <p>Here's what's happening with your projects today.</p>
+            </section>
+
+            <!-- Project Health Indicators -->
+            <section class="health-indicators">
+                <div class="health-card excellent">
+                    <div class="health-bar"></div>
+                    <div class="health-content">
+                        <h3>E-Commerce Platform</h3>
+                        <p class="health-status">✅ On Track</p>
+                        <p class="health-detail">Development Phase - 75% Complete</p>
+                    </div>
+                </div>
+                <div class="health-card warning">
+                    <div class="health-bar"></div>
+                    <div class="health-content">
+                        <h3>Mobile App Redesign</h3>
+                        <p class="health-status">⚠️ Needs Attention</p>
+                        <p class="health-detail">Awaiting client feedback on mockups</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Active Projects -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Active Projects</h2>
+                        <button class="card-action">View All →</button>
+                    </div>
+                    <div class="card-content">
+                        <div class="project-item">
+                            <div class="project-info">
+                                <div class="project-icon">🛒</div>
+                                <div>
+                                    <h4>E-Commerce Platform</h4>
+                                    <p>Development Phase</p>
+                                </div>
+                            </div>
+                            <div class="project-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 75%"></div>
+                                </div>
+                                <span>75%</span>
+                            </div>
+                        </div>
+                        <div class="project-item">
+                            <div class="project-info">
+                                <div class="project-icon">📱</div>
+                                <div>
+                                    <h4>Mobile App Redesign</h4>
+                                    <p>Design Review</p>
+                                </div>
+                            </div>
+                            <div class="project-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 45%"></div>
+                                </div>
+                                <span>45%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Recent Activity</h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="activity-item">
+                            <div class="activity-icon">✅</div>
+                            <div class="activity-content">
+                                <p><strong>Design approved</strong></p>
+                                <p class="activity-time">2 hours ago</p>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">💬</div>
+                            <div class="activity-content">
+                                <p><strong>New message from Sarah</strong></p>
+                                <p class="activity-time">4 hours ago</p>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">📄</div>
+                            <div class="activity-content">
+                                <p><strong>Invoice #1234 paid</strong></p>
+                                <p class="activity-time">Yesterday</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Milestones -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Upcoming Milestones</h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="milestone-item">
+                            <div class="milestone-date">
+                                <span class="date-day">28</span>
+                                <span class="date-month">OCT</span>
+                            </div>
+                            <div class="milestone-info">
+                                <h4>Backend API Completion</h4>
+                                <p>E-Commerce Platform</p>
+                            </div>
+                        </div>
+                        <div class="milestone-item">
+                            <div class="milestone-date">
+                                <span class="date-day">05</span>
+                                <span class="date-month">NOV</span>
+                            </div>
+                            <div class="milestone-info">
+                                <h4>Final Design Review</h4>
+                                <p>Mobile App Redesign</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Open Tickets -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Support Tickets</h2>
+                        <button class="card-action">New Ticket +</button>
+                    </div>
+                    <div class="card-content">
+                        <div class="ticket-item">
+                            <div class="ticket-priority high">High</div>
+                            <div class="ticket-info">
+                                <h4>SSL Certificate Renewal</h4>
+                                <p>Ticket #5432 • Opened 3 hours ago</p>
+                            </div>
+                            <span class="ticket-status open">Open</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Overview -->
+                <div class="dashboard-card span-2">
+                    <div class="card-header">
+                        <h2>Analytics Overview</h2>
+                        <select class="card-select">
+                            <option>Last 7 Days</option>
+                            <option>Last 30 Days</option>
+                            <option>Last 90 Days</option>
+                        </select>
+                    </div>
+                    <div class="card-content">
+                        <div class="analytics-grid">
+                            <div class="analytics-stat">
+                                <div class="stat-icon">👥</div>
+                                <div class="stat-info">
+                                    <h3>12,543</h3>
+                                    <p>Total Visitors</p>
+                                    <span class="stat-change positive">+12.5%</span>
+                                </div>
+                            </div>
+                            <div class="analytics-stat">
+                                <div class="stat-icon">⏱️</div>
+                                <div class="stat-info">
+                                    <h3>3m 24s</h3>
+                                    <p>Avg. Session</p>
+                                    <span class="stat-change positive">+8.2%</span>
+                                </div>
+                            </div>
+                            <div class="analytics-stat">
+                                <div class="stat-icon">📈</div>
+                                <div class="stat-info">
+                                    <h3>4.2%</h3>
+                                    <p>Conversion Rate</p>
+                                    <span class="stat-change positive">+1.1%</span>
+                                </div>
+                            </div>
+                            <div class="analytics-stat">
+                                <div class="stat-icon">⚡</div>
+                                <div class="stat-info">
+                                    <h3>99.9%</h3>
+                                    <p>Uptime</p>
+                                    <span class="stat-change neutral">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Domains & Hosting -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Domains & Hosting</h2>
+                        <button class="card-action">Manage →</button>
+                    </div>
+                    <div class="card-content">
+                        <div class="domain-item">
+                            <div class="domain-icon">🌐</div>
+                            <div class="domain-info">
+                                <h4>example.com</h4>
+                                <p>Expires: Dec 15, 2025</p>
+                            </div>
+                            <span class="domain-status active">Active</span>
+                        </div>
+                        <div class="domain-item">
+                            <div class="domain-icon">🌐</div>
+                            <div class="domain-info">
+                                <h4>myapp.io</h4>
+                                <p>Expires: Jan 22, 2026</p>
+                            </div>
+                            <span class="domain-status active">Active</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Invoices -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Recent Invoices</h2>
+                        <button class="card-action">View All →</button>
+                    </div>
+                    <div class="card-content">
+                        <div class="invoice-item">
+                            <div class="invoice-info">
+                                <h4>Invoice #1234</h4>
+                                <p>Oct 15, 2025</p>
+                            </div>
+                            <div class="invoice-amount">
+                                <strong>$2,999.00</strong>
+                                <span class="invoice-status paid">Paid</span>
+                            </div>
+                        </div>
+                        <div class="invoice-item">
+                            <div class="invoice-info">
+                                <h4>Invoice #1233</h4>
+                                <p>Sep 15, 2025</p>
+                            </div>
+                            <div class="invoice-amount">
+                                <strong>$79.00</strong>
+                                <span class="invoice-status paid">Paid</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Investor Opportunities -->
+                <div class="dashboard-card span-2">
+                    <div class="card-header">
+                        <h2>💰 Attract Investors</h2>
+                        <button class="card-action" onclick="showListingModal()">List for Investment +</button>
+                    </div>
+                    <div class="card-content">
+                        <div style="background: linear-gradient(135deg, rgba(64, 224, 208, 0.1), rgba(54, 184, 168, 0.1)); padding: 2rem; border-radius: 12px; border: 1px solid #40E0D0; margin-bottom: 1.5rem;">
+                            <div style="display: flex; gap: 2rem; align-items: center;">
+                                <div style="font-size: 4rem;">💼</div>
+                                <div style="flex: 1;">
+                                    <h3 style="color: #40E0D0; font-size: 1.5rem; margin-bottom: 0.5rem;">List Your Project in the Investor Lounge</h3>
+                                    <p style="color: #9CA3AF; margin-bottom: 1rem;">Connect with verified investors looking to fund or acquire projects like yours. All communications are securely handled by Clippit Admin.</p>
+                                    <button class="btn btn-primary" onclick="showListingModal()" style="padding: 0.75rem 1.5rem;">Get Started</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="active-listings">
+                            <h3 style="margin-bottom: 1rem; color: #fff;">Your Active Listings</h3>
+                            <div style="padding: 2rem; text-align: center; background: #1F2937; border: 1px dashed #4B5563; border-radius: 8px;">
+                                <p style="color: #9CA3AF; margin-bottom: 1rem;">📋 No active listings yet</p>
+                                <p style="color: #6B7280; font-size: 0.875rem;">List your project to attract potential investors and secure funding</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>

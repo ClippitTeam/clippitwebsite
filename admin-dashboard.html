@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Clippit Admin Dashboard - Complete control and management suite.">
+    <title>Admin Dashboard - Clippit</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <!-- Dashboard Header -->
+    <header class="dashboard-header">
+        <div class="dashboard-header-content">
+            <div class="dashboard-logo">
+                <span class="logo-icon">📎</span>
+                <span class="logo-text">Clippit Admin</span>
+            </div>
+            <div class="dashboard-quick-actions">
+                <button class="quick-action-btn admin" title="New Project">
+                    <span>➕</span> New Project
+                </button>
+                <button class="quick-action-btn admin" title="Create Invoice">
+                    <span>💰</span> Invoice
+                </button>
+                <button class="quick-action-btn admin" title="Send Announcement">
+                    <span>📢</span> Announce
+                </button>
+            </div>
+            <div class="dashboard-user">
+                <div class="notification-icon admin">
+                    <span>🔔</span>
+                    <span class="notification-badge">8</span>
+                </div>
+                <div class="user-avatar admin">AD</div>
+                <span class="user-name">Admin User</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dashboard Layout -->
+    <div class="dashboard-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="dashboard-sidebar admin">
+            <nav class="dashboard-nav">
+                <a href="#dashboard" class="nav-item active">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a href="#projects" class="nav-item">
+                    <span class="nav-icon">💼</span>
+                    <span class="nav-label">Projects</span>
+                    <span class="nav-badge">12</span>
+                </a>
+                <a href="#clients" class="nav-item">
+                    <span class="nav-icon">👥</span>
+                    <span class="nav-label">Clients</span>
+                </a>
+                <a href="#team" class="nav-item">
+                    <span class="nav-icon">👨‍💼</span>
+                    <span class="nav-label">Team</span>
+                </a>
+                <a href="#invoices" class="nav-item">
+                    <span class="nav-icon">💰</span>
+                    <span class="nav-label">Invoices</span>
+                    <span class="nav-badge">3</span>
+                </a>
+                <a href="#domains" class="nav-item">
+                    <span class="nav-icon">🌐</span>
+                    <span class="nav-label">Domains</span>
+                </a>
+                <a href="#hosting" class="nav-item">
+                    <span class="nav-icon">🖥️</span>
+                    <span class="nav-label">Hosting</span>
+                </a>
+                <a href="#tickets" class="nav-item">
+                    <span class="nav-icon">🎫</span>
+                    <span class="nav-label">Support</span>
+                    <span class="nav-badge">5</span>
+                </a>
+                <a href="#analytics" class="nav-item">
+                    <span class="nav-icon">📈</span>
+                    <span class="nav-label">Analytics</span>
+                </a>
+                <a href="#seo" class="nav-item">
+                    <span class="nav-icon">🔍</span>
+                    <span class="nav-label">SEO</span>
+                </a>
+                <a href="#integrations" class="nav-item">
+                    <span class="nav-icon">🔗</span>
+                    <span class="nav-label">Integrations</span>
+                </a>
+                <a href="#settings" class="nav-item">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-label">Settings</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="index.html" class="logout-btn">
+                    <span>🚪</span> Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="dashboard-main">
+            <!-- Welcome Section -->
+            <section class="dashboard-welcome">
+                <h1>Admin Control Center 🛡️</h1>
+                <p>Manage all client projects, team members, and system operations</p>
+            </section>
+
+            <!-- Key Metrics -->
+            <section class="admin-metrics">
+                <div class="metric-card">
+                    <div class="metric-icon">💼</div>
+                    <div class="metric-info">
+                        <h3>12</h3>
+                        <p>Active Projects</p>
+                        <span class="metric-trend positive">+3 this month</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">👥</div>
+                    <div class="metric-info">
+                        <h3>48</h3>
+                        <p>Total Clients</p>
+                        <span class="metric-trend positive">+5 new</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">💰</div>
+                    <div class="metric-info">
+                        <h3>$89,420</h3>
+                        <p>Monthly Revenue</p>
+                        <span class="metric-trend positive">+12.5%</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">🎫</div>
+                    <div class="metric-info">
+                        <h3>5</h3>
+                        <p>Open Tickets</p>
+                        <span class="metric-trend neutral">2 urgent</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid admin-grid">
+                <!-- All Projects Overview -->
+                <div class="dashboard-card span-2">
+                    <div class="card-header">
+                        <h2>All Projects</h2>
+                        <button class="card-action">New Project +</button>
+                    </div>
+                    <div class="card-content">
+                        <div class="admin-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Project</th>
+                                        <th>Client</th>
+                                        <th>Status</th>
+                                        <th>Team</th>
+                                        <th>Due Date</th>
+                                        <th>Health</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="clickable-row">
+                                        <td><strong>E-Commerce Platform</strong></td>
+                                        <td>TechStart Inc.</td>
+                                        <td><span class="status-badge progress">In Progress</span></td>
+                                        <td>Sarah, Marcus</td>
+                                        <td>Oct 28, 2025</td>
+                                        <td><span class="health-indicator excellent">●</span></td>
+                                    </tr>
+                                    <tr class="clickable-row">
+                                        <td><strong>Mobile App Redesign</strong></td>
+                                        <td>FitLife App</td>
+                                        <td><span class="status-badge review">In Review</span></td>
+                                        <td>Emily</td>
+                                        <td>Nov 5, 2025</td>
+                                        <td><span class="health-indicator warning">●</span></td>
+                                    </tr>
+                                    <tr class="clickable-row">
+                                        <td><strong>Corporate Website</strong></td>
+                                        <td>GlobalCorp</td>
+                                        <td><span class="status-badge planning">Planning</span></td>
+                                        <td>Alex, Sarah</td>
+                                        <td>Nov 15, 2025</td>
+                                        <td><span class="health-indicator excellent">●</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Clients -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Recent Clients</h2>
+                        <button class="card-action">Add Client +</button>
+                    </div>
+                    <div class="card-content">
+                        <div class="client-item">
+                            <div class="client-avatar">JD</div>
+                            <div class="client-info">
+                                <h4>John Davis</h4>
+                                <p>TechStart Inc.</p>
+                                <p class="client-meta">2 active projects</p>
+                            </div>
+                        </div>
+                        <div class="client-item">
+                            <div class="client-avatar">SM</div>
+                            <div class="client-info">
+                                <h4>Sarah Miller</h4>
+                                <p>FitLife App</p>
+                                <p class="client-meta">1 active project</p>
+                            </div>
+                        </div>
+                        <div class="client-item">
+                            <div class="client-avatar">MC</div>
+                            <div class="client-info">
+                                <h4>Michael Chen</h4>
+                                <p>ConnectHub</p>
+                                <p class="client-meta">Started yesterday</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Activity -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Team Activity</h2>
+                        <button class="card-action">Manage Team →</button>
+                    </div>
+                    <div class="card-content">
+                        <div class="activity-item">
+                            <div class="activity-icon">✅</div>
+                            <div class="activity-content">
+                                <p><strong>Sarah</strong> completed API development</p>
+                                <p class="activity-time">30 minutes ago</p>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">📝</div>
+                            <div class="activity-content">
+                                <p><strong>Marcus</strong> updated project timeline</p>
+                                <p class="activity-time">1 hour ago</p>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">💬</div>
+                            <div class="activity-content">
+                                <p><strong>Emily</strong> responded to ticket #5432</p>
+                                <p class="activity-time">2 hours ago</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Invoices -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Pending Invoices</h2>
+                        <button class="card-action">View All →</button>
+                    </div>
+                    <div class="card-content">
+                        <div class="invoice-item admin">
+                            <div class="invoice-info">
+                                <h4>Invoice #1235</h4>
+                                <p>TechStart Inc.</p>
+                                <p class="invoice-meta">Due in 5 days</p>
+                            </div>
+                            <div class="invoice-amount">
+                                <strong>$5,000</strong>
+                                <span class="invoice-status pending">Pending</span>
+                            </div>
+                        </div>
+                        <div class="invoice-item admin">
+                            <div class="invoice-info">
+                                <h4>Invoice #1236</h4>
+                                <p>GlobalCorp</p>
+                                <p class="invoice-meta">Due tomorrow</p>
+                            </div>
+                            <div class="invoice-amount">
+                                <strong>$15,000</strong>
+                                <span class="invoice-status pending">Pending</span>
+                            </div>
+                        </div>
+                        <div class="invoice-item admin">
+                            <div class="invoice-info">
+                                <h4>Invoice #1230</h4>
+                                <p>ConnectHub</p>
+                                <p class="invoice-meta">Overdue 2 days</p>
+                            </div>
+                            <div class="invoice-amount">
+                                <strong>$2,500</strong>
+                                <span class="invoice-status overdue">Overdue</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Domain Management -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Domain Status</h2>
+                        <button class="card-action">Manage →</button>
+                    </div>
+                    <div class="card-content">
+                        <div class="domain-stat">
+                            <span class="domain-stat-number">127</span>
+                            <span class="domain-stat-label">Total Domains</span>
+                        </div>
+                        <div class="domain-stat">
+                            <span class="domain-stat-number warning">8</span>
+                            <span class="domain-stat-label">Expiring Soon</span>
+                        </div>
+                        <div class="domain-stat">
+                            <span class="domain-stat-number success">119</span>
+                            <span class="domain-stat-label">Active & Healthy</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hosting Resources -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Hosting Resources</h2>
+                        <button class="card-action">Monitor →</button>
+                    </div>
+                    <div class="card-content">
+                        <div class="resource-item">
+                            <div class="resource-label">
+                                <span>CPU Usage</span>
+                                <span>45%</span>
+                            </div>
+                            <div class="resource-bar">
+                                <div class="resource-fill" style="width: 45%; background: #10B981;"></div>
+                            </div>
+                        </div>
+                        <div class="resource-item">
+                            <div class="resource-label">
+                                <span>Memory</span>
+                                <span>68%</span>
+                            </div>
+                            <div class="resource-bar">
+                                <div class="resource-fill" style="width: 68%; background: #F59E0B;"></div>
+                            </div>
+                        </div>
+                        <div class="resource-item">
+                            <div class="resource-label">
+                                <span>Storage</span>
+                                <span>34%</span>
+                            </div>
+                            <div class="resource-bar">
+                                <div class="resource-fill" style="width: 34%; background: #10B981;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Open Support Tickets -->
+                <div class="dashboard-card span-2">
+                    <div class="card-header">
+                        <h2>Open Support Tickets</h2>
+                        <button class="card-action">View All →</button>
+                    </div>
+                    <div class="card-content">
+                        <div class="admin-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Ticket ID</th>
+                                        <th>Subject</th>
+                                        <th>Client</th>
+                                        <th>Priority</th>
+                                        <th>Assigned To</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="clickable-row">
+                                        <td>#5432</td>
+                                        <td>SSL Certificate Renewal</td>
+                                        <td>TechStart Inc.</td>
+                                        <td><span class="ticket-priority high">High</span></td>
+                                        <td>Emily</td>
+                                        <td><span class="ticket-status open">Open</span></td>
+                                    </tr>
+                                    <tr class="clickable-row">
+                                        <td>#5431</td>
+                                        <td>Email Configuration</td>
+                                        <td>GlobalCorp</td>
+                                        <td><span class="ticket-priority standard">Standard</span></td>
+                                        <td>Marcus</td>
+                                        <td><span class="ticket-status open">Open</span></td>
+                                    </tr>
+                                    <tr class="clickable-row">
+                                        <td>#5430</td>
+                                        <td>Database Optimization</td>
+                                        <td>FitLife App</td>
+                                        <td><span class="ticket-priority high">High</span></td>
+                                        <td>Sarah</td>
+                                        <td><span class="ticket-status progress">In Progress</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Integrations -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Integrations</h2>
+                        <button class="card-action">Configure →</button>
+                    </div>
+                    <div class="card-content">
+                        <div class="integration-item">
+                            <div class="integration-logo">📊</div>
+                            <div class="integration-info">
+                                <h4>MYOB</h4>
+                                <p class="integration-status connected">Connected</p>
+                            </div>
+                        </div>
+                        <div class="integration-item">
+                            <div class="integration-logo">💼</div>
+                            <div class="integration-info">
+                                <h4>Xero</h4>
+                                <p class="integration-status connected">Connected</p>
+                            </div>
+                        </div>
+                        <div class="integration-item">
+                            <div class="integration-logo">📈</div>
+                            <div class="integration-info">
+                                <h4>Google Analytics</h4>
+                                <p class="integration-status connected">Connected</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Quick Actions</h2>
+                    </div>
+                    <div class="card-content">
+                        <button class="admin-action-btn" onclick="quickAction('Create Project')">
+                            <span>➕</span> Create New Project
+                        </button>
+                        <button class="admin-action-btn" onclick="quickAction('Generate Invoice')">
+                            <span>💰</span> Generate Invoice
+                        </button>
+                        <button class="admin-action-btn" onclick="quickAction('Add Client')">
+                            <span>👤</span> Add New Client
+                        </button>
+                        <button class="admin-action-btn" onclick="quickAction('Broadcast')">
+                            <span>📢</span> Send Announcement
+                        </button>
+                        <button class="admin-action-btn" onclick="quickAction('Backup')">
+                            <span>💾</span> Initiate Backup
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="admin-dashboard.js"></script>
+</body>
+</html>
