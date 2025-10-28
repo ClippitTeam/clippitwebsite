@@ -18,25 +18,64 @@ document.addEventListener('DOMContentLoaded', function() {
     const navLinks = document.querySelectorAll('.nav-item');
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
+            // Allow external links to work normally
+            if (this.hasAttribute('target') && this.getAttribute('target') === '_blank') {
+                return; // Don't prevent default for external links
+            }
+            
             e.preventDefault();
+            
+            // Get the href to determine which section to show
+            const href = this.getAttribute('href');
+            
             // Remove active class from all nav items
             navLinks.forEach(item => item.classList.remove('active'));
             // Add active class to clicked item
             this.classList.add('active');
             
-            const section = this.querySelector('.nav-label').textContent;
+            // Hide all dashboard sections
+            const allSections = document.querySelectorAll('.dashboard-section');
+            allSections.forEach(section => section.style.display = 'none');
             
-            // Handle Investor Opportunities section specially
-            if (section === 'Investor Opportunities') {
-                const investorSection = document.querySelector('.dashboard-card.span-2:last-child');
-                if (investorSection) {
-                    investorSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    showNotification('Showing Investor Opportunities section', 'info');
-                } else {
-                    showNotification(`Navigating to ${section}...`, 'info');
-                }
+            // Hide main dashboard content
+            const mainDashboard = document.querySelector('.dashboard-welcome');
+            const healthIndicators = document.querySelector('.health-indicators');
+            const dashboardGrid = document.querySelector('.dashboard-grid');
+            
+            // Show appropriate section based on href
+            if (href === '#dashboard') {
+                // Show main dashboard
+                if (mainDashboard) mainDashboard.style.display = 'block';
+                if (healthIndicators) healthIndicators.style.display = 'flex';
+                if (dashboardGrid) dashboardGrid.style.display = 'grid';
             } else {
-                showNotification(`Navigating to ${section}...`, 'info');
+                // Hide main dashboard sections for all other tabs
+                if (mainDashboard) mainDashboard.style.display = 'none';
+                if (healthIndicators) healthIndicators.style.display = 'none';
+                if (dashboardGrid) dashboardGrid.style.display = 'none';
+                
+                // Show the appropriate section
+                if (href === '#projects') {
+                    const projectsSection = document.getElementById('section-projects');
+                    if (projectsSection) projectsSection.style.display = 'block';
+                } else if (href === '#tickets') {
+                    const ticketsSection = document.getElementById('section-tickets');
+                    if (ticketsSection) ticketsSection.style.display = 'block';
+                } else if (href === '#billing') {
+                    const billingSection = document.getElementById('section-billing');
+                    if (billingSection) billingSection.style.display = 'block';
+                } else if (href === '#calendar') {
+                    const calendarSection = document.getElementById('section-calendar');
+                    if (calendarSection) calendarSection.style.display = 'block';
+                } else if (href === '#investor-opportunities') {
+                    const investorSection = document.getElementById('section-investor-opportunities');
+                    if (investorSection) investorSection.style.display = 'block';
+                } else if (href === '#settings') {
+                    const settingsSection = document.getElementById('section-settings');
+                    if (settingsSection) settingsSection.style.display = 'block';
+                } else if (href === '#chat') {
+                    showNotification('Live Chat coming soon', 'info');
+                }
             }
         });
     });
@@ -450,6 +489,673 @@ function sendTicketResponse() {
     closeModal();
     showNotification('Response sent successfully!', 'success');
 }
+
+// Customer Dashboard - Projects Tab Functions
+function viewProjectDetails(projectId) {
+    // Hide projects grid, show details view
+    const projectsGrid = document.querySelector('.projects-grid');
+    const detailsView = document.getElementById('project-details-view');
+    
+    if (projectsGrid) projectsGrid.style.display = 'none';
+    if (detailsView) detailsView.style.display = 'block';
+    
+    showNotification('Loading project details...', 'info');
+}
+
+function hideProjectDetails() {
+    // Show projects grid, hide details view
+    const projectsGrid = document.querySelector('.projects-grid');
+    const detailsView = document.getElementById('project-details-view');
+    
+    if (projectsGrid) projectsGrid.style.display = 'grid';
+    if (detailsView) detailsView.style.display = 'none';
+}
+
+// Customer Dashboard - Tickets Tab Functions
+function viewTicketDetails(ticketId) {
+    // Hide tickets list, show details view
+    const ticketsList = document.getElementById('tickets-list');
+    const detailsView = document.getElementById('ticket-details-view');
+    
+    if (ticketsList) ticketsList.style.display = 'none';
+    if (detailsView) detailsView.style.display = 'block';
+    
+    showNotification('Loading ticket details...', 'info');
+}
+
+function hideTicketDetails() {
+    // Show tickets list, hide details view
+    const ticketsList = document.getElementById('tickets-list');
+    const detailsView = document.getElementById('ticket-details-view');
+    
+    if (ticketsList) ticketsList.style.display = 'flex';
+    if (detailsView) detailsView.style.display = 'none';
+}
+
+function submitTicketResponse(e) {
+    e.preventDefault();
+    const response = document.getElementById('ticket-response');
+    if (response && response.value.trim()) {
+        showNotification('Response sent successfully!', 'success');
+        response.value = '';
+    } else {
+        showNotification('Please enter a response', 'warning');
+    }
+}
+
+function attachFile() {
+    showNotification('File attachment feature coming soon', 'info');
+}
+
+// Customer Dashboard - Billing Tab Functions
+function payInvoice(invoiceNumber, amount) {
+    const content = `
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <div style="font-size: 3rem; margin-bottom: 0.5rem;">💳</div>
+                <h3 style="color: #40E0D0; font-size: 1.5rem; margin-bottom: 0.5rem;">Pay Invoice #${invoiceNumber}</h3>
+                <p style="color: #fff; font-size: 2rem; font-weight: 800;">$${amount.toFixed(2)}</p>
+            </div>
+
+            <div style="background: #111827; padding: 1.5rem; border-radius: 8px;">
+                <h4 style="color: #fff; margin-bottom: 1rem;">Select Payment Method</h4>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <div onclick="selectPaymentMethod('visa4242')" style="padding: 1rem; background: #1F2937; border: 2px solid #40E0D0; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <p style="color: #fff; font-weight: 600; margin-bottom: 0.25rem;">💳 Visa ending in 4242</p>
+                            <p style="color: #9CA3AF; font-size: 0.875rem;">Expires 12/2027</p>
+                        </div>
+                        <span style="color: #40E0D0; font-size: 1.5rem;">✓</span>
+                    </div>
+                    <div onclick="addPaymentMethod()" style="padding: 1rem; background: #1F2937; border: 2px dashed #4B5563; border-radius: 8px; cursor: pointer; text-align: center;">
+                        <p style="color: #40E0D0; font-weight: 600;">+ Add New Payment Method</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: rgba(64, 224, 208, 0.1); padding: 1rem; border-radius: 8px; font-size: 0.875rem;">
+                <p>✓ Secure payment via Stripe</p>
+                <p>✓ Instant payment confirmation</p>
+                <p>✓ Receipt sent to your email</p>
+            </div>
+
+            <button onclick="processPayment('${invoiceNumber}', ${amount})" style="width: 100%; padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 1.125rem;">Complete Payment</button>
+        </div>
+    `;
+    showModal('Pay Invoice', content);
+}
+
+function processPayment(invoiceNumber, amount) {
+    closeModal();
+    showNotification('Processing payment...', 'info');
+    
+    // Simulate payment processing
+    setTimeout(() => {
+        showNotification(`Payment of $${amount.toFixed(2)} successful!`, 'success');
+        setTimeout(() => {
+            showNotification('Receipt sent to your email', 'info');
+        }, 1500);
+    }, 2000);
+}
+
+function viewInvoiceDetails(invoiceNumber) {
+    const content = `
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div style="background: #111827; padding: 1.5rem; border-radius: 8px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+                    <div>
+                        <h4 style="color: #40E0D0; font-size: 1.25rem; margin-bottom: 0.5rem;">Invoice #${invoiceNumber}</h4>
+                        <p style="color: #9CA3AF;">Issued: Oct 20, 2025</p>
+                        <p style="color: #9CA3AF;">Due: Nov 5, 2025</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="background: rgba(251, 191, 36, 0.2); color: #FBB624; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600;">DUE NOW</span>
+                    </div>
+                </div>
+                
+                <div style="border-top: 1px solid #4B5563; padding-top: 1.5rem;">
+                    <h5 style="color: #fff; margin-bottom: 1rem;">Line Items</h5>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: #9CA3AF;">E-Commerce Platform Development</span>
+                        <span style="color: #fff;">$2,500.00</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: #9CA3AF;">Payment Gateway Integration</span>
+                        <span style="color: #fff;">$399.00</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: #9CA3AF;">Security Audit</span>
+                        <span style="color: #fff;">$100.00</span>
+                    </div>
+                    
+                    <div style="border-top: 1px solid #4B5563; margin-top: 1rem; padding-top: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="color: #9CA3AF;">Subtotal</span>
+                            <span style="color: #fff;">$2,999.00</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="color: #9CA3AF;">Tax (0%)</span>
+                            <span style="color: #fff;">$0.00</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 1.25rem;">
+                            <span style="color: #fff; font-weight: 700;">Total</span>
+                            <span style="color: #40E0D0; font-weight: 800;">$2,999.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button onclick="downloadInvoicePDF('${invoiceNumber}')" style="flex: 1; padding: 0.75rem 1.5rem; background: #111827; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; font-weight: 600; cursor: pointer;">📥 Download PDF</button>
+                <button onclick="closeModal()" style="flex: 1; padding: 0.75rem 1.5rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; font-weight: 600; cursor: pointer;">Close</button>
+            </div>
+        </div>
+    `;
+    showModal('Invoice Details', content);
+}
+
+function downloadInvoicePDF(invoiceNumber) {
+    closeModal();
+    showNotification(`Downloading Invoice #${invoiceNumber}...`, 'info');
+    setTimeout(() => {
+        showNotification('Invoice PDF downloaded successfully!', 'success');
+    }, 1000);
+}
+
+function downloadReceipt(invoiceNumber) {
+    showNotification(`Downloading receipt for Invoice #${invoiceNumber}...`, 'info');
+    setTimeout(() => {
+        showNotification('Receipt PDF downloaded successfully!', 'success');
+    }, 1000);
+}
+
+function addPaymentMethod() {
+    const content = `
+        <form onsubmit="submitPaymentMethod(event)" style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <div style="font-size: 3rem; margin-bottom: 0.5rem;">💳</div>
+                <h3 style="color: #40E0D0; font-size: 1.25rem;">Add Payment Method</h3>
+                <p style="color: #9CA3AF; font-size: 0.875rem;">Enter your card details</p>
+            </div>
+
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Card Number</label>
+                <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Expiry Date</label>
+                    <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: #fff;">CVC</label>
+                    <input type="text" id="card-cvc" placeholder="123" maxlength="4" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                </div>
+            </div>
+
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Cardholder Name</label>
+                <input type="text" id="card-name" placeholder="John Davis" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+            </div>
+
+            <div style="background: rgba(64, 224, 208, 0.1); padding: 1rem; border-radius: 8px; font-size: 0.875rem;">
+                <p>🔒 Your payment information is encrypted and secure</p>
+                <p>💳 Powered by Stripe</p>
+            </div>
+
+            <button type="submit" style="background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Add Card</button>
+        </form>
+    `;
+    showModal('Add Payment Method', content);
+}
+
+function submitPaymentMethod(e) {
+    e.preventDefault();
+    const cardNumber = document.getElementById('card-number').value;
+    const last4 = cardNumber.slice(-4);
+    
+    closeModal();
+    showNotification('Adding payment method...', 'info');
+    
+    setTimeout(() => {
+        showNotification(`Card ending in ${last4} added successfully!`, 'success');
+    }, 1500);
+}
+
+function updateBillingInfo() {
+    const content = `
+        <form onsubmit="submitBillingInfo(event)" style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <div style="font-size: 3rem; margin-bottom: 0.5rem;">📝</div>
+                <h3 style="color: #40E0D0; font-size: 1.25rem;">Update Billing Information</h3>
+            </div>
+
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Company Name</label>
+                <input type="text" value="Davis Enterprises Ltd" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+            </div>
+
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Contact Email</label>
+                <input type="email" value="john@davisenterprises.com" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+            </div>
+
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Business Number</label>
+                <input type="text" value="ABN 12 345 678 901" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+            </div>
+
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Street Address</label>
+                <input type="text" value="123 Business Street" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: #fff;">City</label>
+                    <input type="text" value="Sydney" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: #fff;">State</label>
+                    <input type="text" value="NSW" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Postcode</label>
+                    <input type="text" value="2000" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                </div>
+            </div>
+
+            <button type="submit" style="background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Save Changes</button>
+        </form>
+    `;
+    showModal('Update Billing Information', content);
+}
+
+function submitBillingInfo(e) {
+    e.preventDefault();
+    closeModal();
+    showNotification('Updating billing information...', 'info');
+    
+    setTimeout(() => {
+        showNotification('Billing information updated successfully!', 'success');
+    }, 1500);
+}
+
+function selectPaymentMethod(methodId) {
+    showNotification('Payment method selected', 'info');
+}
+
+// Customer Dashboard - Calendar Tab Functions
+function requestMeeting() {
+    const content = `
+        <form onsubmit="submitMeetingRequest(event)" style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <div style="font-size: 3rem; margin-bottom: 0.5rem;">📅</div>
+                <h3 style="color: #40E0D0; font-size: 1.25rem;">Request Meeting</h3>
+                <p style="color: #9CA3AF; font-size: 0.875rem;">Schedule a meeting with your project team</p>
+            </div>
+
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Meeting Purpose</label>
+                <input type="text" id="meeting-purpose" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;" placeholder="e.g., Progress Review">
+            </div>
+
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Preferred Date</label>
+                <input type="date" id="meeting-date" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+            </div>
+
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Preferred Time</label>
+                <select id="meeting-time" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                    <option value="">Select time</option>
+                    <option value="09:00">9:00 AM</option>
+                    <option value="10:00">10:00 AM</option>
+                    <option value="11:00">11:00 AM</option>
+                    <option value="13:00">1:00 PM</option>
+                    <option value="14:00">2:00 PM</option>
+                    <option value="15:00">3:00 PM</option>
+                    <option value="16:00">4:00 PM</option>
+                </select>
+            </div>
+
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Meeting Type</label>
+                <select id="meeting-type" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                    <option value="video">Video Call</option>
+                    <option value="phone">Phone Call</option>
+                    <option value="in-person">In-Person</option>
+                </select>
+            </div>
+
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Additional Notes (Optional)</label>
+                <textarea id="meeting-notes" rows="3" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; resize: vertical;" placeholder="Any specific topics to discuss?"></textarea>
+            </div>
+
+            <button type="submit" style="background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Submit Request</button>
+        </form>
+    `;
+    showModal('Request Meeting', content);
+}
+
+function submitMeetingRequest(e) {
+    e.preventDefault();
+    const purpose = document.getElementById('meeting-purpose').value;
+    const date = document.getElementById('meeting-date').value;
+    
+    closeModal();
+    showNotification('Meeting request submitted successfully!', 'success');
+    setTimeout(() => {
+        showNotification(`Request for "${purpose}" on ${date} sent to your project team`, 'info');
+    }, 1500);
+}
+
+function previousMonth() {
+    showNotification('Navigating to previous month...', 'info');
+}
+
+function nextMonth() {
+    showNotification('Navigating to next month...', 'info');
+}
+
+function viewEventDetails(eventId) {
+    const events = {
+        'team-chat-nov10': {
+            title: 'Weekly Team Sync',
+            date: 'November 10, 2025',
+            time: '2:00 PM - 3:00 PM',
+            type: 'Video Call',
+            attendees: ['Mike Johnson (Lead Developer)', 'John Davis (You)'],
+            description: 'Regular weekly sync to discuss project progress, address any blockers, and plan upcoming work.',
+            icon: '💬'
+        },
+        'first-demo': {
+            title: 'First Demo Session',
+            date: 'November 16, 2025',
+            time: '10:00 AM - 11:30 AM',
+            type: 'Milestone',
+            attendees: ['Sarah Miller (Project Lead)', 'Mike Johnson', 'John Davis (You)'],
+            description: 'First live demonstration of the E-Commerce Platform. Review core functionality and gather feedback.',
+            icon: '🎯'
+        },
+        'weekly-sync-nov20': {
+            title: 'Weekly Progress Update',
+            date: 'November 20, 2025',
+            time: '3:00 PM - 4:00 PM',
+            type: 'Video Call',
+            attendees: ['Sarah Miller (Project Lead)', 'John Davis (You)'],
+            description: 'Weekly progress update and planning session. Review completed work and discuss next steps.',
+            icon: '💬'
+        },
+        'handover-day': {
+            title: 'Project Handover Day',
+            date: 'November 24, 2025',
+            time: '11:00 AM - 1:00 PM',
+            type: 'Milestone',
+            attendees: ['Sarah Miller', 'Mike Johnson', 'John Davis (You)'],
+            description: 'Final project handover meeting. Transfer of all documentation, credentials, and final deliverables.',
+            icon: '🎉'
+        },
+        'project-end': {
+            title: 'Project Completion',
+            date: 'November 30, 2025',
+            time: 'All Day',
+            type: 'Milestone',
+            attendees: ['All Team Members'],
+            description: 'Official project completion date. All deliverables finalized and project closed.',
+            icon: '🏁'
+        }
+    };
+    
+    const event = events[eventId];
+    if (!event) return;
+    
+    const content = `
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <div style="font-size: 3rem; margin-bottom: 0.5rem;">${event.icon}</div>
+                <h3 style="color: #40E0D0; font-size: 1.5rem; margin-bottom: 0.5rem;">${event.title}</h3>
+            </div>
+
+            <div style="background: #111827; padding: 1.5rem; border-radius: 8px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem;">
+                    <div>
+                        <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Date</p>
+                        <p style="color: #fff; font-weight: 600;">${event.date}</p>
+                    </div>
+                    <div>
+                        <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Time</p>
+                        <p style="color: #fff; font-weight: 600;">${event.time}</p>
+                    </div>
+                    <div>
+                        <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Type</p>
+                        <p style="color: #fff; font-weight: 600;">${event.type}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: #111827; padding: 1.5rem; border-radius: 8px;">
+                <h4 style="color: #fff; margin-bottom: 1rem;">Description</h4>
+                <p style="color: #9CA3AF; line-height: 1.6;">${event.description}</p>
+            </div>
+
+            <div style="background: #111827; padding: 1.5rem; border-radius: 8px;">
+                <h4 style="color: #fff; margin-bottom: 1rem;">Attendees</h4>
+                <ul style="color: #9CA3AF; margin-left: 1.25rem;">
+                    ${event.attendees.map(attendee => `<li style="margin-bottom: 0.5rem;">${attendee}</li>`).join('')}
+                </ul>
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                ${event.type === 'Video Call' ? 
+                    `<button onclick="joinVideoCall('${eventId}'); closeModal();" style="flex: 1; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; padding: 0.75rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Join Meeting</button>` : 
+                    ''}
+                <button onclick="closeModal()" style="flex: 1; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; padding: 0.75rem; border-radius: 8px; font-weight: 600; cursor: pointer;">Close</button>
+            </div>
+        </div>
+    `;
+    showModal('Event Details', content);
+}
+
+function joinVideoCall(eventId) {
+    showNotification('Connecting to video call...', 'info');
+    setTimeout(() => {
+        showNotification('Video call feature will open in your default browser', 'info');
+    }, 1500);
+}
+
+// Settings Tab Functions
+function switchSettingsTab(tab) {
+    // Hide all settings content
+    const allContent = document.querySelectorAll('.settings-content');
+    allContent.forEach(content => content.style.display = 'none');
+    
+    // Remove active class from all nav buttons
+    const allButtons = document.querySelectorAll('.settings-nav-btn');
+    allButtons.forEach(btn => {
+        btn.classList.remove('active');
+        btn.style.background = 'transparent';
+        btn.style.color = '#9CA3AF';
+    });
+    
+    // Show selected content
+    const selectedContent = document.getElementById(`settings-${tab}`);
+    if (selectedContent) {
+        selectedContent.style.display = 'block';
+    }
+    
+    // Activate selected button
+    const selectedButton = document.querySelector(`[data-setting="${tab}"]`);
+    if (selectedButton) {
+        selectedButton.classList.add('active');
+        selectedButton.style.background = 'rgba(64, 224, 208, 0.2)';
+        selectedButton.style.color = '#40E0D0';
+    }
+    
+    showNotification(`Switched to ${tab} settings`, 'info');
+}
+
+function saveProfileSettings(e) {
+    e.preventDefault();
+    showNotification('Saving profile changes...', 'info');
+    setTimeout(() => {
+        showNotification('Profile updated successfully!', 'success');
+    }, 1000);
+}
+
+function uploadProfilePicture() {
+    showNotification('Opening file picker...', 'info');
+    setTimeout(() => {
+        showNotification('Profile picture upload feature coming soon', 'info');
+    }, 500);
+}
+
+function changePassword(e) {
+    e.preventDefault();
+    showNotification('Updating password...', 'info');
+    setTimeout(() => {
+        showNotification('Password changed successfully!', 'success');
+    }, 1500);
+}
+
+function enable2FA() {
+    showNotification('Enabling two-factor authentication...', 'info');
+    setTimeout(() => {
+        showNotification('2FA enabled! Please check your email for setup instructions', 'success');
+    }, 1500);
+}
+
+function revokeSession() {
+    showNotification('Revoking session...', 'info');
+    setTimeout(() => {
+        showNotification('Session revoked successfully', 'success');
+    }, 1000);
+}
+
+function saveNotificationSettings() {
+    showNotification('Saving notification preferences...', 'info');
+    setTimeout(() => {
+        showNotification('Notification settings saved!', 'success');
+    }, 1000);
+}
+
+function selectTheme(theme) {
+    showNotification(`Switching to ${theme} theme...`, 'info');
+    setTimeout(() => {
+        showNotification(`${theme.charAt(0).toUpperCase() + theme.slice(1)} theme activated!`, 'success');
+    }, 500);
+}
+
+function saveAppearanceSettings() {
+    showNotification('Saving appearance settings...', 'info');
+    setTimeout(() => {
+        showNotification('Appearance settings saved!', 'success');
+    }, 1000);
+}
+
+function downloadData() {
+    showNotification('Preparing your data for download...', 'info');
+    setTimeout(() => {
+        showNotification('Data archive will be sent to your email within 24 hours', 'info');
+    }, 1500);
+}
+
+function exportProjects() {
+    showNotification('Exporting project data...', 'info');
+    setTimeout(() => {
+        showNotification('Project data exported successfully!', 'success');
+    }, 1000);
+}
+
+function confirmDeleteAccount() {
+    const content = `
+        <div style="display: flex; flex-direction: column; gap: 1.5rem; text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">⚠️</div>
+            <h3 style="color: #EF4444; font-size: 1.5rem;">Delete Account</h3>
+            <p style="color: #9CA3AF;">This action cannot be undone. All your data, projects, and settings will be permanently deleted.</p>
+            <div style="background: rgba(239, 68, 68, 0.1); padding: 1rem; border-radius: 8px; border: 1px solid rgba(239, 68, 68, 0.3);">
+                <p style="color: #EF4444; font-weight: 600; margin-bottom: 0.5rem;">You will lose:</p>
+                <ul style="color: #9CA3AF; text-align: left; margin-left: 1.5rem;">
+                    <li>All project data and files</li>
+                    <li>Billing history and invoices</li>
+                    <li>Support tickets and conversations</li>
+                    <li>Calendar events and meetings</li>
+                </ul>
+            </div>
+            <p style="color: #fff; font-weight: 600;">Type DELETE to confirm:</p>
+            <input type="text" id="delete-confirm" placeholder="Type DELETE" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #EF4444; border-radius: 8px; color: #fff; text-align: center;">
+            <div style="display: flex; gap: 1rem;">
+                <button onclick="closeModal()" style="flex: 1; padding: 0.75rem; background: #111827; color: #fff; border: 1px solid #4B5563; border-radius: 8px; font-weight: 600; cursor: pointer;">Cancel</button>
+                <button onclick="executeDeleteAccount()" style="flex: 1; padding: 0.75rem; background: #EF4444; color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Delete Account</button>
+            </div>
+        </div>
+    `;
+    showModal('⚠️ Confirm Account Deletion', content);
+}
+
+function executeDeleteAccount() {
+    const confirmText = document.getElementById('delete-confirm');
+    if (confirmText && confirmText.value === 'DELETE') {
+        closeModal();
+        showNotification('Deleting account...', 'info');
+        setTimeout(() => {
+            showNotification('Account deletion request submitted. You will receive a confirmation email.', 'success');
+        }, 2000);
+    } else {
+        showNotification('Please type DELETE to confirm', 'warning');
+    }
+}
+
+// Ticket filtering
+document.addEventListener('DOMContentLoaded', function() {
+    const ticketFilters = document.querySelectorAll('.ticket-filter');
+    ticketFilters.forEach(filter => {
+        filter.addEventListener('click', function() {
+            // Remove active class from all filters
+            ticketFilters.forEach(f => {
+                f.classList.remove('active');
+                f.style.background = 'transparent';
+                f.style.color = '#9CA3AF';
+                f.style.borderColor = '#4B5563';
+            });
+            
+            // Add active class to clicked filter
+            this.classList.add('active');
+            this.style.background = 'rgba(64, 224, 208, 0.2)';
+            this.style.color = '#40E0D0';
+            this.style.borderColor = '#40E0D0';
+            
+            const filterType = this.getAttribute('data-filter');
+            const tickets = document.querySelectorAll('.ticket-card');
+            
+            tickets.forEach(ticket => {
+                const status = ticket.getAttribute('data-status');
+                if (filterType === 'all' || status === filterType) {
+                    ticket.style.display = 'block';
+                } else {
+                    ticket.style.display = 'none';
+                }
+            });
+            
+            showNotification(`Filtering: ${this.textContent}`, 'info');
+        });
+    });
+    
+    // Add hover effect to ticket cards
+    const ticketCards = document.querySelectorAll('.ticket-card');
+    ticketCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.borderColor = '#40E0D0';
+            this.style.transform = 'translateY(-2px)';
+        });
+        card.addEventListener('mouseleave', function() {
+            this.style.borderColor = '#374151';
+            this.style.transform = 'translateY(0)';
+        });
+    });
+});
 
 // Show notification toast
 function showNotification(message, type = 'info') {

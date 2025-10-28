@@ -15,7 +15,7 @@
     <header class="dashboard-header">
         <div class="dashboard-header-content">
             <div class="dashboard-logo">
-                <span class="logo-icon">📎</span>
+                <img src="images/logo2.png" alt="Clippit Logo" class="logo-icon" style="width: 40px; height: 40px; object-fit: contain;">
                 <span class="logo-text">Clippit Admin</span>
             </div>
             <div class="dashboard-quick-actions">
@@ -27,6 +27,9 @@
                 </button>
                 <button class="quick-action-btn admin" title="Send Announcement">
                     <span>📢</span> Announce
+                </button>
+                <button class="quick-action-btn admin" title="Invite Investor" onclick="showInviteInvestorModal()">
+                    <span>💰</span> Invite Investor
                 </button>
             </div>
             <div class="dashboard-user">
@@ -67,7 +70,7 @@
                     <span class="nav-label">Invoices</span>
                     <span class="nav-badge">3</span>
                 </a>
-                <a href="#domains" class="nav-item">
+                <a href="https://www.clippit.online/" target="_blank" class="nav-item">
                     <span class="nav-icon">🌐</span>
                     <span class="nav-label">Domains</span>
                 </a>
@@ -472,6 +475,1819 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Projects Section -->
+            <div id="section-projects" class="dashboard-section" style="display: none;">
+                <section class="projects-admin-section">
+                    <!-- Projects Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <div>
+                            <h2 style="color: #40E0D0; font-size: 1.75rem; margin-bottom: 0.5rem;">Project Management</h2>
+                            <p style="color: #9CA3AF;">Manage all client projects, teams, and timelines</p>
+                        </div>
+                        <button onclick="showCreateProjectModal()" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">+ Create Project</button>
+                    </div>
+
+                    <!-- Project Filters & Search -->
+                    <div style="background: #1F2937; padding: 1.5rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 2rem;">
+                        <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 1rem; align-items: center;">
+                            <div style="position: relative;">
+                                <input type="text" id="project-search" placeholder="Search projects..." style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                                <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #9CA3AF;">🔍</span>
+                            </div>
+                            
+                            <select id="project-status-filter" style="padding: 0.75rem 1rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; cursor: pointer;">
+                                <option value="all">All Status</option>
+                                <option value="planning">Planning</option>
+                                <option value="in-progress">In Progress</option>
+                                <option value="review">In Review</option>
+                                <option value="completed">Completed</option>
+                                <option value="on-hold">On Hold</option>
+                            </select>
+                            
+                            <select id="project-health-filter" style="padding: 0.75rem 1rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; cursor: pointer;">
+                                <option value="all">All Health</option>
+                                <option value="excellent">Excellent</option>
+                                <option value="good">Good</option>
+                                <option value="warning">Needs Attention</option>
+                                <option value="critical">Critical</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Projects Stats Cards -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                        <div style="background: linear-gradient(135deg, rgba(64, 224, 208, 0.1), rgba(54, 184, 168, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(64, 224, 208, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Active Projects</p>
+                            <h3 style="color: #40E0D0; font-size: 2rem; font-weight: 800;">12</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">+3 this month</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">In Review</p>
+                            <h3 style="color: #FBB624; font-size: 2rem; font-weight: 800;">5</h3>
+                            <p style="color: #9CA3AF; font-size: 0.875rem;">Awaiting approval</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(147, 51, 234, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(168, 85, 247, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Completed This Month</p>
+                            <h3 style="color: #A855F7; font-size: 2rem; font-weight: 800;">8</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">+2 from last month</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Need Attention</p>
+                            <h3 style="color: #EF4444; font-size: 2rem; font-weight: 800;">2</h3>
+                            <p style="color: #EF4444; font-size: 0.875rem;">Requires action</p>
+                        </div>
+                    </div>
+
+                    <!-- Projects List/Table -->
+                    <div id="projects-list-view" style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 2rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                            <h3 style="color: #40E0D0; font-size: 1.5rem;">All Projects</h3>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button onclick="switchProjectView('grid')" class="view-toggle-btn" style="padding: 0.5rem 1rem; background: #111827; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer;">🔲 Grid</button>
+                                <button onclick="switchProjectView('table')" class="view-toggle-btn active" style="padding: 0.5rem 1rem; background: rgba(64, 224, 208, 0.2); color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; cursor: pointer;">📋 Table</button>
+                            </div>
+                        </div>
+
+                        <!-- Table View -->
+                        <div id="projects-table-view">
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="border-bottom: 1px solid #374151;">
+                                            <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Project</th>
+                                            <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Client</th>
+                                            <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Status</th>
+                                            <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Team</th>
+                                            <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Progress</th>
+                                            <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Due Date</th>
+                                            <th style="padding: 1rem; text-align: center; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Health</th>
+                                            <th style="padding: 1rem; text-align: right; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Project 1 -->
+                                        <tr onclick="viewAdminProjectDetails('proj-001')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                    <div style="font-size: 1.5rem;">🛒</div>
+                                                    <div>
+                                                        <p style="color: #fff; font-weight: 600;">E-Commerce Platform</p>
+                                                        <p style="color: #9CA3AF; font-size: 0.875rem;">#PROJ-001</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <p style="color: #fff;">John Davis</p>
+                                                <p style="color: #9CA3AF; font-size: 0.875rem;">TechStart Inc.</p>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <span style="background: rgba(64, 224, 208, 0.2); color: #40E0D0; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">IN PROGRESS</span>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; gap: 0.25rem;">
+                                                    <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #40E0D0, #36B8A8); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #111827;">SM</div>
+                                                    <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #A855F7, #9333EA); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #fff;">MJ</div>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                    <div style="flex: 1; height: 6px; background: #374151; border-radius: 3px; overflow: hidden;">
+                                                        <div style="width: 75%; height: 100%; background: linear-gradient(90deg, #40E0D0, #36B8A8);"></div>
+                                                    </div>
+                                                    <span style="color: #fff; font-size: 0.875rem;">75%</span>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem; color: #fff;">Oct 28, 2025</td>
+                                            <td style="padding: 1rem; text-align: center;">
+                                                <span style="color: #10B981; font-size: 1.5rem;" title="Excellent">●</span>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                                <button onclick="editProject('proj-001')" style="padding: 0.25rem 0.75rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 6px; cursor: pointer; margin-right: 0.5rem;">Edit</button>
+                                                <button onclick="showProjectMenu('proj-001')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Project 2 -->
+                                        <tr onclick="viewAdminProjectDetails('proj-002')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                    <div style="font-size: 1.5rem;">📱</div>
+                                                    <div>
+                                                        <p style="color: #fff; font-weight: 600;">Mobile App Redesign</p>
+                                                        <p style="color: #9CA3AF; font-size: 0.875rem;">#PROJ-002</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <p style="color: #fff;">Sarah Miller</p>
+                                                <p style="color: #9CA3AF; font-size: 0.875rem;">FitLife App</p>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <span style="background: rgba(251, 191, 36, 0.2); color: #FBB624; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">IN REVIEW</span>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; gap: 0.25rem;">
+                                                    <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #FBB624, #F59E0B); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #111827;">EM</div>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                    <div style="flex: 1; height: 6px; background: #374151; border-radius: 3px; overflow: hidden;">
+                                                        <div style="width: 90%; height: 100%; background: linear-gradient(90deg, #FBB624, #F59E0B);"></div>
+                                                    </div>
+                                                    <span style="color: #fff; font-size: 0.875rem;">90%</span>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem; color: #fff;">Nov 5, 2025</td>
+                                            <td style="padding: 1rem; text-align: center;">
+                                                <span style="color: #F59E0B; font-size: 1.5rem;" title="Needs Attention">●</span>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                                <button onclick="editProject('proj-002')" style="padding: 0.25rem 0.75rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 6px; cursor: pointer; margin-right: 0.5rem;">Edit</button>
+                                                <button onclick="showProjectMenu('proj-002')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Project 3 -->
+                                        <tr onclick="viewAdminProjectDetails('proj-003')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                    <div style="font-size: 1.5rem;">🏢</div>
+                                                    <div>
+                                                        <p style="color: #fff; font-weight: 600;">Corporate Website</p>
+                                                        <p style="color: #9CA3AF; font-size: 0.875rem;">#PROJ-003</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <p style="color: #fff;">Michael Chen</p>
+                                                <p style="color: #9CA3AF; font-size: 0.875rem;">GlobalCorp</p>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <span style="background: rgba(168, 85, 247, 0.2); color: #A855F7; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">PLANNING</span>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; gap: 0.25rem;">
+                                                    <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #40E0D0, #36B8A8); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #111827;">SM</div>
+                                                    <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #10B981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #fff;">AW</div>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                    <div style="flex: 1; height: 6px; background: #374151; border-radius: 3px; overflow: hidden;">
+                                                        <div style="width: 15%; height: 100%; background: linear-gradient(90deg, #A855F7, #9333EA);"></div>
+                                                    </div>
+                                                    <span style="color: #fff; font-size: 0.875rem;">15%</span>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem; color: #fff;">Nov 15, 2025</td>
+                                            <td style="padding: 1rem; text-align: center;">
+                                                <span style="color: #10B981; font-size: 1.5rem;" title="Excellent">●</span>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                                <button onclick="editProject('proj-003')" style="padding: 0.25rem 0.75rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 6px; cursor: pointer; margin-right: 0.5rem;">Edit</button>
+                                                <button onclick="showProjectMenu('proj-003')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Grid View (Hidden by default) -->
+                        <div id="projects-grid-view" style="display: none;">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;">
+                                <!-- Project Card 1 -->
+                                <div onclick="viewAdminProjectDetails('proj-001')" style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563; cursor: pointer; transition: all 0.3s;" onmouseenter="this.style.borderColor='#40E0D0'" onmouseleave="this.style.borderColor='#4B5563'">
+                                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                        <div style="display: flex; gap: 1rem; align-items: center;">
+                                            <div style="font-size: 2rem;">🛒</div>
+                                            <div>
+                                                <h4 style="color: #40E0D0; font-size: 1.125rem; margin-bottom: 0.25rem;">E-Commerce Platform</h4>
+                                                <p style="color: #9CA3AF; font-size: 0.875rem;">#PROJ-001</p>
+                                            </div>
+                                        </div>
+                                        <span style="color: #10B981; font-size: 1.5rem;">●</span>
+                                    </div>
+                                    
+                                    <div style="margin-bottom: 1rem;">
+                                        <p style="color: #fff; margin-bottom: 0.25rem;">John Davis</p>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem;">TechStart Inc.</p>
+                                    </div>
+                                    
+                                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                                        <span style="background: rgba(64, 224, 208, 0.2); color: #40E0D0; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">IN PROGRESS</span>
+                                        <span style="background: #111827; color: #9CA3AF; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem;">Due: Oct 28</span>
+                                    </div>
+                                    
+                                    <div style="margin-bottom: 1rem;">
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                            <span style="color: #9CA3AF; font-size: 0.875rem;">Progress</span>
+                                            <span style="color: #40E0D0; font-size: 0.875rem; font-weight: 600;">75%</span>
+                                        </div>
+                                        <div style="width: 100%; height: 6px; background: #374151; border-radius: 3px; overflow: hidden;">
+                                            <div style="width: 75%; height: 100%; background: linear-gradient(90deg, #40E0D0, #36B8A8);"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div style="display: flex; gap: 0.25rem;">
+                                            <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #40E0D0, #36B8A8); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #111827;">SM</div>
+                                            <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #A855F7, #9333EA); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #fff;">MJ</div>
+                                        </div>
+                                        <button onclick="event.stopPropagation(); showProjectMenu('proj-001')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                    </div>
+                                </div>
+                                
+                                <!-- More grid cards would go here... -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- End Projects Section -->
+
+            <!-- Clients Section -->
+            <div id="section-clients" class="dashboard-section" style="display: none;">
+                <section class="clients-admin-section">
+                    <!-- Clients Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <div>
+                            <h2 style="color: #40E0D0; font-size: 1.75rem; margin-bottom: 0.5rem;">Client Management</h2>
+                            <p style="color: #9CA3AF;">Manage all clients, contacts, and relationships</p>
+                        </div>
+                        <button onclick="showAddClientModal()" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">+ Add Client</button>
+                    </div>
+
+                    <!-- Client Stats Cards -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                        <div style="background: linear-gradient(135deg, rgba(64, 224, 208, 0.1), rgba(54, 184, 168, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(64, 224, 208, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Total Clients</p>
+                            <h3 style="color: #40E0D0; font-size: 2rem; font-weight: 800;">48</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">+5 this month</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Active Clients</p>
+                            <h3 style="color: #10B981; font-size: 2rem; font-weight: 800;">35</h3>
+                            <p style="color: #9CA3AF; font-size: 0.875rem;">With active projects</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Total Revenue</p>
+                            <h3 style="color: #FBB624; font-size: 2rem; font-weight: 800;">$892K</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">+18.5% YoY</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(147, 51, 234, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(168, 85, 247, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Avg. Project Value</p>
+                            <h3 style="color: #A855F7; font-size: 2rem; font-weight: 800;">$18.6K</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">+$2.1K</p>
+                        </div>
+                    </div>
+
+                    <!-- Search and Filters -->
+                    <div style="background: #1F2937; padding: 1.5rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 2rem;">
+                        <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 1rem; align-items: center;">
+                            <div style="position: relative;">
+                                <input type="text" id="client-search" placeholder="Search clients by name, company, email..." style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                                <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #9CA3AF;">🔍</span>
+                            </div>
+                            
+                            <select id="client-status-filter" style="padding: 0.75rem 1rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; cursor: pointer;">
+                                <option value="all">All Clients</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="prospect">Prospects</option>
+                            </select>
+                            
+                            <button onclick="switchClientView('grid')" id="client-view-toggle" style="padding: 0.75rem 1rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; cursor: pointer;">🔲 Grid View</button>
+                        </div>
+                    </div>
+
+                    <!-- Clients List View -->
+                    <div id="clients-list-container" style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151;">
+                        <h3 style="color: #40E0D0; font-size: 1.5rem; margin-bottom: 1.5rem;">All Clients</h3>
+                        
+                        <!-- Table View -->
+                        <div id="clients-table-view">
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="border-bottom: 1px solid #374151;">
+                                            <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Client</th>
+                                            <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Company</th>
+                                            <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Contact</th>
+                                            <th style="padding: 1rem; text-align: center; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Projects</th>
+                                            <th style="padding: 1rem; text-align: right; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Revenue</th>
+                                            <th style="padding: 1rem; text-align: center; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Status</th>
+                                            <th style="padding: 1rem; text-align: right; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Client 1 -->
+                                        <tr onclick="viewClientDetail('client-001')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #40E0D0, #36B8A8); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: #111827;">JD</div>
+                                                    <div>
+                                                        <p style="color: #fff; font-weight: 600;">John Davis</p>
+                                                        <p style="color: #9CA3AF; font-size: 0.875rem;">Since Aug 2024</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem; color: #fff;">TechStart Inc.</td>
+                                            <td style="padding: 1rem;">
+                                                <p style="color: #fff; margin-bottom: 0.25rem;">john@techstart.com</p>
+                                                <p style="color: #9CA3AF; font-size: 0.875rem;">+61 412 345 678</p>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: center;">
+                                                <span style="background: rgba(64, 224, 208, 0.2); color: #40E0D0; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.875rem; font-weight: 600;">2 Active</span>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: right; color: #fff; font-weight: 600;">$45,000</td>
+                                            <td style="padding: 1rem; text-align: center;">
+                                                <span style="color: #10B981; font-size: 1.25rem;" title="Active">●</span>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                                <button onclick="showClientMenu('client-001')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Client 2 -->
+                                        <tr onclick="viewClientDetail('client-002')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #A855F7, #9333EA); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: #fff;">SM</div>
+                                                    <div>
+                                                        <p style="color: #fff; font-weight: 600;">Sarah Miller</p>
+                                                        <p style="color: #9CA3AF; font-size: 0.875rem;">Since Jan 2025</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem; color: #fff;">FitLife App</td>
+                                            <td style="padding: 1rem;">
+                                                <p style="color: #fff; margin-bottom: 0.25rem;">sarah@fitlife.com</p>
+                                                <p style="color: #9CA3AF; font-size: 0.875rem;">+61 423 456 789</p>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: center;">
+                                                <span style="background: rgba(64, 224, 208, 0.2); color: #40E0D0; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.875rem; font-weight: 600;">1 Active</span>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: right; color: #fff; font-weight: 600;">$28,500</td>
+                                            <td style="padding: 1rem; text-align: center;">
+                                                <span style="color: #10B981; font-size: 1.25rem;" title="Active">●</span>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                                <button onclick="showClientMenu('client-002')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Client 3 -->
+                                        <tr onclick="viewClientDetail('client-003')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #FBB624, #F59E0B); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: #111827;">MC</div>
+                                                    <div>
+                                                        <p style="color: #fff; font-weight: 600;">Michael Chen</p>
+                                                        <p style="color: #9CA3AF; font-size: 0.875rem;">Since Oct 2025</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem; color: #fff;">GlobalCorp</td>
+                                            <td style="padding: 1rem;">
+                                                <p style="color: #fff; margin-bottom: 0.25rem;">michael@globalcorp.com</p>
+                                                <p style="color: #9CA3AF; font-size: 0.875rem;">+61 434 567 890</p>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: center;">
+                                                <span style="background: rgba(168, 85, 247, 0.2); color: #A855F7; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.875rem; font-weight: 600;">1 Planning</span>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: right; color: #fff; font-weight: 600;">$15,000</td>
+                                            <td style="padding: 1rem; text-align: center;">
+                                                <span style="color: #10B981; font-size: 1.25rem;" title="Active">●</span>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                                <button onclick="showClientMenu('client-003')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Client 4 - Inactive -->
+                                        <tr onclick="viewClientDetail('client-004')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #6B7280, #4B5563); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: #fff;">LW</div>
+                                                    <div>
+                                                        <p style="color: #fff; font-weight: 600;">Lisa Wang</p>
+                                                        <p style="color: #9CA3AF; font-size: 0.875rem;">Since Mar 2024</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem; color: #fff;">CloudSync Ltd</td>
+                                            <td style="padding: 1rem;">
+                                                <p style="color: #fff; margin-bottom: 0.25rem;">lisa@cloudsync.com</p>
+                                                <p style="color: #9CA3AF; font-size: 0.875rem;">+61 445 678 901</p>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: center;">
+                                                <span style="background: rgba(107, 114, 128, 0.2); color: #9CA3AF; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.875rem; font-weight: 600;">0 Projects</span>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: right; color: #fff; font-weight: 600;">$32,000</td>
+                                            <td style="padding: 1rem; text-align: center;">
+                                                <span style="color: #6B7280; font-size: 1.25rem;" title="Inactive">●</span>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                                <button onclick="showClientMenu('client-004')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Grid View (Hidden by default) -->
+                        <div id="clients-grid-view" style="display: none;">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+                                <!-- Client Card 1 -->
+                                <div onclick="viewClientDetail('client-001')" style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563; cursor: pointer; transition: all 0.3s;" onmouseenter="this.style.borderColor='#40E0D0'" onmouseleave="this.style.borderColor='#4B5563'">
+                                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                        <div style="display: flex; gap: 1rem; align-items: center;">
+                                            <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #40E0D0, #36B8A8); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 700; color: #111827;">JD</div>
+                                            <div>
+                                                <h4 style="color: #40E0D0; font-size: 1.125rem; margin-bottom: 0.25rem;">John Davis</h4>
+                                                <p style="color: #9CA3AF; font-size: 0.875rem;">TechStart Inc.</p>
+                                            </div>
+                                        </div>
+                                        <span style="color: #10B981; font-size: 1.25rem;">●</span>
+                                    </div>
+                                    
+                                    <div style="margin-bottom: 1rem; padding: 1rem; background: #1F2937; border-radius: 8px;">
+                                        <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.25rem;">john@techstart.com</p>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem;">+61 412 345 678</p>
+                                    </div>
+                                    
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                        <div>
+                                            <p style="color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem;">Projects</p>
+                                            <p style="color: #40E0D0; font-weight: 600;">2 Active</p>
+                                        </div>
+                                        <div>
+                                            <p style="color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem;">Revenue</p>
+                                            <p style="color: #fff; font-weight: 600;">$45,000</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <button onclick="event.stopPropagation(); showClientMenu('client-001')" style="width: 100%; padding: 0.5rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; cursor: pointer;">Manage Client</button>
+                                </div>
+                                
+                                <!-- More grid cards would go here... -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- End Clients Section -->
+
+            <!-- Team Section -->
+            <div id="section-team" class="dashboard-section" style="display: none;">
+                <section class="team-admin-section">
+                    <!-- Team Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <div>
+                            <h2 style="color: #40E0D0; font-size: 1.75rem; margin-bottom: 0.5rem;">Team Management</h2>
+                            <p style="color: #9CA3AF;">Manage team members, roles, and workload</p>
+                        </div>
+                        <button onclick="showAddTeamMemberModal()" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">+ Add Team Member</button>
+                    </div>
+
+                    <!-- Team Stats Cards -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                        <div style="background: linear-gradient(135deg, rgba(64, 224, 208, 0.1), rgba(54, 184, 168, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(64, 224, 208, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Total Team Members</p>
+                            <h3 style="color: #40E0D0; font-size: 2rem; font-weight: 800;">12</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">+2 this quarter</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Active Projects</p>
+                            <h3 style="color: #10B981; font-size: 2rem; font-weight: 800;">18</h3>
+                            <p style="color: #9CA3AF; font-size: 0.875rem;">Currently assigned</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Avg. Workload</p>
+                            <h3 style="color: #FBB624; font-size: 2rem; font-weight: 800;">78%</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">Healthy capacity</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(147, 51, 234, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(168, 85, 247, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Completed Tasks</p>
+                            <h3 style="color: #A855F7; font-size: 2rem; font-weight: 800;">145</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">This month</p>
+                        </div>
+                    </div>
+
+                    <!-- Search and Filters -->
+                    <div style="background: #1F2937; padding: 1.5rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 2rem;">
+                        <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 1rem; align-items: center;">
+                            <div style="position: relative;">
+                                <input type="text" id="team-search" placeholder="Search team members by name, role, skills..." style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                                <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #9CA3AF;">🔍</span>
+                            </div>
+                            
+                            <select id="team-role-filter" style="padding: 0.75rem 1rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; cursor: pointer;">
+                                <option value="all">All Roles</option>
+                                <option value="developer">Developers</option>
+                                <option value="designer">Designers</option>
+                                <option value="manager">Project Managers</option>
+                                <option value="support">Support</option>
+                            </select>
+                            
+                            <button onclick="switchTeamView('grid')" id="team-view-toggle" style="padding: 0.75rem 1rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; cursor: pointer;">🔲 Grid View</button>
+                        </div>
+                    </div>
+
+                    <!-- Team Members List -->
+                    <div id="team-list-container" style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151;">
+                        <h3 style="color: #40E0D0; font-size: 1.5rem; margin-bottom: 1.5rem;">All Team Members</h3>
+                        
+                        <!-- Table View -->
+                        <div id="team-table-view">
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="border-bottom: 1px solid #374151;">
+                                            <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Team Member</th>
+                                            <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Role</th>
+                                            <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Skills</th>
+                                            <th style="padding: 1rem; text-align: center; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Projects</th>
+                                            <th style="padding: 1rem; text-align: center; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Workload</th>
+                                            <th style="padding: 1rem; text-align: center; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Status</th>
+                                            <th style="padding: 1rem; text-align: right; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Team Member 1 -->
+                                        <tr onclick="viewTeamMemberDetail('team-001')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #40E0D0, #36B8A8); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: #111827;">SC</div>
+                                                    <div>
+                                                        <p style="color: #fff; font-weight: 600;">Sarah Chen</p>
+                                                        <p style="color: #9CA3AF; font-size: 0.875rem;">sarah.chen@clippit.com</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <span style="background: rgba(64, 224, 208, 0.2); color: #40E0D0; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">Senior Developer</span>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
+                                                    <span style="background: #111827; color: #9CA3AF; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">React</span>
+                                                    <span style="background: #111827; color: #9CA3AF; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">Node.js</span>
+                                                    <span style="background: #111827; color: #9CA3AF; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">TypeScript</span>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: center;">
+                                                <span style="color: #40E0D0; font-weight: 600; font-size: 1.125rem;">3</span>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                                                    <div style="width: 100%; max-width: 80px; height: 6px; background: #374151; border-radius: 3px; overflow: hidden;">
+                                                        <div style="width: 85%; height: 100%; background: linear-gradient(90deg, #FBB624, #F59E0B);"></div>
+                                                    </div>
+                                                    <span style="color: #FBB624; font-size: 0.75rem; font-weight: 600;">85%</span>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: center;">
+                                                <span style="color: #10B981; font-size: 1.25rem;" title="Active">●</span>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                                <button onclick="showTeamMemberMenu('team-001')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Team Member 2 -->
+                                        <tr onclick="viewTeamMemberDetail('team-002')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #A855F7, #9333EA); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: #fff;">MR</div>
+                                                    <div>
+                                                        <p style="color: #fff; font-weight: 600;">Marcus Rodriguez</p>
+                                                        <p style="color: #9CA3AF; font-size: 0.875rem;">marcus.r@clippit.com</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <span style="background: rgba(168, 85, 247, 0.2); color: #A855F7; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">UI/UX Designer</span>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
+                                                    <span style="background: #111827; color: #9CA3AF; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">Figma</span>
+                                                    <span style="background: #111827; color: #9CA3AF; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">Adobe XD</span>
+                                                    <span style="background: #111827; color: #9CA3AF; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">UI Design</span>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: center;">
+                                                <span style="color: #A855F7; font-weight: 600; font-size: 1.125rem;">2</span>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                                                    <div style="width: 100%; max-width: 80px; height: 6px; background: #374151; border-radius: 3px; overflow: hidden;">
+                                                        <div style="width: 65%; height: 100%; background: linear-gradient(90deg, #10B981, #059669);"></div>
+                                                    </div>
+                                                    <span style="color: #10B981; font-size: 0.75rem; font-weight: 600;">65%</span>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: center;">
+                                                <span style="color: #10B981; font-size: 1.25rem;" title="Active">●</span>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                                <button onclick="showTeamMemberMenu('team-002')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Team Member 3 -->
+                                        <tr onclick="viewTeamMemberDetail('team-003')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #FBB624, #F59E0B); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: #111827;">EW</div>
+                                                    <div>
+                                                        <p style="color: #fff; font-weight: 600;">Emily Watson</p>
+                                                        <p style="color: #9CA3AF; font-size: 0.875rem;">emily.w@clippit.com</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <span style="background: rgba(251, 191, 36, 0.2); color: #FBB624; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">Project Manager</span>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
+                                                    <span style="background: #111827; color: #9CA3AF; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">Agile</span>
+                                                    <span style="background: #111827; color: #9CA3AF; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">Jira</span>
+                                                    <span style="background: #111827; color: #9CA3AF; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">Leadership</span>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: center;">
+                                                <span style="color: #FBB624; font-weight: 600; font-size: 1.125rem;">4</span>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                                                    <div style="width: 100%; max-width: 80px; height: 6px; background: #374151; border-radius: 3px; overflow: hidden;">
+                                                        <div style="width: 92%; height: 100%; background: linear-gradient(90deg, #EF4444, #DC2626);"></div>
+                                                    </div>
+                                                    <span style="color: #EF4444; font-size: 0.75rem; font-weight: 600;">92%</span>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: center;">
+                                                <span style="color: #10B981; font-size: 1.25rem;" title="Active">●</span>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                                <button onclick="showTeamMemberMenu('team-003')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Team Member 4 -->
+                                        <tr onclick="viewTeamMemberDetail('team-004')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #10B981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: #fff;">AT</div>
+                                                    <div>
+                                                        <p style="color: #fff; font-weight: 600;">Alex Thompson</p>
+                                                        <p style="color: #9CA3AF; font-size: 0.875rem;">alex.t@clippit.com</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">Developer</span>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
+                                                    <span style="background: #111827; color: #9CA3AF; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">Python</span>
+                                                    <span style="background: #111827; color: #9CA3AF; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">Django</span>
+                                                    <span style="background: #111827; color: #9CA3AF; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">APIs</span>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: center;">
+                                                <span style="color: #10B981; font-weight: 600; font-size: 1.125rem;">2</span>
+                                            </td>
+                                            <td style="padding: 1rem;">
+                                                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                                                    <div style="width: 100%; max-width: 80px; height: 6px; background: #374151; border-radius: 3px; overflow: hidden;">
+                                                        <div style="width: 70%; height: 100%; background: linear-gradient(90deg, #10B981, #059669);"></div>
+                                                    </div>
+                                                    <span style="color: #10B981; font-size: 0.75rem; font-weight: 600;">70%</span>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: center;">
+                                                <span style="color: #10B981; font-size: 1.25rem;" title="Active">●</span>
+                                            </td>
+                                            <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                                <button onclick="showTeamMemberMenu('team-004')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Grid View (Hidden by default) -->
+                        <div id="team-grid-view" style="display: none;">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+                                <!-- Team Card 1 -->
+                                <div onclick="viewTeamMemberDetail('team-001')" style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563; cursor: pointer; transition: all 0.3s;" onmouseenter="this.style.borderColor='#40E0D0'" onmouseleave="this.style.borderColor='#4B5563'">
+                                    <div style="text-align: center; margin-bottom: 1rem;">
+                                        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #40E0D0, #36B8A8); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: #111827; margin: 0 auto 0.75rem;">SC</div>
+                                        <h4 style="color: #40E0D0; font-size: 1.125rem; margin-bottom: 0.25rem;">Sarah Chen</h4>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Senior Developer</p>
+                                        <span style="color: #10B981; font-size: 1rem;">● Active</span>
+                                    </div>
+                                    
+                                    <div style="margin-bottom: 1rem;">
+                                        <p style="color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.5rem;">Skills</p>
+                                        <div style="display: flex; gap: 0.25rem; flex-wrap: wrap; justify-content: center;">
+                                            <span style="background: #1F2937; color: #9CA3AF; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">React</span>
+                                            <span style="background: #1F2937; color: #9CA3AF; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">Node.js</span>
+                                            <span style="background: #1F2937; color: #9CA3AF; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">TypeScript</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: 1rem; background: #1F2937; border-radius: 8px; margin-bottom: 1rem;">
+                                        <div style="text-align: center;">
+                                            <p style="color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem;">Projects</p>
+                                            <p style="color: #40E0D0; font-weight: 600; font-size: 1.25rem;">3</p>
+                                        </div>
+                                        <div style="text-align: center;">
+                                            <p style="color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem;">Workload</p>
+                                            <p style="color: #FBB624; font-weight: 600; font-size: 1.25rem;">85%</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <button onclick="event.stopPropagation(); showTeamMemberMenu('team-001')" style="width: 100%; padding: 0.5rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; cursor: pointer;">Manage</button>
+                                </div>
+                                
+                                <!-- More grid cards would go here... -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- End Team Section -->
+
+            <!-- Invoices Section -->
+            <div id="section-invoices" class="dashboard-section" style="display: none;">
+                <section class="invoices-admin-section">
+                    <!-- Invoices Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <div>
+                            <h2 style="color: #40E0D0; font-size: 1.75rem; margin-bottom: 0.5rem;">Invoice Management</h2>
+                            <p style="color: #9CA3AF;">Create, manage, and track all client invoices</p>
+                        </div>
+                        <button onclick="showCreateInvoiceModal()" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">+ Create Invoice</button>
+                    </div>
+
+                    <!-- Invoice Stats Cards -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                        <div style="background: linear-gradient(135deg, rgba(64, 224, 208, 0.1), rgba(54, 184, 168, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(64, 224, 208, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Total Invoices</p>
+                            <h3 style="color: #40E0D0; font-size: 2rem; font-weight: 800;">156</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">+12 this month</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Pending Invoices</p>
+                            <h3 style="color: #FBB624; font-size: 2rem; font-weight: 800;">8</h3>
+                            <p style="color: #9CA3AF; font-size: 0.875rem;">$42,500 outstanding</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Paid This Month</p>
+                            <h3 style="color: #10B981; font-size: 2rem; font-weight: 800;">$89,420</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">+15.3% increase</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Overdue</p>
+                            <h3 style="color: #EF4444; font-size: 2rem; font-weight: 800;">3</h3>
+                            <p style="color: #EF4444; font-size: 0.875rem;">$12,750 overdue</p>
+                        </div>
+                    </div>
+
+                    <!-- Search and Filters -->
+                    <div style="background: #1F2937; padding: 1.5rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 2rem;">
+                        <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 1rem; align-items: center;">
+                            <div style="position: relative;">
+                                <input type="text" id="invoice-search" placeholder="Search by invoice number, client, amount..." style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                                <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #9CA3AF;">🔍</span>
+                            </div>
+                            
+                            <select id="invoice-status-filter" style="padding: 0.75rem 1rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; cursor: pointer;">
+                                <option value="all">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="paid">Paid</option>
+                                <option value="overdue">Overdue</option>
+                                <option value="draft">Draft</option>
+                            </select>
+                            
+                            <button onclick="exportInvoices()" style="padding: 0.75rem 1rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; cursor: pointer;">📥 Export</button>
+                        </div>
+                    </div>
+
+                    <!-- Invoices List -->
+                    <div id="invoices-list-container" style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151;">
+                        <h3 style="color: #40E0D0; font-size: 1.5rem; margin-bottom: 1.5rem;">All Invoices</h3>
+                        
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid #374151;">
+                                        <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Invoice #</th>
+                                        <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Client</th>
+                                        <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Description</th>
+                                        <th style="padding: 1rem; text-align: right; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Amount</th>
+                                        <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Issue Date</th>
+                                        <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Due Date</th>
+                                        <th style="padding: 1rem; text-align: center; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Status</th>
+                                        <th style="padding: 1rem; text-align: right; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Invoice 1 - Pending -->
+                                    <tr onclick="viewInvoiceDetails('INV-001')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #40E0D0; font-weight: 600;">INV-1235</p>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #fff; font-weight: 600;">TechStart Inc.</p>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">John Davis</p>
+                                        </td>
+                                        <td style="padding: 1rem; color: #fff;">E-Commerce Platform Development</td>
+                                        <td style="padding: 1rem; text-align: right;">
+                                            <p style="color: #fff; font-weight: 600; font-size: 1.125rem;">$15,000</p>
+                                        </td>
+                                        <td style="padding: 1rem; color: #9CA3AF;">Oct 15, 2025</td>
+                                        <td style="padding: 1rem; color: #9CA3AF;">Oct 30, 2025</td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="background: rgba(251, 191, 36, 0.2); color: #FBB624; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">PENDING</span>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                            <button onclick="showInvoiceMenu('INV-1235')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Invoice 2 - Paid -->
+                                    <tr onclick="viewInvoiceDetails('INV-002')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #40E0D0; font-weight: 600;">INV-1234</p>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #fff; font-weight: 600;">FitLife App</p>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">Sarah Miller</p>
+                                        </td>
+                                        <td style="padding: 1rem; color: #fff;">Mobile App UI/UX Design</td>
+                                        <td style="padding: 1rem; text-align: right;">
+                                            <p style="color: #fff; font-weight: 600; font-size: 1.125rem;">$8,500</p>
+                                        </td>
+                                        <td style="padding: 1rem; color: #9CA3AF;">Oct 1, 2025</td>
+                                        <td style="padding: 1rem; color: #9CA3AF;">Oct 15, 2025</td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">PAID</span>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                            <button onclick="showInvoiceMenu('INV-1234')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Invoice 3 - Overdue -->
+                                    <tr onclick="viewInvoiceDetails('INV-003')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #40E0D0; font-weight: 600;">INV-1230</p>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #fff; font-weight: 600;">GlobalCorp</p>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">Michael Chen</p>
+                                        </td>
+                                        <td style="padding: 1rem; color: #fff;">Website Maintenance - Q3</td>
+                                        <td style="padding: 1rem; text-align: right;">
+                                            <p style="color: #fff; font-weight: 600; font-size: 1.125rem;">$3,250</p>
+                                        </td>
+                                        <td style="padding: 1rem; color: #9CA3AF;">Sep 15, 2025</td>
+                                        <td style="padding: 1rem; color: #EF4444;">Oct 1, 2025</td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="background: rgba(239, 68, 68, 0.2); color: #EF4444; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">OVERDUE</span>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                            <button onclick="showInvoiceMenu('INV-1230')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Invoice 4 - Pending -->
+                                    <tr onclick="viewInvoiceDetails('INV-004')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #40E0D0; font-weight: 600;">INV-1236</p>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #fff; font-weight: 600;">ConnectHub</p>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">Alex Wong</p>
+                                        </td>
+                                        <td style="padding: 1rem; color: #fff;">Custom CRM Integration</td>
+                                        <td style="padding: 1rem; text-align: right;">
+                                            <p style="color: #fff; font-weight: 600; font-size: 1.125rem;">$12,000</p>
+                                        </td>
+                                        <td style="padding: 1rem; color: #9CA3AF;">Oct 20, 2025</td>
+                                        <td style="padding: 1rem; color: #9CA3AF;">Nov 5, 2025</td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="background: rgba(251, 191, 36, 0.2); color: #FBB624; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">PENDING</span>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                            <button onclick="showInvoiceMenu('INV-1236')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- End Invoices Section -->
+
+            <!-- Support/Tickets Section -->
+            <div id="section-tickets" class="dashboard-section" style="display: none;">
+                <section class="tickets-admin-section">
+                    <!-- Tickets Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <div>
+                            <h2 style="color: #40E0D0; font-size: 1.75rem; margin-bottom: 0.5rem;">Support Tickets</h2>
+                            <p style="color: #9CA3AF;">Manage and respond to client support requests</p>
+                        </div>
+                        <button onclick="showCreateTicketModal()" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">+ Create Ticket</button>
+                    </div>
+
+                    <!-- Ticket Stats Cards -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                        <div style="background: linear-gradient(135deg, rgba(64, 224, 208, 0.1), rgba(54, 184, 168, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(64, 224, 208, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Total Tickets</p>
+                            <h3 style="color: #40E0D0; font-size: 2rem; font-weight: 800;">142</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">+8 this week</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Open Tickets</p>
+                            <h3 style="color: #FBB624; font-size: 2rem; font-weight: 800;">5</h3>
+                            <p style="color: #9CA3AF; font-size: 0.875rem;">Needs attention</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Resolved This Week</p>
+                            <h3 style="color: #10B981; font-size: 2rem; font-weight: 800;">23</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">+5 from last week</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(147, 51, 234, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(168, 85, 247, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Avg. Response Time</p>
+                            <h3 style="color: #A855F7; font-size: 2rem; font-weight: 800;">2.3h</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">15% faster</p>
+                        </div>
+                    </div>
+
+                    <!-- Search and Filters -->
+                    <div style="background: #1F2937; padding: 1.5rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 2rem;">
+                        <div style="display: grid; grid-template-columns: 1fr auto auto auto; gap: 1rem; align-items: center;">
+                            <div style="position: relative;">
+                                <input type="text" id="ticket-search" placeholder="Search tickets by ID, client, subject..." style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                                <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #9CA3AF;">🔍</span>
+                            </div>
+                            
+                            <select id="ticket-status-filter" style="padding: 0.75rem 1rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; cursor: pointer;">
+                                <option value="all">All Status</option>
+                                <option value="open">Open</option>
+                                <option value="in-progress">In Progress</option>
+                                <option value="waiting">Waiting on Client</option>
+                                <option value="resolved">Resolved</option>
+                                <option value="closed">Closed</option>
+                            </select>
+                            
+                            <select id="ticket-priority-filter" style="padding: 0.75rem 1rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; cursor: pointer;">
+                                <option value="all">All Priority</option>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                            
+                            <select id="ticket-assignee-filter" style="padding: 0.75rem 1rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; cursor: pointer;">
+                                <option value="all">All Team Members</option>
+                                <option value="sarah">Sarah Chen</option>
+                                <option value="marcus">Marcus Rodriguez</option>
+                                <option value="emily">Emily Watson</option>
+                                <option value="alex">Alex Thompson</option>
+                                <option value="unassigned">Unassigned</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Tickets List -->
+                    <div id="tickets-list-container" style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151;">
+                        <h3 style="color: #40E0D0; font-size: 1.5rem; margin-bottom: 1.5rem;">All Support Tickets</h3>
+                        
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid #374151;">
+                                        <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Ticket ID</th>
+                                        <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Subject</th>
+                                        <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Client</th>
+                                        <th style="padding: 1rem; text-align: center; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Priority</th>
+                                        <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Assigned To</th>
+                                        <th style="padding: 1rem; text-align: center; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Status</th>
+                                        <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Updated</th>
+                                        <th style="padding: 1rem; text-align: right; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Ticket 1 - High Priority Open -->
+                                    <tr onclick="viewTicketDetails('TICK-5432')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #40E0D0; font-weight: 600;">#5432</p>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #fff; font-weight: 600;">SSL Certificate Renewal</p>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">Certificate expiring in 3 days</p>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #fff;">TechStart Inc.</p>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">John Davis</p>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="background: rgba(239, 68, 68, 0.2); color: #EF4444; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">HIGH</span>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #FBB624, #F59E0B); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #111827;">EW</div>
+                                                <span style="color: #fff; font-size: 0.875rem;">Emily W.</span>
+                                            </div>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="background: rgba(251, 191, 36, 0.2); color: #FBB624; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">OPEN</span>
+                                        </td>
+                                        <td style="padding: 1rem; color: #9CA3AF;">2 hours ago</td>
+                                        <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                            <button onclick="showTicketMenu('TICK-5432')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Ticket 2 - Medium Priority In Progress -->
+                                    <tr onclick="viewTicketDetails('TICK-5431')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #40E0D0; font-weight: 600;">#5431</p>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #fff; font-weight: 600;">Email Configuration Issue</p>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">Unable to send emails from contact form</p>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #fff;">GlobalCorp</p>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">Michael Chen</p>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="background: rgba(251, 191, 36, 0.2); color: #FBB624; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">MEDIUM</span>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #A855F7, #9333EA); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #fff;">MR</div>
+                                                <span style="color: #fff; font-size: 0.875rem;">Marcus R.</span>
+                                            </div>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="background: rgba(64, 224, 208, 0.2); color: #40E0D0; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">IN PROGRESS</span>
+                                        </td>
+                                        <td style="padding: 1rem; color: #9CA3AF;">5 hours ago</td>
+                                        <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                            <button onclick="showTicketMenu('TICK-5431')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Ticket 3 - High Priority In Progress -->
+                                    <tr onclick="viewTicketDetails('TICK-5430')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #40E0D0; font-weight: 600;">#5430</p>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #fff; font-weight: 600;">Database Optimization Request</p>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">Website loading slowly</p>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #fff;">FitLife App</p>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">Sarah Miller</p>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="background: rgba(239, 68, 68, 0.2); color: #EF4444; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">HIGH</span>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #40E0D0, #36B8A8); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #111827;">SC</div>
+                                                <span style="color: #fff; font-size: 0.875rem;">Sarah C.</span>
+                                            </div>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="background: rgba(64, 224, 208, 0.2); color: #40E0D0; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">IN PROGRESS</span>
+                                        </td>
+                                        <td style="padding: 1rem; color: #9CA3AF;">1 day ago</td>
+                                        <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                            <button onclick="showTicketMenu('TICK-5430')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Ticket 4 - Low Priority Waiting -->
+                                    <tr onclick="viewTicketDetails('TICK-5429')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #40E0D0; font-weight: 600;">#5429</p>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #fff; font-weight: 600;">Feature Request - Dark Mode</p>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">Add dark mode to admin panel</p>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #fff;">ConnectHub</p>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">Alex Wong</p>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">LOW</span>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #10B981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #fff;">AT</div>
+                                                <span style="color: #fff; font-size: 0.875rem;">Alex T.</span>
+                                            </div>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="background: rgba(168, 85, 247, 0.2); color: #A855F7; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">WAITING</span>
+                                        </td>
+                                        <td style="padding: 1rem; color: #9CA3AF;">2 days ago</td>
+                                        <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                            <button onclick="showTicketMenu('TICK-5429')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- End Support/Tickets Section -->
+
+            <!-- Integrations Section -->
+            <div id="section-integrations" class="dashboard-section" style="display: none;">
+                <section class="integrations-admin-section">
+                    <!-- Integrations Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <div>
+                            <h2 style="color: #40E0D0; font-size: 1.75rem; margin-bottom: 0.5rem;">Integrations</h2>
+                            <p style="color: #9CA3AF;">Connect and manage third-party services</p>
+                        </div>
+                        <button onclick="showBrowseIntegrationsModal()" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Browse Integrations</button>
+                    </div>
+
+                    <!-- Integration Stats Cards -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                        <div style="background: linear-gradient(135deg, rgba(64, 224, 208, 0.1), rgba(54, 184, 168, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(64, 224, 208, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Active Integrations</p>
+                            <h3 style="color: #40E0D0; font-size: 2rem; font-weight: 800;">8</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">All running smoothly</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Data Synced Today</p>
+                            <h3 style="color: #10B981; font-size: 2rem; font-weight: 800;">1,247</h3>
+                            <p style="color: #9CA3AF; font-size: 0.875rem;">Records processed</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(147, 51, 234, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(168, 85, 247, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Available Integrations</p>
+                            <h3 style="color: #A855F7; font-size: 2rem; font-weight: 800;">25+</h3>
+                            <p style="color: #9CA3AF; font-size: 0.875rem;">Ready to connect</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">API Calls Today</p>
+                            <h3 style="color: #FBB624; font-size: 2rem; font-weight: 800;">3,842</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">98.7% success rate</p>
+                        </div>
+                    </div>
+
+                    <!-- Categories -->
+                    <div style="display: flex; gap: 1rem; margin-bottom: 2rem; overflow-x: auto; padding-bottom: 0.5rem;">
+                        <button onclick="filterIntegrationsByCategory('all')" class="integration-category-btn active" style="padding: 0.5rem 1rem; background: rgba(64, 224, 208, 0.2); color: #40E0D0; border: 1px solid #40E0D0; border-radius: 50px; cursor: pointer; white-space: nowrap; font-weight: 600;">All</button>
+                        <button onclick="filterIntegrationsByCategory('accounting')" class="integration-category-btn" style="padding: 0.5rem 1rem; background: #111827; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 50px; cursor: pointer; white-space: nowrap;">💼 Accounting</button>
+                        <button onclick="filterIntegrationsByCategory('analytics')" class="integration-category-btn" style="padding: 0.5rem 1rem; background: #111827; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 50px; cursor: pointer; white-space: nowrap;">📊 Analytics</button>
+                        <button onclick="filterIntegrationsByCategory('payment')" class="integration-category-btn" style="padding: 0.5rem 1rem; background: #111827; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 50px; cursor: pointer; white-space: nowrap;">💳 Payment</button>
+                        <button onclick="filterIntegrationsByCategory('communication')" class="integration-category-btn" style="padding: 0.5rem 1rem; background: #111827; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 50px; cursor: pointer; white-space: nowrap;">💬 Communication</button>
+                        <button onclick="filterIntegrationsByCategory('storage')" class="integration-category-btn" style="padding: 0.5rem 1rem; background: #111827; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 50px; cursor: pointer; white-space: nowrap;">☁️ Storage</button>
+                        <button onclick="filterIntegrationsByCategory('crm')" class="integration-category-btn" style="padding: 0.5rem 1rem; background: #111827; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 50px; cursor: pointer; white-space: nowrap;">👥 CRM</button>
+                    </div>
+
+                    <!-- Connected Integrations -->
+                    <div style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 2rem;">
+                        <h3 style="color: #40E0D0; font-size: 1.5rem; margin-bottom: 1.5rem;">Connected Integrations</h3>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;">
+                            <!-- MYOB Integration -->
+                            <div data-category="accounting" style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563; position: relative;">
+                                <div style="position: absolute; top: 1rem; right: 1rem;">
+                                    <span style="width: 10px; height: 10px; background: #10B981; border-radius: 50%; display: inline-block;"></span>
+                                </div>
+                                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #40E0D0, #36B8A8); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: #111827;">M</div>
+                                    <div style="flex: 1;">
+                                        <h4 style="color: #fff; font-size: 1.125rem; margin-bottom: 0.25rem;">MYOB</h4>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem;">Accounting Software</p>
+                                    </div>
+                                </div>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 1rem;">Syncs invoices, expenses, and financial reports automatically.</p>
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                                    <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">Connected</span>
+                                    <span style="background: #1F2937; color: #9CA3AF; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem;">Last sync: 2 min ago</span>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button onclick="configureIntegration('MYOB')" style="flex: 1; padding: 0.5rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; cursor: pointer; font-size: 0.875rem;">⚙️ Configure</button>
+                                    <button onclick="disconnectIntegration('MYOB')" style="flex: 1; padding: 0.5rem; background: transparent; color: #EF4444; border: 1px solid #EF4444; border-radius: 8px; cursor: pointer; font-size: 0.875rem;">Disconnect</button>
+                                </div>
+                            </div>
+
+                            <!-- Xero Integration -->
+                            <div data-category="accounting" style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563; position: relative;">
+                                <div style="position: absolute; top: 1rem; right: 1rem;">
+                                    <span style="width: 10px; height: 10px; background: #10B981; border-radius: 50%; display: inline-block;"></span>
+                                </div>
+                                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #13B5EA, #0E95C4); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: #fff;">X</div>
+                                    <div style="flex: 1;">
+                                        <h4 style="color: #fff; font-size: 1.125rem; margin-bottom: 0.25rem;">Xero</h4>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem;">Cloud Accounting</p>
+                                    </div>
+                                </div>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 1rem;">Manages bookkeeping, invoicing, and bank reconciliation.</p>
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                                    <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">Connected</span>
+                                    <span style="background: #1F2937; color: #9CA3AF; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem;">Last sync: 5 min ago</span>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button onclick="configureIntegration('Xero')" style="flex: 1; padding: 0.5rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; cursor: pointer; font-size: 0.875rem;">⚙️ Configure</button>
+                                    <button onclick="disconnectIntegration('Xero')" style="flex: 1; padding: 0.5rem; background: transparent; color: #EF4444; border: 1px solid #EF4444; border-radius: 8px; cursor: pointer; font-size: 0.875rem;">Disconnect</button>
+                                </div>
+                            </div>
+
+                            <!-- Google Analytics Integration -->
+                            <div data-category="analytics" style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563; position: relative;">
+                                <div style="position: absolute; top: 1rem; right: 1rem;">
+                                    <span style="width: 10px; height: 10px; background: #10B981; border-radius: 50%; display: inline-block;"></span>
+                                </div>
+                                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #F9AB00, #E37400); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: #fff;">G</div>
+                                    <div style="flex: 1;">
+                                        <h4 style="color: #fff; font-size: 1.125rem; margin-bottom: 0.25rem;">Google Analytics</h4>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem;">Web Analytics</p>
+                                    </div>
+                                </div>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 1rem;">Tracks website traffic, user behavior, and conversion metrics.</p>
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                                    <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">Connected</span>
+                                    <span style="background: #1F2937; color: #9CA3AF; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem;">Real-time tracking</span>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button onclick="configureIntegration('Google Analytics')" style="flex: 1; padding: 0.5rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; cursor: pointer; font-size: 0.875rem;">⚙️ Configure</button>
+                                    <button onclick="disconnectIntegration('Google Analytics')" style="flex: 1; padding: 0.5rem; background: transparent; color: #EF4444; border: 1px solid #EF4444; border-radius: 8px; cursor: pointer; font-size: 0.875rem;">Disconnect</button>
+                                </div>
+                            </div>
+
+                            <!-- Stripe Integration -->
+                            <div data-category="payment" style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563; position: relative;">
+                                <div style="position: absolute; top: 1rem; right: 1rem;">
+                                    <span style="width: 10px; height: 10px; background: #10B981; border-radius: 50%; display: inline-block;"></span>
+                                </div>
+                                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #635BFF, #4F46E5); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: #fff;">S</div>
+                                    <div style="flex: 1;">
+                                        <h4 style="color: #fff; font-size: 1.125rem; margin-bottom: 0.25rem;">Stripe</h4>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem;">Payment Processing</p>
+                                    </div>
+                                </div>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 1rem;">Processes online payments, subscriptions, and invoices.</p>
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                                    <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">Connected</span>
+                                    <span style="background: #1F2937; color: #9CA3AF; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem;">24 payments today</span>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button onclick="configureIntegration('Stripe')" style="flex: 1; padding: 0.5rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; cursor: pointer; font-size: 0.875rem;">⚙️ Configure</button>
+                                    <button onclick="disconnectIntegration('Stripe')" style="flex: 1; padding: 0.5rem; background: transparent; color: #EF4444; border: 1px solid #EF4444; border-radius: 8px; cursor: pointer; font-size: 0.875rem;">Disconnect</button>
+                                </div>
+                            </div>
+
+                            <!-- Slack Integration -->
+                            <div data-category="communication" style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563; position: relative;">
+                                <div style="position: absolute; top: 1rem; right: 1rem;">
+                                    <span style="width: 10px; height: 10px; background: #10B981; border-radius: 50%; display: inline-block;"></span>
+                                </div>
+                                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #4A154B, #36104A); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: #fff;">#</div>
+                                    <div style="flex: 1;">
+                                        <h4 style="color: #fff; font-size: 1.125rem; margin-bottom: 0.25rem;">Slack</h4>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem;">Team Communication</p>
+                                    </div>
+                                </div>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 1rem;">Sends notifications and updates to team channels automatically.</p>
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                                    <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">Connected</span>
+                                    <span style="background: #1F2937; color: #9CA3AF; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem;">3 channels active</span>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button onclick="configureIntegration('Slack')" style="flex: 1; padding: 0.5rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; cursor: pointer; font-size: 0.875rem;">⚙️ Configure</button>
+                                    <button onclick="disconnectIntegration('Slack')" style="flex: 1; padding: 0.5rem; background: transparent; color: #EF4444; border: 1px solid #EF4444; border-radius: 8px; cursor: pointer; font-size: 0.875rem;">Disconnect</button>
+                                </div>
+                            </div>
+
+                            <!-- AWS S3 Integration -->
+                            <div data-category="storage" style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563; position: relative;">
+                                <div style="position: absolute; top: 1rem; right: 1rem;">
+                                    <span style="width: 10px; height: 10px; background: #10B981; border-radius: 50%; display: inline-block;"></span>
+                                </div>
+                                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #FF9900, #EC7211); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: #fff;">AWS</div>
+                                    <div style="flex: 1;">
+                                        <h4 style="color: #fff; font-size: 1.125rem; margin-bottom: 0.25rem;">AWS S3</h4>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem;">Cloud Storage</p>
+                                    </div>
+                                </div>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 1rem;">Stores files, backups, and project assets securely in the cloud.</p>
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                                    <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">Connected</span>
+                                    <span style="background: #1F2937; color: #9CA3AF; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem;">42GB stored</span>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button onclick="configureIntegration('AWS S3')" style="flex: 1; padding: 0.5rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; cursor: pointer; font-size: 0.875rem;">⚙️ Configure</button>
+                                    <button onclick="disconnectIntegration('AWS S3')" style="flex: 1; padding: 0.5rem; background: transparent; color: #EF4444; border: 1px solid #EF4444; border-radius: 8px; cursor: pointer; font-size: 0.875rem;">Disconnect</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Available Integrations -->
+                    <div style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151;">
+                        <h3 style="color: #40E0D0; font-size: 1.5rem; margin-bottom: 1.5rem;">Available Integrations</h3>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+                            <!-- Mailchimp -->
+                            <div data-category="communication" style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563;">
+                                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #FFE01B, #FFD700); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">📧</div>
+                                    <div style="flex: 1;">
+                                        <h4 style="color: #fff; font-size: 1.125rem; margin-bottom: 0.25rem;">Mailchimp</h4>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem;">Email Marketing</p>
+                                    </div>
+                                </div>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 1rem;">Automate email campaigns and manage subscriber lists.</p>
+                                <button onclick="connectIntegration('Mailchimp')" style="width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Connect</button>
+                            </div>
+
+                            <!-- HubSpot CRM -->
+                            <div data-category="crm" style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563;">
+                                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #FF7A59, #FF5C35); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: #fff;">H</div>
+                                    <div style="flex: 1;">
+                                        <h4 style="color: #fff; font-size: 1.125rem; margin-bottom: 0.25rem;">HubSpot CRM</h4>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem;">Customer Management</p>
+                                    </div>
+                                </div>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 1rem;">Manage contacts, deals, and customer interactions.</p>
+                                <button onclick="connectIntegration('HubSpot')" style="width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Connect</button>
+                            </div>
+
+                            <!-- PayPal -->
+                            <div data-category="payment" style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563;">
+                                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #0070BA, #003087); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: #fff;">P</div>
+                                    <div style="flex: 1;">
+                                        <h4 style="color: #fff; font-size: 1.125rem; margin-bottom: 0.25rem;">PayPal</h4>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem;">Payment Gateway</p>
+                                    </div>
+                                </div>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 1rem;">Accept PayPal payments for invoices and services.</p>
+                                <button onclick="connectIntegration('PayPal')" style="width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Connect</button>
+                            </div>
+
+                            <!-- Dropbox -->
+                            <div data-category="storage" style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563;">
+                                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #0061FF, #0052CC); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: #fff;">D</div>
+                                    <div style="flex: 1;">
+                                        <h4 style="color: #fff; font-size: 1.125rem; margin-bottom: 0.25rem;">Dropbox</h4>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem;">File Storage & Sharing</p>
+                                    </div>
+                                </div>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 1rem;">Store and share project files with clients and team.</p>
+                                <button onclick="connectIntegration('Dropbox')" style="width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Connect</button>
+                            </div>
+
+                            <!-- QuickBooks -->
+                            <div data-category="accounting" style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563;">
+                                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #2CA01C, #228B16); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: #fff;">Q</div>
+                                    <div style="flex: 1;">
+                                        <h4 style="color: #fff; font-size: 1.125rem; margin-bottom: 0.25rem;">QuickBooks</h4>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem;">Accounting Platform</p>
+                                    </div>
+                                </div>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 1rem;">Sync financial data and manage accounting workflows.</p>
+                                <button onclick="connectIntegration('QuickBooks')" style="width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Connect</button>
+                            </div>
+
+                            <!-- Zapier -->
+                            <div data-category="all" style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563;">
+                                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #FF4F00, #E64500); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: #fff;">Z</div>
+                                    <div style="flex: 1;">
+                                        <h4 style="color: #fff; font-size: 1.125rem; margin-bottom: 0.25rem;">Zapier</h4>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem;">Workflow Automation</p>
+                                    </div>
+                                </div>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 1rem;">Connect 5000+ apps and automate workflows.</p>
+                                <button onclick="connectIntegration('Zapier')" style="width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Connect</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- End Integrations Section -->
+
+            <!-- Settings Section -->
+            <div id="section-settings" class="dashboard-section" style="display: none;">
+                <section class="settings-admin-section">
+                    <!-- Settings Header -->
+                    <div style="margin-bottom: 2rem;">
+                        <h2 style="color: #40E0D0; font-size: 1.75rem; margin-bottom: 0.5rem;">Settings</h2>
+                        <p style="color: #9CA3AF;">Manage your account, company, and system preferences</p>
+                    </div>
+
+                    <!-- Settings Navigation Tabs -->
+                    <div style="display: flex; gap: 1rem; margin-bottom: 2rem; overflow-x: auto; padding-bottom: 0.5rem; border-bottom: 2px solid #374151;">
+                        <button onclick="switchSettingsTab('profile')" class="settings-tab-btn active" data-tab="profile" style="padding: 0.75rem 1.5rem; background: rgba(64, 224, 208, 0.2); color: #40E0D0; border: none; border-bottom: 2px solid #40E0D0; cursor: pointer; white-space: nowrap; font-weight: 600;">👤 Profile</button>
+                        <button onclick="switchSettingsTab('company')" class="settings-tab-btn" data-tab="company" style="padding: 0.75rem 1.5rem; background: transparent; color: #9CA3AF; border: none; cursor: pointer; white-space: nowrap; font-weight: 600;">🏢 Company</button>
+                        <button onclick="switchSettingsTab('security')" class="settings-tab-btn" data-tab="security" style="padding: 0.75rem 1.5rem; background: transparent; color: #9CA3AF; border: none; cursor: pointer; white-space: nowrap; font-weight: 600;">🔒 Security</button>
+                        <button onclick="switchSettingsTab('notifications')" class="settings-tab-btn" data-tab="notifications" style="padding: 0.75rem 1.5rem; background: transparent; color: #9CA3AF; border: none; cursor: pointer; white-space: nowrap; font-weight: 600;">🔔 Notifications</button>
+                        <button onclick="switchSettingsTab('appearance')" class="settings-tab-btn" data-tab="appearance" style="padding: 0.75rem 1.5rem; background: transparent; color: #9CA3AF; border: none; cursor: pointer; white-space: nowrap; font-weight: 600;">🎨 Appearance</button>
+                        <button onclick="switchSettingsTab('billing')" class="settings-tab-btn" data-tab="billing" style="padding: 0.75rem 1.5rem; background: transparent; color: #9CA3AF; border: none; cursor: pointer; white-space: nowrap; font-weight: 600;">💳 Billing</button>
+                    </div>
+
+                    <!-- Profile Settings -->
+                    <div id="settings-profile" class="settings-content" style="display: block;">
+                        <div style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 2rem;">
+                            <h3 style="color: #40E0D0; font-size: 1.5rem; margin-bottom: 1.5rem;">Profile Information</h3>
+                            
+                            <div style="display: flex; gap: 2rem; margin-bottom: 2rem;">
+                                <div style="flex-shrink: 0;">
+                                    <div style="width: 120px; height: 120px; background: linear-gradient(135deg, #40E0D0, #36B8A8); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: 700; color: #111827; margin-bottom: 1rem;">AD</div>
+                                    <button onclick="changeProfilePicture()" style="width: 100%; padding: 0.5rem; background: #111827; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; cursor: pointer; font-size: 0.875rem;">Change Photo</button>
+                                </div>
+                                
+                                <div style="flex: 1;">
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                        <div>
+                                            <label style="display: block; margin-bottom: 0.5rem; color: #fff;">First Name</label>
+                                            <input type="text" id="profile-first-name" value="Admin" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                                        </div>
+                                        <div>
+                                            <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Last Name</label>
+                                            <input type="text" id="profile-last-name" value="User" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="margin-bottom: 1rem;">
+                                        <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Email Address</label>
+                                        <input type="email" id="profile-email" value="admin@clippit.com" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                                    </div>
+                                    
+                                    <div style="margin-bottom: 1rem;">
+                                        <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Phone Number</label>
+                                        <input type="tel" id="profile-phone" value="+61 412 345 678" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                                    </div>
+                                    
+                                    <div>
+                                        <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Job Title</label>
+                                        <input type="text" id="profile-job-title" value="System Administrator" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button onclick="saveProfileSettings()" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Save Changes</button>
+                        </div>
+                    </div>
+
+                    <!-- Company Settings -->
+                    <div id="settings-company" class="settings-content" style="display: none;">
+                        <div style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 2rem;">
+                            <h3 style="color: #40E0D0; font-size: 1.5rem; margin-bottom: 1.5rem;">Company Information</h3>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                <div>
+                                    <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Company Name</label>
+                                    <input type="text" value="Clippit" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                                </div>
+                                <div>
+                                    <label style="display: block; margin-bottom: 0.5rem; color: #fff;">ABN</label>
+                                    <input type="text" value="12 345 678 901" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 1rem;">
+                                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Company Address</label>
+                                <input type="text" value="123 Business St, Sydney NSW 2000, Australia" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                <div>
+                                    <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Support Email</label>
+                                    <input type="email" value="support@clippit.com" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                                </div>
+                                <div>
+                                    <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Phone Number</label>
+                                    <input type="tel" value="+61 2 1234 5678" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                                </div>
+                            </div>
+                            
+                            <button onclick="saveCompanySettings()" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Save Changes</button>
+                        </div>
+                    </div>
+
+                    <!-- Security Settings -->
+                    <div id="settings-security" class="settings-content" style="display: none;">
+                        <div style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 2rem;">
+                            <h3 style="color: #40E0D0; font-size: 1.5rem; margin-bottom: 1.5rem;">Password & Authentication</h3>
+                            
+                            <div style="margin-bottom: 2rem;">
+                                <button onclick="changePassword()" style="padding: 0.75rem 1.5rem; background: #111827; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; cursor: pointer; font-weight: 600;">Change Password</button>
+                            </div>
+                            
+                            <div style="background: #111827; padding: 1.5rem; border-radius: 8px; border: 1px solid #4B5563; margin-bottom: 2rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <h4 style="color: #fff; margin-bottom: 0.5rem;">Two-Factor Authentication</h4>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem;">Add an extra layer of security to your account</p>
+                                    </div>
+                                    <label style="position: relative; display: inline-block; width: 60px; height: 30px;">
+                                        <input type="checkbox" id="2fa-toggle" style="opacity: 0; width: 0; height: 0;">
+                                        <span onclick="toggle2FA()" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #4B5563; border-radius: 30px; transition: 0.3s;"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <h4 style="color: #fff; margin-bottom: 1rem;">Active Sessions</h4>
+                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <div style="background: #111827; padding: 1rem; border-radius: 8px; border: 1px solid #4B5563;">
+                                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                                        <div>
+                                            <p style="color: #fff; font-weight: 600; margin-bottom: 0.25rem;">💻 Windows PC</p>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">Chrome • Sydney, Australia</p>
+                                            <p style="color: #10B981; font-size: 0.75rem;">● Current Session</p>
+                                        </div>
+                                        <button onclick="revokeSession('current')" style="padding: 0.5rem 1rem; background: transparent; color: #EF4444; border: 1px solid #EF4444; border-radius: 6px; cursor: pointer; font-size: 0.875rem;" disabled>Revoke</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notifications Settings -->
+                    <div id="settings-notifications" class="settings-content" style="display: none;">
+                        <div style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 2rem;">
+                            <h3 style="color: #40E0D0; font-size: 1.5rem; margin-bottom: 1.5rem;">Notification Preferences</h3>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                                <div style="background: #111827; padding: 1.5rem; border-radius: 8px; border: 1px solid #4B5563;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                        <div>
+                                            <h4 style="color: #fff; margin-bottom: 0.5rem;">Email Notifications</h4>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">Receive notifications via email</p>
+                                        </div>
+                                        <label style="position: relative; display: inline-block; width: 60px; height: 30px;">
+                                            <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                                            <span onclick="toggleNotification('email')" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #40E0D0; border-radius: 30px; transition: 0.3s;"></span>
+                                        </label>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; gap: 0.75rem; padding-left: 1rem;">
+                                        <label style="display: flex; align-items: center; gap: 0.5rem; color: #fff; cursor: pointer;">
+                                            <input type="checkbox" checked style="width: 20px; height: 20px;">
+                                            <span>New project updates</span>
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 0.5rem; color: #fff; cursor: pointer;">
+                                            <input type="checkbox" checked style="width: 20px; height: 20px;">
+                                            <span>Client messages</span>
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 0.5rem; color: #fff; cursor: pointer;">
+                                            <input type="checkbox" checked style="width: 20px; height: 20px;">
+                                            <span>Invoice payments</span>
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 0.5rem; color: #fff; cursor: pointer;">
+                                            <input type="checkbox" style="width: 20px; height: 20px;">
+                                            <span>Team mentions</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div style="background: #111827; padding: 1.5rem; border-radius: 8px; border: 1px solid #4B5563;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div>
+                                            <h4 style="color: #fff; margin-bottom: 0.5rem;">Push Notifications</h4>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">Receive push notifications in browser</p>
+                                        </div>
+                                        <label style="position: relative; display: inline-block; width: 60px; height: 30px;">
+                                            <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                                            <span onclick="toggleNotification('push')" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #40E0D0; border-radius: 30px; transition: 0.3s;"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div style="background: #111827; padding: 1.5rem; border-radius: 8px; border: 1px solid #4B5563;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div>
+                                            <h4 style="color: #fff; margin-bottom: 0.5rem;">Weekly Digest</h4>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">Receive a weekly summary email</p>
+                                        </div>
+                                        <label style="position: relative; display: inline-block; width: 60px; height: 30px;">
+                                            <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                                            <span onclick="toggleNotification('digest')" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #40E0D0; border-radius: 30px; transition: 0.3s;"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button onclick="saveNotificationSettings()" style="margin-top: 1.5rem; padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Save Preferences</button>
+                        </div>
+                    </div>
+
+                    <!-- Appearance Settings -->
+                    <div id="settings-appearance" class="settings-content" style="display: none;">
+                        <div style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 2rem;">
+                            <h3 style="color: #40E0D0; font-size: 1.5rem; margin-bottom: 1.5rem;">Appearance Preferences</h3>
+                            
+                            <div style="margin-bottom: 2rem;">
+                                <h4 style="color: #fff; margin-bottom: 1rem;">Theme</h4>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                                    <div onclick="selectTheme('dark')" style="padding: 1.5rem; background: #111827; border: 2px solid #40E0D0; border-radius: 8px; cursor: pointer; text-align: center;">
+                                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌙</div>
+                                        <p style="color: #fff; font-weight: 600;">Dark</p>
+                                        <p style="color: #10B981; font-size: 0.75rem;">● Active</p>
+                                    </div>
+                                    <div onclick="selectTheme('light')" style="padding: 1.5rem; background: #111827; border: 2px solid #4B5563; border-radius: 8px; cursor: pointer; text-align: center;">
+                                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">☀️</div>
+                                        <p style="color: #fff; font-weight: 600;">Light</p>
+                                        <p style="color: #9CA3AF; font-size: 0.75rem;">Coming Soon</p>
+                                    </div>
+                                    <div onclick="selectTheme('auto')" style="padding: 1.5rem; background: #111827; border: 2px solid #4B5563; border-radius: 8px; cursor: pointer; text-align: center;">
+                                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔄</div>
+                                        <p style="color: #fff; font-weight: 600;">Auto</p>
+                                        <p style="color: #9CA3AF; font-size: 0.75rem;">System</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 2rem;">
+                                <h4 style="color: #fff; margin-bottom: 1rem;">Language</h4>
+                                <select style="width: 100%; max-width: 300px; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; cursor: pointer;">
+                                    <option value="en" selected>English</option>
+                                    <option value="es">Spanish</option>
+                                    <option value="fr">French</option>
+                                    <option value="de">German</option>
+                                    <option value="zh">Chinese</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <h4 style="color: #fff; margin-bottom: 1rem;">Timezone</h4>
+                                <select style="width: 100%; max-width: 300px; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; cursor: pointer;">
+                                    <option value="australia/brisbane" selected>Australia/Brisbane (GMT+10)</option>
+                                    <option value="australia/sydney">Australia/Sydney (GMT+11)</option>
+                                    <option value="australia/perth">Australia/Perth (GMT+8)</option>
+                                    <option value="utc">UTC (GMT+0)</option>
+                                </select>
+                            </div>
+                            
+                            <button onclick="saveAppearanceSettings()" style="margin-top: 1.5rem; padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Save Changes</button>
+                        </div>
+                    </div>
+
+                    <!-- Billing Settings -->
+                    <div id="settings-billing" class="settings-content" style="display: none;">
+                        <div style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 2rem;">
+                            <h3 style="color: #40E0D0; font-size: 1.5rem; margin-bottom: 1.5rem;">Billing & Subscription</h3>
+                            
+                            <div style="background: linear-gradient(135deg, rgba(64, 224, 208, 0.1), rgba(54, 184, 168, 0.05)); padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(64, 224, 208, 0.3); margin-bottom: 2rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: start;">
+                                    <div>
+                                        <h4 style="color: #40E0D0; font-size: 1.25rem; margin-bottom: 0.5rem;">Enterprise Plan</h4>
+                                        <p style="color: #fff; font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">$299/month</p>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem;">Next billing date: Nov 28, 2025</p>
+                                    </div>
+                                    <button onclick="changePlan()" style="padding: 0.5rem 1rem; background: #111827; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; cursor: pointer;">Change Plan</button>
+                                </div>
+                            </div>
+                            
+                            <h4 style="color: #fff; margin-bottom: 1rem;">Payment Method</h4>
+                            <div style="background: #111827; padding: 1.5rem; border-radius: 8px; border: 1px solid #4B5563; margin-bottom: 2rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="display: flex; align-items: center; gap: 1rem;">
+                                        <div style="font-size: 2rem;">💳</div>
+                                        <div>
+                                            <p style="color: #fff; font-weight: 600;">Visa ending in 4242</p>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">Expires 12/2026</p>
+                                        </div>
+                                    </div>
+                                    <button onclick="updatePaymentMethod()" style="padding: 0.5rem 1rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; cursor: pointer;">Update</button>
+                                </div>
+                            </div>
+                            
+                            <h4 style="color: #fff; margin-bottom: 1rem;">Billing History</h4>
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="border-bottom: 1px solid #374151;">
+                                            <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Date</th>
+                                            <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Description</th>
+                                            <th style="padding: 1rem; text-align: right; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Amount</th>
+                                            <th style="padding: 1rem; text-align: center; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Status</th>
+                                            <th style="padding: 1rem; text-align: right; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Invoice</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr style="border-bottom: 1px solid #374151;">
+                                            <td style="padding: 1rem; color: #fff;">Oct 28, 2025</td>
+                                            <td style="padding: 1rem; color: #fff;">Enterprise Plan - Monthly</td>
+                                            <td style="padding: 1rem; text-align: right; color: #fff; font-weight: 600;">$299.00</td>
+                                            <td style="padding: 1rem; text-align: center;"><span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">PAID</span></td>
+                                            <td style="padding: 1rem; text-align: right;"><button onclick="downloadInvoice('oct-2025')" style="padding: 0.25rem 0.75rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 6px; cursor: pointer; font-size: 0.875rem;">Download</button></td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid #374151;">
+                                            <td style="padding: 1rem; color: #fff;">Sep 28, 2025</td>
+                                            <td style="padding: 1rem; color: #fff;">Enterprise Plan - Monthly</td>
+                                            <td style="padding: 1rem; text-align: right; color: #fff; font-weight: 600;">$299.00</td>
+                                            <td style="padding: 1rem; text-align: center;"><span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">PAID</span></td>
+                                            <td style="padding: 1rem; text-align: right;"><button onclick="downloadInvoice('sep-2025')" style="padding: 0.25rem 0.75rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 6px; cursor: pointer; font-size: 0.875rem;">Download</button></td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid #374151;">
+                                            <td style="padding: 1rem; color: #fff;">Aug 28, 2025</td>
+                                            <td style="padding: 1rem; color: #fff;">Enterprise Plan - Monthly</td>
+                                            <td style="padding: 1rem; text-align: right; color: #fff; font-weight: 600;">$299.00</td>
+                                            <td style="padding: 1rem; text-align: center;"><span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">PAID</span></td>
+                                            <td style="padding: 1rem; text-align: right;"><button onclick="downloadInvoice('aug-2025')" style="padding: 0.25rem 0.75rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 6px; cursor: pointer; font-size: 0.875rem;">Download</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- End Settings Section -->
+
         </main>
     </div>
 

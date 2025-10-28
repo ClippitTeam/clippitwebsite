@@ -15,7 +15,7 @@
     <nav class="navbar">
         <div class="container nav-container">
             <div class="logo">
-                <span class="logo-icon">📎</span>
+                <img src="images/logo2.png" alt="Clippit Logo" class="logo-icon" style="width: 40px; height: 40px; object-fit: contain;">
                 <span class="logo-text">Clippit</span>
             </div>
             <button class="mobile-menu-toggle" aria-label="Toggle menu">
@@ -34,15 +34,11 @@
                         <li><a href="services.html#hosting">Hosting</a></li>
                         <li><a href="services.html#domains">Domains</a></li>
                         <li><a href="services.html#email">Email</a></li>
+                        <li><a href="pricing.html#dreamlab">DreamLab</a></li>
+                        <li><a href="pricing.html#clippit-builds">Clippit Builds</a></li>
                     </ul>
                 </li>
-                <li class="dropdown">
-                    <a href="pricing.html" class="active">Pricing</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#dreamlab">DreamLab</a></li>
-                        <li><a href="#clippit-builds">Clippit Builds</a></li>
-                    </ul>
-                </li>
+                <li><a href="pricing.html" class="active">Pricing</a></li>
                 <li><a href="portfolio.html">Portfolio</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="login.html" class="login-btn">Login</a></li>
@@ -63,6 +59,67 @@
                     Choose the perfect package for your project. No hidden fees, no surprises.
                 </p>
             </div>
+            
+            <!-- Domain Search Bar -->
+            <div class="domain-search-container" style="margin-top: 3rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+                <div style="background: rgba(31, 41, 55, 0.8); backdrop-filter: blur(10px); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(64, 224, 208, 0.2);">
+                    <h3 style="color: #fff; font-size: 1.5rem; margin-bottom: 0.5rem; text-align: center;">Search for Your Perfect Domain</h3>
+                    <p style="color: #9CA3AF; margin-bottom: 1.5rem; text-align: center;">Find and register your ideal domain name</p>
+                    <form onsubmit="event.preventDefault(); window.open('https://www.clippit.online/', '_blank');" style="display: flex; gap: 0.5rem;">
+                        <input 
+                            type="text" 
+                            placeholder="Find your perfect domain name" 
+                            style="flex: 1; padding: 1rem 1.5rem; background: #111827; border: 2px solid #4B5563; border-radius: 50px; color: #fff; font-size: 1rem; outline: none; transition: border-color 0.3s;"
+                            onfocus="this.style.borderColor='#40E0D0'"
+                            onblur="this.style.borderColor='#4B5563'"
+                        >
+                        <button 
+                            type="submit" 
+                            style="padding: 1rem 2.5rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 50px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;"
+                            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 20px rgba(64, 224, 208, 0.3)'"
+                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
+                        >
+                            Search
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Service Category Buttons -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+                    <button 
+                        onclick="window.open('https://www.clippit.online/', '_blank')"
+                        style="padding: 1rem 1.5rem; background: rgba(31, 41, 55, 0.6); border: 1px solid rgba(64, 224, 208, 0.3); border-radius: 12px; color: #40E0D0; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.3s;"
+                        onmouseover="this.style.background='rgba(64, 224, 208, 0.1)'; this.style.borderColor='#40E0D0'; this.style.transform='translateY(-2px)'"
+                        onmouseout="this.style.background='rgba(31, 41, 55, 0.6)'; this.style.borderColor='rgba(64, 224, 208, 0.3)'; this.style.transform='translateY(0)'"
+                    >
+                        🚀 Hosting
+                    </button>
+                    <button 
+                        onclick="window.open('https://www.clippit.online/', '_blank')"
+                        style="padding: 1rem 1.5rem; background: rgba(31, 41, 55, 0.6); border: 1px solid rgba(64, 224, 208, 0.3); border-radius: 12px; color: #40E0D0; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.3s;"
+                        onmouseover="this.style.background='rgba(64, 224, 208, 0.1)'; this.style.borderColor='#40E0D0'; this.style.transform='translateY(-2px)'"
+                        onmouseout="this.style.background='rgba(31, 41, 55, 0.6)'; this.style.borderColor='rgba(64, 224, 208, 0.3)'; this.style.transform='translateY(0)'"
+                    >
+                        🔒 Security
+                    </button>
+                    <button 
+                        onclick="window.open('https://www.clippit.online/', '_blank')"
+                        style="padding: 1rem 1.5rem; background: rgba(31, 41, 55, 0.6); border: 1px solid rgba(64, 224, 208, 0.3); border-radius: 12px; color: #40E0D0; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.3s;"
+                        onmouseover="this.style.background='rgba(64, 224, 208, 0.1)'; this.style.borderColor='#40E0D0'; this.style.transform='translateY(-2px)'"
+                        onmouseout="this.style.background='rgba(31, 41, 55, 0.6)'; this.style.borderColor='rgba(64, 224, 208, 0.3)'; this.style.transform='translateY(0)'"
+                    >
+                        📈 Marketing
+                    </button>
+                    <button 
+                        onclick="window.open('https://www.clippit.online/', '_blank')"
+                        style="padding: 1rem 1.5rem; background: rgba(31, 41, 55, 0.6); border: 1px solid rgba(64, 224, 208, 0.3); border-radius: 12px; color: #40E0D0; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.3s;"
+                        onmouseover="this.style.background='rgba(64, 224, 208, 0.1)'; this.style.borderColor='#40E0D0'; this.style.transform='translateY(-2px)'"
+                        onmouseout="this.style.background='rgba(31, 41, 55, 0.6)'; this.style.borderColor='rgba(64, 224, 208, 0.3)'; this.style.transform='translateY(0)'"
+                    >
+                        📧 Email
+                    </button>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -75,10 +132,10 @@
             </div>
             <div class="pricing-grid">
                 <div class="pricing-card">
-                    <h3>Starter</h3>
+                    <h3>Website</h3>
                     <div class="price">
                         <span class="currency">$</span>
-                        <span class="amount">1,499</span>
+                        <span class="amount">199</span>
                     </div>
                     <p class="price-description">Perfect for simple app concepts</p>
                     <ul class="feature-list">
@@ -95,10 +152,10 @@
                 
                 <div class="pricing-card featured">
                     <div class="popular-badge">Most Popular</div>
-                    <h3>Professional</h3>
+                    <h3>App</h3>
                     <div class="price">
                         <span class="currency">$</span>
-                        <span class="amount">2,999</span>
+                        <span class="amount">289</span>
                     </div>
                     <p class="price-description">For comprehensive app prototypes</p>
                     <ul class="feature-list">
@@ -116,10 +173,10 @@
                 </div>
                 
                 <div class="pricing-card">
-                    <h3>Enterprise</h3>
+                    <h3>Website & App</h3>
                     <div class="price">
                         <span class="currency">$</span>
-                        <span class="amount">4,999</span>
+                        <span class="amount">329</span>
                     </div>
                     <p class="price-description">For complex applications</p>
                     <ul class="feature-list">
@@ -207,6 +264,14 @@
             <div class="section-header">
                 <h2 class="section-title">Standard Service Pricing</h2>
                 <p class="section-subtitle">Professional development services for your projects</p>
+                <button 
+                    onclick="window.open('https://www.clippit.online/', '_blank')"
+                    style="margin-top: 1.5rem; padding: 1rem 2.5rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 50px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;"
+                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 20px rgba(64, 224, 208, 0.3)'"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
+                >
+                    See Prices
+                </button>
             </div>
             
             <div class="service-pricing-grid">
@@ -215,17 +280,14 @@
                     <div class="pricing-tiers">
                         <div class="tier">
                             <h4>Basic</h4>
-                            <p class="tier-price">Starting at $2,500</p>
                             <p class="tier-desc">Up to 5 pages, responsive design, contact form</p>
                         </div>
                         <div class="tier">
                             <h4>Business</h4>
-                            <p class="tier-price">Starting at $5,000</p>
                             <p class="tier-desc">Up to 15 pages, CMS, e-commerce ready</p>
                         </div>
                         <div class="tier">
                             <h4>Enterprise</h4>
-                            <p class="tier-price">Custom Quote</p>
                             <p class="tier-desc">Unlimited pages, custom features, API integration</p>
                         </div>
                     </div>
@@ -236,17 +298,14 @@
                     <div class="pricing-tiers">
                         <div class="tier">
                             <h4>Single Platform</h4>
-                            <p class="tier-price">Starting at $15,000</p>
                             <p class="tier-desc">iOS or Android, basic features</p>
                         </div>
                         <div class="tier">
                             <h4>Cross-Platform</h4>
-                            <p class="tier-price">Starting at $25,000</p>
                             <p class="tier-desc">iOS & Android, advanced features</p>
                         </div>
                         <div class="tier">
                             <h4>Enterprise</h4>
-                            <p class="tier-price">Custom Quote</p>
                             <p class="tier-desc">Complex features, backend development</p>
                         </div>
                     </div>
@@ -257,39 +316,15 @@
                     <div class="pricing-tiers">
                         <div class="tier">
                             <h4>Basic Tool</h4>
-                            <p class="tier-price">Starting at $10,000</p>
                             <p class="tier-desc">Simple automation or internal tool</p>
                         </div>
                         <div class="tier">
                             <h4>SaaS Platform</h4>
-                            <p class="tier-price">Starting at $50,000</p>
                             <p class="tier-desc">Multi-tenant, subscription management</p>
                         </div>
                         <div class="tier">
                             <h4>Enterprise</h4>
-                            <p class="tier-price">Custom Quote</p>
                             <p class="tier-desc">Complex systems, integrations, scaling</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="service-pricing-card">
-                    <h3>Hosting & Infrastructure</h3>
-                    <div class="pricing-tiers">
-                        <div class="tier">
-                            <h4>Shared</h4>
-                            <p class="tier-price">$19/month</p>
-                            <p class="tier-desc">Perfect for small websites</p>
-                        </div>
-                        <div class="tier">
-                            <h4>VPS</h4>
-                            <p class="tier-price">$79/month</p>
-                            <p class="tier-desc">Dedicated resources, better performance</p>
-                        </div>
-                        <div class="tier">
-                            <h4>Cloud</h4>
-                            <p class="tier-price">Custom Quote</p>
-                            <p class="tier-desc">Scalable, high-availability setup</p>
                         </div>
                     </div>
                 </div>
@@ -320,18 +355,8 @@
                     <p>Secure your website with HTTPS</p>
                 </div>
                 <div class="additional-card">
-                    <h3>Logo Design</h3>
-                    <p class="add-price">$500 - $2,000</p>
-                    <p>Professional brand identity creation</p>
-                </div>
-                <div class="additional-card">
-                    <h3>SEO Package</h3>
-                    <p class="add-price">$500 <span>/month</span></p>
-                    <p>Ongoing optimization and content strategy</p>
-                </div>
-                <div class="additional-card">
                     <h3>Maintenance</h3>
-                    <p class="add-price">$200+ <span>/month</span></p>
+                    <p class="add-price">$59 <span>/month</span></p>
                     <p>Updates, backups, and support</p>
                 </div>
             </div>
@@ -390,7 +415,7 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <div class="footer-logo">
-                        <span class="logo-icon">📎</span>
+                        <img src="images/logo2.png" alt="Clippit Logo" class="logo-icon" style="width: 40px; height: 40px; object-fit: contain;">
                         <span class="logo-text">Clippit</span>
                     </div>
                     <p>Building digital futures, one project at a time.</p>

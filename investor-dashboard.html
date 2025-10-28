@@ -9,13 +9,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body class="dashboard-body">
     <!-- Dashboard Header -->
     <header class="dashboard-header investor">
         <div class="dashboard-header-content">
             <div class="dashboard-logo">
-                <span class="logo-icon">📎</span>
+                <img src="images/logo2.png" alt="Clippit Logo" class="logo-icon" style="width: 40px; height: 40px; object-fit: contain;">
                 <span class="logo-text">Clippit Investor Lounge</span>
             </div>
             <div class="dashboard-quick-actions">
@@ -93,17 +94,12 @@
             </section>
 
             <!-- Subscription Status Banner -->
-            <div class="subscription-banner">
-                <div class="banner-content">
-                    <div class="banner-icon">⭐</div>
-                    <div class="banner-text">
-                        <h3>Standard Access Active</h3>
-                        <p>Access to 8 opportunities • Next billing: Nov 21, 2025</p>
-                    </div>
-                </div>
-                <button class="btn btn-primary" onclick="showUpgradeTierModal()">Upgrade Tier</button>
+            <div class="subscription-banner" id="subscriptionBanner">
+                <!-- Will be populated by JavaScript based on subscription status -->
             </div>
 
+            <!-- Dashboard Section -->
+            <div id="section-dashboard" class="dashboard-section" style="display: block;">
             <!-- Investment Portfolio Overview -->
             <section class="investor-stats">
                 <div class="stat-card investor">
@@ -149,7 +145,6 @@
                         <button class="filter-chip">Apps</button>
                         <button class="filter-chip">Websites</button>
                         <button class="filter-chip">Software</button>
-                        <button class="filter-chip">Companies</button>
                     </div>
                 </div>
 
@@ -355,6 +350,799 @@
                     </div>
                 </div>
             </section>
+            </div>
+            <!-- End Dashboard Section -->
+
+            <!-- Opportunities Section -->
+            <div id="section-opportunities" class="dashboard-section" style="display: none;">
+                <section class="opportunities-section">
+                    <div class="section-header-inline">
+                        <h2>All Investment Opportunities</h2>
+                        <div class="opportunity-filters">
+                            <button class="filter-chip active">All</button>
+                            <button class="filter-chip">Apps</button>
+                            <button class="filter-chip">Websites</button>
+                            <button class="filter-chip">Software</button>
+                        </div>
+                    </div>
+
+                    <div class="opportunities-grid" style="margin-top: 2rem;">
+                        <!-- Copy all opportunity cards from dashboard -->
+                        <div class="opportunity-card">
+                            <div class="opportunity-badge hot">🔥 Hot</div>
+                            <div class="opportunity-image">
+                                <div class="placeholder-img">📱</div>
+                            </div>
+                            <div class="opportunity-content">
+                                <div class="opportunity-header">
+                                    <h3>FitTracker Pro</h3>
+                                    <span class="opportunity-category">Mobile App</span>
+                                </div>
+                                <p class="opportunity-description">AI-powered fitness and nutrition tracking app with 5K+ beta users. Seeking seed funding for market launch.</p>
+                                
+                                <div class="opportunity-details">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Investment Type</span>
+                                        <span class="detail-value">Equity Funding</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Seeking</span>
+                                        <span class="detail-value funding-goal">$150,000</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Valuation</span>
+                                        <span class="detail-value">$1.2M</span>
+                                    </div>
+                                </div>
+
+                                <div class="funding-progress">
+                                    <div class="progress-header">
+                                        <span>Funded: $95,000</span>
+                                        <span>63%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 63%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="opportunity-actions">
+                                    <button class="opportunity-btn primary" onclick="showInvestModal('FitTracker Pro')">
+                                        <span>💰</span> Invest Now
+                                    </button>
+                                    <button class="opportunity-btn secondary" onclick="showQuestionModal('FitTracker Pro')">
+                                        <span>💬</span> Ask Question
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="opportunity-card">
+                            <div class="opportunity-badge verified">✓ Verified</div>
+                            <div class="opportunity-image">
+                                <div class="placeholder-img">🌐</div>
+                            </div>
+                            <div class="opportunity-content">
+                                <div class="opportunity-header">
+                                    <h3>EcoMarket Platform</h3>
+                                    <span class="opportunity-category">E-Commerce</span>
+                                </div>
+                                <p class="opportunity-description">Sustainable products marketplace with integrated carbon offset tracking. Revenue: $45K/month.</p>
+                                
+                                <div class="opportunity-details">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Investment Type</span>
+                                        <span class="detail-value">Full Buyout</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Asking Price</span>
+                                        <span class="detail-value funding-goal">$500,000</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Revenue</span>
+                                        <span class="detail-value">$540K/year</span>
+                                    </div>
+                                </div>
+
+                                <div class="roi-estimate">
+                                    <span class="roi-label">Estimated ROI:</span>
+                                    <span class="roi-value">24% annually</span>
+                                </div>
+
+                                <div class="opportunity-actions">
+                                    <button class="opportunity-btn primary" onclick="showOfferModal('EcoMarket Platform')">
+                                        <span>🤝</span> Make Offer
+                                    </button>
+                                    <button class="opportunity-btn secondary" onclick="showQuestionModal('EcoMarket Platform')">
+                                        <span>💬</span> Ask Question
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="opportunity-card">
+                            <div class="opportunity-badge new">✨ New</div>
+                            <div class="opportunity-image">
+                                <div class="placeholder-img">⚙️</div>
+                            </div>
+                            <div class="opportunity-content">
+                                <div class="opportunity-header">
+                                    <h3>TaskFlow SaaS</h3>
+                                    <span class="opportunity-category">Software</span>
+                                </div>
+                                <p class="opportunity-description">B2B project management tool with 200+ paying customers. MRR growing 15% monthly.</p>
+                                
+                                <div class="opportunity-details">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Investment Type</span>
+                                        <span class="detail-value">Equity Partnership</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Seeking</span>
+                                        <span class="detail-value funding-goal">$250,000</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Equity Offered</span>
+                                        <span class="detail-value">20%</span>
+                                    </div>
+                                </div>
+
+                                <div class="funding-progress">
+                                    <div class="progress-header">
+                                        <span>Funded: $180,000</span>
+                                        <span>72%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 72%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="opportunity-actions">
+                                    <button class="opportunity-btn primary" onclick="showInvestModal('TaskFlow SaaS')">
+                                        <span>💰</span> Invest Now
+                                    </button>
+                                    <button class="opportunity-btn secondary" onclick="showQuestionModal('TaskFlow SaaS')">
+                                        <span>💬</span> Ask Question
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- End Opportunities Section -->
+
+            <!-- My Investments Section -->
+            <div id="section-my-investments" class="dashboard-section" style="display: none;">
+                <section class="my-investments-section">
+                    <!-- Portfolio Summary -->
+                    <div class="portfolio-summary" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.05)); padding: 2rem; border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.3); margin-bottom: 2rem;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
+                            <div>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Total Invested</p>
+                                <h3 style="color: #F59E0B; font-size: 2rem; font-weight: 800;">$125,000</h3>
+                            </div>
+                            <div>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Current Value</p>
+                                <h3 style="color: #10B981; font-size: 2rem; font-weight: 800;">$145,000</h3>
+                            </div>
+                            <div>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Total Gain</p>
+                                <h3 style="color: #10B981; font-size: 2rem; font-weight: 800;">+$20,000</h3>
+                            </div>
+                            <div>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">ROI</p>
+                                <h3 style="color: #10B981; font-size: 2rem; font-weight: 800;">+16%</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Investments List -->
+                    <h2 style="margin-bottom: 1.5rem;">Active Investments (3)</h2>
+                    <div class="investments-list">
+                        <div class="investment-item" style="background: #1F2937; padding: 1.5rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 1rem;">
+                            <div style="display: flex; gap: 1.5rem; align-items: start;">
+                                <div class="investment-icon" style="font-size: 3rem; min-width: 60px;">🏥</div>
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                        <div>
+                                            <h4 style="color: #F59E0B; font-size: 1.25rem; margin-bottom: 0.5rem;">MediConnect App</h4>
+                                            <p style="color: #9CA3AF; margin-bottom: 0.5rem;">Healthcare platform connecting patients with doctors</p>
+                                            <div class="investment-meta" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                                <span class="meta-tag" style="background: rgba(245, 158, 11, 0.1); color: #F59E0B; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem;">Healthcare</span>
+                                                <span class="meta-date" style="color: #9CA3AF; font-size: 0.875rem;">Invested: Aug 2025</span>
+                                            </div>
+                                        </div>
+                                        <div class="investment-performance" style="text-align: right;">
+                                            <span class="performance-label" style="display: block; color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem;">Current Value</span>
+                                            <span class="performance-value positive" style="display: block; color: #10B981; font-size: 1.5rem; font-weight: 700;">$62,500</span>
+                                            <span style="color: #10B981; font-size: 0.875rem;">+$12,500 (25%)</span>
+                                        </div>
+                                    </div>
+                                    <div style="background: #111827; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                                            <div>
+                                                <p style="color: #9CA3AF; font-size: 0.75rem;">Investment</p>
+                                                <p style="color: #fff; font-weight: 600;">$50,000</p>
+                                            </div>
+                                            <div>
+                                                <p style="color: #9CA3AF; font-size: 0.75rem;">Equity</p>
+                                                <p style="color: #fff; font-weight: 600;">15%</p>
+                                            </div>
+                                            <div>
+                                                <p style="color: #9CA3AF; font-size: 0.75rem;">Status</p>
+                                                <p style="color: #10B981; font-weight: 600;">Active</p>
+                                            </div>
+                                            <div>
+                                                <p style="color: #9CA3AF; font-size: 0.75rem;">Last Update</p>
+                                                <p style="color: #fff; font-weight: 600;">2 days ago</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; gap: 0.75rem;">
+                                        <button onclick="showNotification('Viewing investment details...', 'info')" style="padding: 0.5rem 1rem; background: linear-gradient(135deg, #F59E0B, #D97706); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">View Details</button>
+                                        <button onclick="showNotification('Opening messages...', 'info')" style="padding: 0.5rem 1rem; background: #111827; color: #F59E0B; border: 1px solid #F59E0B; border-radius: 8px; font-weight: 600; cursor: pointer;">Message Admin</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="investment-item" style="background: #1F2937; padding: 1.5rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 1rem;">
+                            <div style="display: flex; gap: 1.5rem; align-items: start;">
+                                <div class="investment-icon" style="font-size: 3rem; min-width: 60px;">🎓</div>
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                        <div>
+                                            <h4 style="color: #F59E0B; font-size: 1.25rem; margin-bottom: 0.5rem;">EduTech Platform</h4>
+                                            <p style="color: #9CA3AF; margin-bottom: 0.5rem;">Online learning platform for professional development</p>
+                                            <div class="investment-meta" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                                <span class="meta-tag" style="background: rgba(245, 158, 11, 0.1); color: #F59E0B; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem;">Education</span>
+                                                <span class="meta-date" style="color: #9CA3AF; font-size: 0.875rem;">Invested: Jul 2025</span>
+                                            </div>
+                                        </div>
+                                        <div class="investment-performance" style="text-align: right;">
+                                            <span class="performance-label" style="display: block; color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem;">Current Value</span>
+                                            <span class="performance-value positive" style="display: block; color: #10B981; font-size: 1.5rem; font-weight: 700;">$82,500</span>
+                                            <span style="color: #10B981; font-size: 0.875rem;">+$7,500 (10%)</span>
+                                        </div>
+                                    </div>
+                                    <div style="background: #111827; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                                            <div>
+                                                <p style="color: #9CA3AF; font-size: 0.75rem;">Investment</p>
+                                                <p style="color: #fff; font-weight: 600;">$75,000</p>
+                                            </div>
+                                            <div>
+                                                <p style="color: #9CA3AF; font-size: 0.75rem;">Equity</p>
+                                                <p style="color: #fff; font-weight: 600;">20%</p>
+                                            </div>
+                                            <div>
+                                                <p style="color: #9CA3AF; font-size: 0.75rem;">Status</p>
+                                                <p style="color: #10B981; font-weight: 600;">Active</p>
+                                            </div>
+                                            <div>
+                                                <p style="color: #9CA3AF; font-size: 0.75rem;">Last Update</p>
+                                                <p style="color: #fff; font-weight: 600;">1 week ago</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; gap: 0.75rem;">
+                                        <button onclick="showNotification('Viewing investment details...', 'info')" style="padding: 0.5rem 1rem; background: linear-gradient(135deg, #F59E0B, #D97706); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">View Details</button>
+                                        <button onclick="showNotification('Opening messages...', 'info')" style="padding: 0.5rem 1rem; background: #111827; color: #F59E0B; border: 1px solid #F59E0B; border-radius: 8px; font-weight: 600; cursor: pointer;">Message Admin</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="investment-item" style="background: #1F2937; padding: 1.5rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 1rem;">
+                            <div style="display: flex; gap: 1.5rem; align-items: start;">
+                                <div class="investment-icon" style="font-size: 3rem; min-width: 60px;">🏪</div>
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                        <div>
+                                            <h4 style="color: #F59E0B; font-size: 1.25rem; margin-bottom: 0.5rem;">LocalMart Chain</h4>
+                                            <p style="color: #9CA3AF; margin-bottom: 0.5rem;">Regional grocery store expansion project</p>
+                                            <div class="investment-meta" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                                <span class="meta-tag" style="background: rgba(245, 158, 11, 0.1); color: #F59E0B; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem;">Retail</span>
+                                                <span class="meta-date" style="color: #9CA3AF; font-size: 0.875rem;">Invested: Jun 2025</span>
+                                            </div>
+                                        </div>
+                                        <div class="investment-performance" style="text-align: right;">
+                                            <span class="performance-label" style="display: block; color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem;">Current Value</span>
+                                            <span class="performance-value positive" style="display: block; color: #10B981; font-size: 1.5rem; font-weight: 700;">$105,000</span>
+                                            <span style="color: #10B981; font-size: 0.875rem;">+$5,000 (5%)</span>
+                                        </div>
+                                    </div>
+                                    <div style="background: #111827; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                                            <div>
+                                                <p style="color: #9CA3AF; font-size: 0.75rem;">Investment</p>
+                                                <p style="color: #fff; font-weight: 600;">$100,000</p>
+                                            </div>
+                                            <div>
+                                                <p style="color: #9CA3AF; font-size: 0.75rem;">Equity</p>
+                                                <p style="color: #fff; font-weight: 600;">25%</p>
+                                            </div>
+                                            <div>
+                                                <p style="color: #9CA3AF; font-size: 0.75rem;">Status</p>
+                                                <p style="color: #10B981; font-weight: 600;">Active</p>
+                                            </div>
+                                            <div>
+                                                <p style="color: #9CA3AF; font-size: 0.75rem;">Last Update</p>
+                                                <p style="color: #fff; font-weight: 600;">3 days ago</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; gap: 0.75rem;">
+                                        <button onclick="showNotification('Viewing investment details...', 'info')" style="padding: 0.5rem 1rem; background: linear-gradient(135deg, #F59E0B, #D97706); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">View Details</button>
+                                        <button onclick="showNotification('Opening messages...', 'info')" style="padding: 0.5rem 1rem; background: #111827; color: #F59E0B; border: 1px solid #F59E0B; border-radius: 8px; font-weight: 600; cursor: pointer;">Message Admin</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pending Offers -->
+                    <h2 style="margin-top: 3rem; margin-bottom: 1.5rem;">Pending Offers (2)</h2>
+                    <div class="pending-offers-list">
+                        <div style="background: rgba(245, 158, 11, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.2); margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <h4 style="color: #F59E0B; margin-bottom: 0.5rem;">GreenTech Solutions</h4>
+                                    <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Offer Amount: $150,000 for 18% equity</p>
+                                    <p style="color: #9CA3AF; font-size: 0.75rem;">Submitted: 2 days ago</p>
+                                </div>
+                                <span style="background: rgba(245, 158, 11, 0.2); color: #F59E0B; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600;">Under Review</span>
+                            </div>
+                        </div>
+                        <div style="background: rgba(245, 158, 11, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.2);">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <h4 style="color: #F59E0B; margin-bottom: 0.5rem;">FinanceFlow App</h4>
+                                    <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Offer Amount: $85,000 for 12% equity</p>
+                                    <p style="color: #9CA3AF; font-size: 0.75rem;">Submitted: 5 days ago</p>
+                                </div>
+                                <span style="background: rgba(245, 158, 11, 0.2); color: #F59E0B; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600;">Under Review</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- End My Investments Section -->
+
+            <!-- Messages Section -->
+            <div id="section-messages" class="dashboard-section" style="display: none;">
+                <section class="messages-section">
+                    <div style="display: grid; grid-template-columns: 350px 1fr; gap: 1.5rem; height: calc(100vh - 250px);">
+                        <!-- Message List Sidebar -->
+                        <div style="background: #1F2937; border-radius: 12px; border: 1px solid #374151; padding: 1.5rem; overflow-y: auto;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                                <h3 style="color: #F59E0B; font-size: 1.25rem;">Messages</h3>
+                                <button onclick="showNewMessageModal()" style="background: linear-gradient(135deg, #F59E0B, #D97706); color: #111827; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.875rem;">New</button>
+                            </div>
+                            
+                            <!-- Search -->
+                            <input type="text" placeholder="Search messages..." style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; margin-bottom: 1rem; font-size: 0.875rem;">
+                            
+                            <!-- Message Threads -->
+                            <div class="message-threads">
+                                <!-- Thread 1 - Unread -->
+                                <div class="message-thread" onclick="showMessageThread('fittracker')" style="padding: 1rem; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; margin-bottom: 0.75rem; cursor: pointer; position: relative;">
+                                    <div style="position: absolute; top: 0.5rem; right: 0.5rem; width: 8px; height: 8px; background: #F59E0B; border-radius: 50%;"></div>
+                                    <div style="display: flex; gap: 0.75rem;">
+                                        <div style="font-size: 2rem;">📱</div>
+                                        <div style="flex: 1; min-width: 0;">
+                                            <h4 style="color: #F59E0B; font-size: 0.875rem; margin-bottom: 0.25rem; font-weight: 600;">FitTracker Pro</h4>
+                                            <p style="color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Clippit Admin: Thank you for your...</p>
+                                            <p style="color: #9CA3AF; font-size: 0.7rem;">2 hours ago</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Thread 2 - Read -->
+                                <div class="message-thread" onclick="showMessageThread('medicconnect')" style="padding: 1rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; margin-bottom: 0.75rem; cursor: pointer;">
+                                    <div style="display: flex; gap: 0.75rem;">
+                                        <div style="font-size: 2rem;">🏥</div>
+                                        <div style="flex: 1; min-width: 0;">
+                                            <h4 style="color: #fff; font-size: 0.875rem; margin-bottom: 0.25rem; font-weight: 600;">MediConnect App</h4>
+                                            <p style="color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">You: When is the next update?</p>
+                                            <p style="color: #9CA3AF; font-size: 0.7rem;">1 day ago</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Thread 3 -->
+                                <div class="message-thread" onclick="showMessageThread('edutech')" style="padding: 1rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; margin-bottom: 0.75rem; cursor: pointer;">
+                                    <div style="display: flex; gap: 0.75rem;">
+                                        <div style="font-size: 2rem;">🎓</div>
+                                        <div style="flex: 1; min-width: 0;">
+                                            <h4 style="color: #fff; font-size: 0.875rem; margin-bottom: 0.25rem; font-weight: 600;">EduTech Platform</h4>
+                                            <p style="color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Clippit Admin: Q3 financial report...</p>
+                                            <p style="color: #9CA3AF; font-size: 0.7rem;">3 days ago</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Thread 4 -->
+                                <div class="message-thread" onclick="showMessageThread('greentech')" style="padding: 1rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; margin-bottom: 0.75rem; cursor: pointer;">
+                                    <div style="display: flex; gap: 0.75rem;">
+                                        <div style="font-size: 2rem;">🌱</div>
+                                        <div style="flex: 1; min-width: 0;">
+                                            <h4 style="color: #fff; font-size: 0.875rem; margin-bottom: 0.25rem; font-weight: 600;">GreenTech Solutions</h4>
+                                            <p style="color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Clippit Admin: Your offer is under...</p>
+                                            <p style="color: #9CA3AF; font-size: 0.7rem;">5 days ago</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Message Conversation -->
+                        <div id="messageConversation" style="background: #1F2937; border-radius: 12px; border: 1px solid #374151; display: flex; flex-direction: column; overflow: hidden;">
+                            <!-- Conversation Header -->
+                            <div style="padding: 1.5rem; border-bottom: 1px solid #374151;">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="font-size: 2.5rem;">💬</div>
+                                    <div>
+                                        <h3 style="color: #F59E0B; font-size: 1.25rem; margin-bottom: 0.25rem;">Re: FitTracker Pro</h3>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem;">🔒 Anonymous Q&A via Admin (Your identity is protected)</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Messages Area -->
+                            <div id="messagesArea" style="flex: 1; padding: 1.5rem; overflow-y: auto;">
+                                <!-- Message from Admin -->
+                                <div style="margin-bottom: 1.5rem;">
+                                    <div style="display: flex; gap: 0.75rem; align-items: start;">
+                                        <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #F59E0B, #D97706); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #111827; font-size: 0.875rem; flex-shrink: 0;">CA</div>
+                                        <div style="flex: 1;">
+                                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                                <span style="color: #F59E0B; font-weight: 600; font-size: 0.875rem;">Clippit Admin</span>
+                                                <span style="color: #9CA3AF; font-size: 0.75rem;">2 hours ago</span>
+                                            </div>
+                                            <div style="background: #111827; padding: 1rem; border-radius: 8px; border: 1px solid #4B5563;">
+                                                <p style="color: #fff; line-height: 1.6;">Thank you for your inquiry about FitTracker Pro. The development team has confirmed they're on track for the Q1 launch. They've successfully completed beta testing with 5,000+ users and are now focusing on final optimizations.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Message from You -->
+                                <div style="margin-bottom: 1.5rem;">
+                                    <div style="display: flex; gap: 0.75rem; align-items: start; flex-direction: row-reverse;">
+                                        <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #10B981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #fff; font-size: 0.875rem; flex-shrink: 0;">IV</div>
+                                        <div style="flex: 1; text-align: right;">
+                                            <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-end; margin-bottom: 0.5rem;">
+                                                <span style="color: #9CA3AF; font-size: 0.75rem;">4 hours ago</span>
+                                                <span style="color: #10B981; font-weight: 600; font-size: 0.875rem;">You</span>
+                                            </div>
+                                            <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2)); padding: 1rem; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.3); display: inline-block; text-align: left; max-width: 80%;">
+                                                <p style="color: #fff; line-height: 1.6;">Hi Clippit Admin, I wanted to check on the progress of FitTracker Pro. Could you provide an update on the launch timeline and any key milestones achieved?</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Message from Admin -->
+                                <div style="margin-bottom: 1.5rem;">
+                                    <div style="display: flex; gap: 0.75rem; align-items: start;">
+                                        <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #F59E0B, #D97706); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #111827; font-size: 0.875rem; flex-shrink: 0;">CA</div>
+                                        <div style="flex: 1;">
+                                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                                <span style="color: #F59E0B; font-weight: 600; font-size: 0.875rem;">Clippit Admin</span>
+                                                <span style="color: #9CA3AF; font-size: 0.75rem;">1 day ago</span>
+                                            </div>
+                                            <div style="background: #111827; padding: 1rem; border-radius: 8px; border: 1px solid #4B5563;">
+                                                <p style="color: #fff; line-height: 1.6; margin-bottom: 0.75rem;">Hello! Thank you for reaching out. Here's the latest update:</p>
+                                                <p style="color: #fff; line-height: 1.6; margin-bottom: 0.5rem;">• Beta testing completed successfully</p>
+                                                <p style="color: #fff; line-height: 1.6; margin-bottom: 0.5rem;">• User feedback incorporated into final version</p>
+                                                <p style="color: #fff; line-height: 1.6; margin-bottom: 0.5rem;">• App Store submission scheduled for next week</p>
+                                                <p style="color: #fff; line-height: 1.6; margin-top: 0.75rem;">I'll keep you updated on the submission status.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Message Input -->
+                            <div style="padding: 1.5rem; border-top: 1px solid #374151;">
+                                <div style="display: flex; gap: 0.75rem;">
+                                    <input type="text" placeholder="Type your message..." style="flex: 1; padding: 0.75rem 1rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;" onkeypress="if(event.key === 'Enter') sendMessage()">
+                                    <button onclick="sendMessage()" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #F59E0B, #D97706); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Send</button>
+                                </div>
+                                <p style="color: #9CA3AF; font-size: 0.75rem; margin-top: 0.5rem;">🔒 <strong>Anonymous Messaging:</strong> Your questions are relayed to the project owner by Admin. Neither party can see each other's identity.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- End Messages Section -->
+
+            <!-- Subscription Section -->
+            <div id="section-subscription" class="dashboard-section" style="display: none;">
+                <section class="subscription-section">
+                    <!-- Current Subscription Card -->
+                    <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.05)); padding: 2rem; border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.3); margin-bottom: 2rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 2rem;">
+                            <div>
+                                <h2 style="color: #F59E0B; font-size: 1.75rem; margin-bottom: 0.5rem;">Investor Access Subscription</h2>
+                                <p style="color: #9CA3AF;">View all investment opportunities</p>
+                            </div>
+                            <div style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; font-size: 0.875rem;">
+                                ✓ Active
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                            <div>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Plan</p>
+                                <p style="color: #fff; font-size: 1.25rem; font-weight: 700;">Weekly Access</p>
+                            </div>
+                            <div>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Price</p>
+                                <p style="color: #fff; font-size: 1.25rem; font-weight: 700;">$14.95<span style="color: #9CA3AF; font-size: 0.875rem; font-weight: 400;">/week</span></p>
+                            </div>
+                            <div>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Next Billing</p>
+                                <p style="color: #fff; font-size: 1.25rem; font-weight: 700;">Nov 28, 2025</p>
+                            </div>
+                            <div>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Started</p>
+                                <p style="color: #fff; font-size: 1.25rem; font-weight: 700;">Oct 14, 2025</p>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <button onclick="showNotification('Opening Stripe payment portal...', 'info')" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #F59E0B, #D97706); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Update Payment Method</button>
+                            <button onclick="confirmCancellation()" style="padding: 0.75rem 1.5rem; background: transparent; color: #EF4444; border: 1px solid #EF4444; border-radius: 8px; font-weight: 600; cursor: pointer;">Cancel Subscription</button>
+                        </div>
+                    </div>
+
+                    <!-- What's Included -->
+                    <div style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 2rem;">
+                        <h3 style="color: #F59E0B; font-size: 1.5rem; margin-bottom: 1.5rem;">What's Included</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                            <div style="display: flex; gap: 1rem;">
+                                <span style="color: #10B981; font-size: 1.5rem;">✓</span>
+                                <div>
+                                    <h4 style="color: #fff; margin-bottom: 0.25rem;">View All Opportunities</h4>
+                                    <p style="color: #9CA3AF; font-size: 0.875rem;">Access to all investment opportunities without restrictions</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 1rem;">
+                                <span style="color: #10B981; font-size: 1.5rem;">✓</span>
+                                <div>
+                                    <h4 style="color: #fff; margin-bottom: 0.25rem;">Detailed Information</h4>
+                                    <p style="color: #9CA3AF; font-size: 0.875rem;">Full financial data, metrics, and project documentation</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 1rem;">
+                                <span style="color: #10B981; font-size: 1.5rem;">✓</span>
+                                <div>
+                                    <h4 style="color: #fff; margin-bottom: 0.25rem;">Ask Questions</h4>
+                                    <p style="color: #9CA3AF; font-size: 0.875rem;">Anonymous Q&A with project owners via Admin</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 1rem;">
+                                <span style="color: #10B981; font-size: 1.5rem;">✓</span>
+                                <div>
+                                    <h4 style="color: #fff; margin-bottom: 0.25rem;">Make Investments</h4>
+                                    <p style="color: #9CA3AF; font-size: 0.875rem;">Submit investment offers (No fee for investments)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Fees -->
+                    <div style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 2rem;">
+                        <h3 style="color: #F59E0B; font-size: 1.5rem; margin-bottom: 1.5rem;">Additional Fees</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                            <div style="background: #111827; padding: 1.5rem; border-radius: 8px; border: 1px solid #4B5563;">
+                                <h4 style="color: #F59E0B; font-size: 1.25rem; margin-bottom: 0.5rem;">Make Offer Fee</h4>
+                                <p style="color: #fff; font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">$20</p>
+                                <p style="color: #9CA3AF; font-size: 0.875rem;">Per offer on buyout opportunities. Ensures serious offers only.</p>
+                            </div>
+                            <div style="background: #111827; padding: 1.5rem; border-radius: 8px; border: 1px solid #4B5563;">
+                                <h4 style="color: #10B981; font-size: 1.25rem; margin-bottom: 0.5rem;">Investment Fee</h4>
+                                <p style="color: #fff; font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">$0</p>
+                                <p style="color: #9CA3AF; font-size: 0.875rem;">No fee for making equity investments. Invest freely!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Billing History -->
+                    <div style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151;">
+                        <h3 style="color: #F59E0B; font-size: 1.5rem; margin-bottom: 1.5rem;">Billing History</h3>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid #374151;">
+                                        <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Date</th>
+                                        <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Description</th>
+                                        <th style="padding: 1rem; text-align: right; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Amount</th>
+                                        <th style="padding: 1rem; text-align: center; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Status</th>
+                                        <th style="padding: 1rem; text-align: center; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Invoice</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="border-bottom: 1px solid #374151;">
+                                        <td style="padding: 1rem; color: #fff;">Oct 21, 2025</td>
+                                        <td style="padding: 1rem; color: #fff;">Weekly Subscription</td>
+                                        <td style="padding: 1rem; text-align: right; color: #fff; font-weight: 600;">$14.95</td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem;">Paid</span>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <button onclick="showNotification('Downloading invoice...', 'info')" style="color: #F59E0B; background: none; border: none; cursor: pointer; text-decoration: underline;">Download</button>
+                                        </td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #374151;">
+                                        <td style="padding: 1rem; color: #fff;">Oct 18, 2025</td>
+                                        <td style="padding: 1rem; color: #fff;">Offer Fee - EcoMarket</td>
+                                        <td style="padding: 1rem; text-align: right; color: #fff; font-weight: 600;">$20.00</td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem;">Paid</span>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <button onclick="showNotification('Downloading invoice...', 'info')" style="color: #F59E0B; background: none; border: none; cursor: pointer; text-decoration: underline;">Download</button>
+                                        </td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #374151;">
+                                        <td style="padding: 1rem; color: #fff;">Oct 14, 2025</td>
+                                        <td style="padding: 1rem; color: #fff;">Weekly Subscription</td>
+                                        <td style="padding: 1rem; text-align: right; color: #fff; font-weight: 600;">$14.95</td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem;">Paid</span>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <button onclick="showNotification('Downloading invoice...', 'info')" style="color: #F59E0B; background: none; border: none; cursor: pointer; text-decoration: underline;">Download</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- End Subscription Section -->
+
+            <!-- Settings Section -->
+            <div id="section-settings" class="dashboard-section" style="display: none;">
+                <section class="settings-section">
+                    <!-- Profile Settings -->
+                    <div style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 2rem;">
+                        <h2 style="color: #F59E0B; font-size: 1.5rem; margin-bottom: 1.5rem;">Profile Settings</h2>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                            <div>
+                                <label style="display: block; color: #9CA3AF; margin-bottom: 0.5rem; font-size: 0.875rem;">Full Name</label>
+                                <input type="text" value="Investor Name" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                            </div>
+                            <div>
+                                <label style="display: block; color: #9CA3AF; margin-bottom: 0.5rem; font-size: 0.875rem;">Email Address</label>
+                                <input type="email" value="investor@example.com" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                            </div>
+                            <div>
+                                <label style="display: block; color: #9CA3AF; margin-bottom: 0.5rem; font-size: 0.875rem;">Phone Number</label>
+                                <input type="tel" value="+1 (555) 123-4567" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                            </div>
+                            <div>
+                                <label style="display: block; color: #9CA3AF; margin-bottom: 0.5rem; font-size: 0.875rem;">Company (Optional)</label>
+                                <input type="text" value="Investment Firm LLC" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                            </div>
+                        </div>
+                        <button onclick="showNotification('Profile updated successfully!', 'success')" style="margin-top: 1.5rem; padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #F59E0B, #D97706); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Save Changes</button>
+                    </div>
+
+                    <!-- Security Settings -->
+                    <div style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 2rem;">
+                        <h2 style="color: #F59E0B; font-size: 1.5rem; margin-bottom: 1.5rem;">Security</h2>
+                        <div style="margin-bottom: 2rem;">
+                            <h3 style="color: #fff; font-size: 1.125rem; margin-bottom: 1rem;">Change Password</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                                <div>
+                                    <label style="display: block; color: #9CA3AF; margin-bottom: 0.5rem; font-size: 0.875rem;">Current Password</label>
+                                    <input type="password" placeholder="Enter current password" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                                </div>
+                                <div>
+                                    <label style="display: block; color: #9CA3AF; margin-bottom: 0.5rem; font-size: 0.875rem;">New Password</label>
+                                    <input type="password" placeholder="Enter new password" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                                </div>
+                                <div>
+                                    <label style="display: block; color: #9CA3AF; margin-bottom: 0.5rem; font-size: 0.875rem;">Confirm New Password</label>
+                                    <input type="password" placeholder="Confirm new password" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                                </div>
+                            </div>
+                            <button onclick="showNotification('Password updated successfully!', 'success')" style="margin-top: 1rem; padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #F59E0B, #D97706); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Update Password</button>
+                        </div>
+                        
+                        <div style="padding-top: 2rem; border-top: 1px solid #374151;">
+                            <h3 style="color: #fff; font-size: 1.125rem; margin-bottom: 1rem;">Two-Factor Authentication</h3>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #111827; border-radius: 8px;">
+                                <div>
+                                    <p style="color: #fff; font-weight: 600; margin-bottom: 0.25rem;">Enhanced Security</p>
+                                    <p style="color: #9CA3AF; font-size: 0.875rem;">Add an extra layer of security to your account</p>
+                                </div>
+                                <button onclick="showNotification('2FA setup initiated...', 'info')" style="padding: 0.5rem 1rem; background: #111827; color: #F59E0B; border: 1px solid #F59E0B; border-radius: 8px; font-weight: 600; cursor: pointer;">Enable 2FA</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notification Preferences -->
+                    <div style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 2rem;">
+                        <h2 style="color: #F59E0B; font-size: 1.5rem; margin-bottom: 1.5rem;">Notification Preferences</h2>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #111827; border-radius: 8px;">
+                                <div>
+                                    <p style="color: #fff; font-weight: 600; margin-bottom: 0.25rem;">New Investment Opportunities</p>
+                                    <p style="color: #9CA3AF; font-size: 0.875rem;">Get notified when new opportunities are added</p>
+                                </div>
+                                <label style="position: relative; display: inline-block; width: 50px; height: 24px;">
+                                    <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                                    <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #F59E0B; border-radius: 24px; transition: 0.3s;"></span>
+                                </label>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #111827; border-radius: 8px;">
+                                <div>
+                                    <p style="color: #fff; font-weight: 600; margin-bottom: 0.25rem;">Investment Updates</p>
+                                    <p style="color: #9CA3AF; font-size: 0.875rem;">Receive updates about your active investments</p>
+                                </div>
+                                <label style="position: relative; display: inline-block; width: 50px; height: 24px;">
+                                    <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                                    <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #F59E0B; border-radius: 24px; transition: 0.3s;"></span>
+                                </label>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #111827; border-radius: 8px;">
+                                <div>
+                                    <p style="color: #fff; font-weight: 600; margin-bottom: 0.25rem;">Message Replies</p>
+                                    <p style="color: #9CA3AF; font-size: 0.875rem;">Get notified when Admin responds to your messages</p>
+                                </div>
+                                <label style="position: relative; display: inline-block; width: 50px; height: 24px;">
+                                    <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                                    <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #F59E0B; border-radius: 24px; transition: 0.3s;"></span>
+                                </label>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #111827; border-radius: 8px;">
+                                <div>
+                                    <p style="color: #fff; font-weight: 600; margin-bottom: 0.25rem;">Weekly Digest</p>
+                                    <p style="color: #9CA3AF; font-size: 0.875rem;">Receive a weekly summary of activity</p>
+                                </div>
+                                <label style="position: relative; display: inline-block; width: 50px; height: 24px;">
+                                    <input type="checkbox" style="opacity: 0; width: 0; height: 0;">
+                                    <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #4B5563; border-radius: 24px; transition: 0.3s;"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Privacy Settings -->
+                    <div style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 2rem;">
+                        <h2 style="color: #F59E0B; font-size: 1.5rem; margin-bottom: 1.5rem;">Privacy & Data</h2>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="padding: 1rem; background: #111827; border-radius: 8px; border: 1px solid #4B5563;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <p style="color: #fff; font-weight: 600; margin-bottom: 0.25rem;">Anonymous Profile</p>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem;">Your identity remains hidden from project owners</p>
+                                    </div>
+                                    <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600;">Active</span>
+                                </div>
+                            </div>
+                            <div style="padding: 1rem; background: #111827; border-radius: 8px;">
+                                <button onclick="showNotification('Downloading data export...', 'info')" style="width: 100%; padding: 0.75rem; background: transparent; color: #F59E0B; border: 1px solid #F59E0B; border-radius: 8px; font-weight: 600; cursor: pointer; text-align: left;">📥 Download My Data</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Danger Zone -->
+                    <div style="background: rgba(239, 68, 68, 0.05); padding: 2rem; border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.3);">
+                        <h2 style="color: #EF4444; font-size: 1.5rem; margin-bottom: 1rem;">Danger Zone</h2>
+                        <p style="color: #9CA3AF; margin-bottom: 1.5rem;">Once you delete your account, there is no going back. Please be certain.</p>
+                        <button onclick="showNotification('Account deletion requires admin confirmation', 'warning')" style="padding: 0.75rem 1.5rem; background: transparent; color: #EF4444; border: 1px solid #EF4444; border-radius: 8px; font-weight: 600; cursor: pointer;">Delete Account</button>
+                    </div>
+                </section>
+            </div>
+            <!-- End Settings Section -->
+
         </main>
     </div>
 
