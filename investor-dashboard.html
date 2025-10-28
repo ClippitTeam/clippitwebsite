@@ -150,42 +150,42 @@
 
                 <div class="opportunities-grid">
                     <!-- Opportunity Card 1 -->
-                    <div class="opportunity-card">
-                        <div class="opportunity-badge hot">🔥 Hot</div>
-                        <div class="opportunity-image">
-                            <div class="placeholder-img">📱</div>
+                    <div class="opportunity-card" onclick="viewOpportunityDetails('fittracker')" style="cursor: pointer;">
+                        <div class="opportunity-header">
+                            <div class="opportunity-icon">📱</div>
+                            <span class="hot-badge">🔥 Hot</span>
                         </div>
-                        <div class="opportunity-content">
-                            <div class="opportunity-header">
-                                <h3>FitTracker Pro</h3>
-                                <span class="opportunity-category">Mobile App</span>
+                        <h3 class="opportunity-title">FitTracker Pro</h3>
+                        <p class="opportunity-description">AI-powered fitness and nutrition tracking app with 5K+ beta users. Seeking seed funding for market launch.</p>
+                        <div class="opportunity-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Investment Type</span>
+                                <span class="stat-value">Equity Funding</span>
                             </div>
-                            <p class="opportunity-description">AI-powered fitness and nutrition tracking app with 5K+ beta users. Seeking seed funding for market launch.</p>
-                            
-                            <div class="opportunity-details">
-                                <div class="detail-item">
-                                    <span class="detail-label">Investment Type</span>
-                                    <span class="detail-value">Equity Funding</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Seeking</span>
-                                    <span class="detail-value funding-goal">$150,000</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Valuation</span>
-                                    <span class="detail-value">$1.2M</span>
-                                </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Seeking</span>
+                                <span class="stat-value">$150,000</span>
                             </div>
-
-                            <div class="funding-progress">
-                                <div class="progress-header">
-                                    <span>Funded: $95,000</span>
-                                    <span>63%</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 63%"></div>
-                                </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Valuation</span>
+                                <span class="stat-value">$1.2M</span>
                             </div>
+                        </div>
+                        <div class="opportunity-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 63%"></div>
+                            </div>
+                            <div class="progress-info">
+                                <span>Funded: $95,000</span>
+                                <span>63%</span>
+                            </div>
+                        </div>
+                        <div class="opportunity-actions" onclick="event.stopPropagation()">
+                            <button class="btn btn-primary" onclick="showInvestModal('FitTracker Pro')">💰 Invest</button>
+                            <button class="btn btn-secondary" onclick="showOfferModal('FitTracker Pro')">🤝 Offer</button>
+                            <button class="btn btn-icon" onclick="showQuestionModal('FitTracker Pro')" title="Ask Question">💬</button>
+                        </div>
+                    </div>
 
                             <div class="opportunity-actions">
                                 <button class="opportunity-btn primary" onclick="showInvestModal('FitTracker Pro')">
