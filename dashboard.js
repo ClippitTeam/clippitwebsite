@@ -1463,28 +1463,28 @@ function showAssetsModal() {
 
             <div>
                 <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Project Images</label>
-                <div style="border: 2px dashed #4B5563; border-radius: 8px; padding: 2rem; text-align: center; cursor: pointer;" onclick="document.getElementById('image-upload').click()">
+                <div id="image-upload-area" style="border: 2px dashed #4B5563; border-radius: 8px; padding: 2rem; text-align: center; cursor: pointer;" onclick="document.getElementById('image-upload').click()">
                     <div style="font-size: 3rem; margin-bottom: 0.5rem;">🖼️</div>
                     <p>Click to upload images</p>
-                    <input type="file" id="image-upload" multiple accept="image/*" style="display: none;">
+                    <input type="file" id="image-upload" multiple accept="image/*" style="display: none;" onchange="handleAssetUpload(this, 'image-upload-area', 'Project Images')">
                 </div>
             </div>
 
             <div>
                 <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Pitch Deck (PDF)</label>
-                <div style="border: 2px dashed #4B5563; border-radius: 8px; padding: 2rem; text-align: center; cursor: pointer;" onclick="document.getElementById('pitch-upload').click()">
+                <div id="pitch-upload-area" style="border: 2px dashed #4B5563; border-radius: 8px; padding: 2rem; text-align: center; cursor: pointer;" onclick="document.getElementById('pitch-upload').click()">
                     <div style="font-size: 3rem; margin-bottom: 0.5rem;">📊</div>
                     <p>Click to upload pitch deck</p>
-                    <input type="file" id="pitch-upload" accept=".pdf,.ppt,.pptx" style="display: none;">
+                    <input type="file" id="pitch-upload" accept=".pdf,.ppt,.pptx" style="display: none;" onchange="handleAssetUpload(this, 'pitch-upload-area', 'Pitch Deck')">
                 </div>
             </div>
 
             <div>
                 <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Demo Video (Optional)</label>
-                <div style="border: 2px dashed #4B5563; border-radius: 8px; padding: 2rem; text-align: center; cursor: pointer;" onclick="document.getElementById('video-upload').click()">
+                <div id="video-upload-area" style="border: 2px dashed #4B5563; border-radius: 8px; padding: 2rem; text-align: center; cursor: pointer;" onclick="document.getElementById('video-upload').click()">
                     <div style="font-size: 3rem; margin-bottom: 0.5rem;">🎬</div>
                     <p>Click to upload demo video</p>
-                    <input type="file" id="video-upload" accept="video/*" style="display: none;">
+                    <input type="file" id="video-upload" accept="video/*" style="display: none;" onchange="handleAssetUpload(this, 'video-upload-area', 'Demo Video')">
                 </div>
             </div>
 
@@ -1492,6 +1492,74 @@ function showAssetsModal() {
         </form>
     `;
     showModal('Step 3: Upload Assets', content);
+}
+
+function handleAssetUpload(input, areaId, assetType) {
+    const uploadArea = document.getElementById(areaId);
+    
+    if (input.files.length > 0 && uploadArea) {
+        const inputElement = input;
+        const fileCount = input.files.length;
+        const fileNames = Array.from(input.files).map(f => f.name).join(', ');
+        const totalSize = Array.from(input.files).reduce((sum, f) => sum + f.size, 0);
+        
+        uploadArea.innerHTML = `
+            <div style="font-size: 2rem; margin-bottom: 0.5rem; color: #10B981;">✓</div>
+            <p style="font-size: 0.875rem; color: #10B981; font-weight: 600;">${fileCount} file${fileCount > 1 ? 's' : ''} selected</p>
+            <p style="font-size: 0.75rem; color: #9CA3AF; margin-top: 0.5rem;">${(totalSize / 1024).toFixed(2)} KB</p>
+            <p style="font-size: 0.75rem; color: #9CA3AF; margin-top: 0.25rem; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${fileNames}</p>
+            <button type="button" onclick="removeAsset('${input.id}', '${areaId}', '${assetType}')" style="margin-top: 0.75rem; padding: 0.5rem 1rem; background: transparent; color: #EF4444; border: 1px solid #EF4444; border-radius: 6px; font-size: 0.875rem; cursor: pointer;">Remove</button>
+        `;
+        
+        // Re-append the input element (hidden)
+        inputElement.style.display = 'none';
+        uploadArea.appendChild(inputElement);
+        
+        uploadArea.style.borderColor = '#10B981';
+        uploadArea.style.background = 'rgba(16, 185, 129, 0.1)';
+        uploadArea.style.cursor = 'default';
+        uploadArea.onclick = null;
+        
+        showNotification(`${assetType} uploaded successfully`, 'success');
+    }
+}
+
+function removeAsset(inputId, areaId, assetType) {
+    const input = document.getElementById(inputId);
+    const uploadArea = document.getElementById(areaId);
+    
+    if (input) input.value = '';
+    
+    if (uploadArea) {
+        let icon = '🖼️';
+        let text = 'Click to upload images';
+        let accept = 'image/*';
+        let multiple = '';
+        
+        if (areaId === 'pitch-upload-area') {
+            icon = '📊';
+            text = 'Click to upload pitch deck';
+            accept = '.pdf,.ppt,.pptx';
+        } else if (areaId === 'video-upload-area') {
+            icon = '🎬';
+            text = 'Click to upload demo video';
+            accept = 'video/*';
+        } else if (areaId === 'image-upload-area') {
+            multiple = 'multiple';
+        }
+        
+        uploadArea.innerHTML = `
+            <div style="font-size: 3rem; margin-bottom: 0.5rem;">${icon}</div>
+            <p>${text}</p>
+            <input type="file" id="${inputId}" ${multiple} accept="${accept}" style="display: none;" onchange="handleAssetUpload(this, '${areaId}', '${assetType}')">
+        `;
+        uploadArea.style.borderColor = '#4B5563';
+        uploadArea.style.background = 'transparent';
+        uploadArea.style.cursor = 'pointer';
+        uploadArea.onclick = () => document.getElementById(inputId).click();
+        
+        showNotification(`${assetType} removed`, 'info');
+    }
 }
 
 function submitAssets(e) {
