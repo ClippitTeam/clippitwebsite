@@ -251,36 +251,24 @@ function handleLogin(event) {
     let errorMessage = 'Invalid username or password';
     
     if (currentLoginType === 'admin') {
-        // Admin requires specific credentials
+        // Admin credentials
         if (username === 'admin@clippit.today' && password === '!Clippit1986') {
             isValid = true;
         } else {
             errorMessage = 'Invalid admin credentials';
         }
     } else if (currentLoginType === 'customer') {
-        // Customer demo accounts (for demonstration purposes)
+        // Customer credentials (same as admin for demo purposes)
         // In production, this would validate against a database
-        const customerAccounts = {
-            'customer@clippit.today': 'Customer123!',
-            'john@techstart.com': 'TechStart2025!',
-            'sarah@fitlife.com': 'FitLife2025!'
-        };
-        
-        if (customerAccounts[username] && customerAccounts[username] === password) {
+        if (username === 'admin@clippit.today' && password === '!Clippit1986') {
             isValid = true;
         } else {
             errorMessage = 'Invalid customer credentials. Please check your username and password.';
         }
     } else if (currentLoginType === 'investor') {
-        // Investor demo accounts (for demonstration purposes)
+        // Investor credentials (same as admin for demo purposes)
         // In production, this would validate against a database
-        const investorAccounts = {
-            'investor@clippit.today': 'Investor123!',
-            'john.smith@venture.com': 'Venture2025!',
-            'emma.davis@capital.com': 'Capital2025!'
-        };
-        
-        if (investorAccounts[username] && investorAccounts[username] === password) {
+        if (username === 'admin@clippit.today' && password === '!Clippit1986') {
             isValid = true;
         } else {
             errorMessage = 'Invalid investor credentials. Please check your username and password.';
