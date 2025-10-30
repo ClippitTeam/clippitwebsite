@@ -1520,6 +1520,15 @@ function handleAssetUpload(input, areaId, assetType) {
         const fileNames = Array.from(input.files).map(f => f.name).join(', ');
         const totalSize = Array.from(input.files).reduce((sum, f) => sum + f.size, 0);
         
+        // Store actual files in global object for preview
+        if (input.id === 'image-upload') {
+            window.uploadedFiles.images = Array.from(input.files);
+        } else if (input.id === 'pitch-upload') {
+            window.uploadedFiles.pitch = input.files[0];
+        } else if (input.id === 'video-upload') {
+            window.uploadedFiles.video = input.files[0];
+        }
+        
         // Store file information for preview
         const fileInfo = {
             count: fileCount,
@@ -1921,16 +1930,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 500);
 });
 
+// Global storage for uploaded files
+window.uploadedFiles = {
+    images: [],
+    pitch: null,
+    video: null
+};
+
 // Preview uploaded files
 function previewImages() {
-    const imageUpload = document.getElementById('image-upload');
-    if (!imageUpload || !imageUpload.files.length) {
+    const files = window.uploadedFiles.images;
+    if (!files || files.length === 0) {
         showNotification('No images to preview', 'info');
         return;
     }
     
     let imagesHTML = '';
-    Array.from(imageUpload.files).forEach((file, index) => {
+    files.forEach((file, index) => {
         const url = URL.createObjectURL(file);
         imagesHTML += `
             <div style="margin-bottom: 1rem;">
@@ -1945,7 +1961,7 @@ function previewImages() {
             <div style="text-align: center; margin-bottom: 1.5rem;">
                 <div style="font-size: 2rem; margin-bottom: 0.5rem;">🖼️</div>
                 <h3 style="color: #40E0D0; margin-bottom: 0.5rem;">Project Images</h3>
-                <p style="font-size: 0.875rem; color: #9CA3AF;">${imageUpload.files.length} image${imageUpload.files.length > 1 ? 's' : ''} uploaded</p>
+                <p style="font-size: 0.875rem; color: #9CA3AF;">${files.length} image${files.length > 1 ? 's' : ''} uploaded</p>
             </div>
             ${imagesHTML}
             <button onclick="closeModal()" style="width: 100%; padding: 0.75rem; background: #111827; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 1rem;">Close Preview</button>
@@ -1955,13 +1971,12 @@ function previewImages() {
 }
 
 function previewPitchDeck() {
-    const pitchUpload = document.getElementById('pitch-upload');
-    if (!pitchUpload || !pitchUpload.files.length) {
+    const file = window.uploadedFiles.pitch;
+    if (!file) {
         showNotification('No pitch deck to preview', 'info');
         return;
     }
     
-    const file = pitchUpload.files[0];
     const content = `
         <div style="text-align: center;">
             <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
@@ -1979,13 +1994,12 @@ function previewPitchDeck() {
 }
 
 function previewVideo() {
-    const videoUpload = document.getElementById('video-upload');
-    if (!videoUpload || !videoUpload.files.length) {
+    const file = window.uploadedFiles.video;
+    if (!file) {
         showNotification('No video to preview', 'info');
         return;
     }
     
-    const file = videoUpload.files[0];
     const url = URL.createObjectURL(file);
     
     const content = `
