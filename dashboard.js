@@ -1682,23 +1682,32 @@ function showReviewModal() {
                     <h3 style="color: #40E0D0; font-size: 1.25rem; margin-bottom: 1rem;">📎 Assets & Materials</h3>
                     <div style="background: #1F2937; padding: 1.5rem; border-radius: 8px;">
                         <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                            <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                <span style="font-size: 1.5rem;">🖼️</span>
-                                <p style="color: ${imageCount > 0 ? '#10B981' : '#6B7280'};">
-                                    ${imageCount > 0 ? `${imageCount} project image${imageCount > 1 ? 's' : ''} attached` : 'No images uploaded'}
-                                </p>
+                            <div onclick="${imageCount > 0 ? 'previewImages()' : ''}" style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; border-radius: 8px; ${imageCount > 0 ? 'background: rgba(64, 224, 208, 0.1); cursor: pointer; border: 1px solid rgba(64, 224, 208, 0.3);' : ''} transition: all 0.2s;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <span style="font-size: 1.5rem;">🖼️</span>
+                                    <p style="color: ${imageCount > 0 ? '#10B981' : '#6B7280'};">
+                                        ${imageCount > 0 ? `${imageCount} project image${imageCount > 1 ? 's' : ''} attached` : 'No images uploaded'}
+                                    </p>
+                                </div>
+                                ${imageCount > 0 ? '<span style="color: #40E0D0; font-size: 1.25rem;">👁️</span>' : ''}
                             </div>
-                            <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                <span style="font-size: 1.5rem;">📊</span>
-                                <p style="color: ${hasPitch ? '#10B981' : '#6B7280'};">
-                                    ${hasPitch ? 'Pitch deck attached' : 'No pitch deck uploaded'}
-                                </p>
+                            <div onclick="${hasPitch ? 'previewPitchDeck()' : ''}" style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; border-radius: 8px; ${hasPitch ? 'background: rgba(64, 224, 208, 0.1); cursor: pointer; border: 1px solid rgba(64, 224, 208, 0.3);' : ''} transition: all 0.2s;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <span style="font-size: 1.5rem;">📊</span>
+                                    <p style="color: ${hasPitch ? '#10B981' : '#6B7280'};">
+                                        ${hasPitch ? 'Pitch deck attached' : 'No pitch deck uploaded'}
+                                    </p>
+                                </div>
+                                ${hasPitch ? '<span style="color: #40E0D0; font-size: 1.25rem;">👁️</span>' : ''}
                             </div>
-                            <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                <span style="font-size: 1.5rem;">🎬</span>
-                                <p style="color: ${hasVideo ? '#10B981' : '#6B7280'};">
-                                    ${hasVideo ? 'Demo video attached' : 'No demo video uploaded'}
-                                </p>
+                            <div onclick="${hasVideo ? 'previewVideo()' : ''}" style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; border-radius: 8px; ${hasVideo ? 'background: rgba(64, 224, 208, 0.1); cursor: pointer; border: 1px solid rgba(64, 224, 208, 0.3);' : ''} transition: all 0.2s;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <span style="font-size: 1.5rem;">🎬</span>
+                                    <p style="color: ${hasVideo ? '#10B981' : '#6B7280'};">
+                                        ${hasVideo ? 'Demo video attached' : 'No demo video uploaded'}
+                                    </p>
+                                </div>
+                                ${hasVideo ? '<span style="color: #40E0D0; font-size: 1.25rem;">👁️</span>' : ''}
                             </div>
                         </div>
                     </div>
@@ -1911,6 +1920,94 @@ document.addEventListener('DOMContentLoaded', function() {
         displayUserListings();
     }, 500);
 });
+
+// Preview uploaded files
+function previewImages() {
+    const imageUpload = document.getElementById('image-upload');
+    if (!imageUpload || !imageUpload.files.length) {
+        showNotification('No images to preview', 'info');
+        return;
+    }
+    
+    let imagesHTML = '';
+    Array.from(imageUpload.files).forEach((file, index) => {
+        const url = URL.createObjectURL(file);
+        imagesHTML += `
+            <div style="margin-bottom: 1rem;">
+                <p style="color: #fff; margin-bottom: 0.5rem; font-weight: 600;">${file.name}</p>
+                <img src="${url}" style="width: 100%; border-radius: 8px; border: 1px solid #4B5563;" />
+            </div>
+        `;
+    });
+    
+    const content = `
+        <div style="max-height: 60vh; overflow-y: auto;">
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🖼️</div>
+                <h3 style="color: #40E0D0; margin-bottom: 0.5rem;">Project Images</h3>
+                <p style="font-size: 0.875rem; color: #9CA3AF;">${imageUpload.files.length} image${imageUpload.files.length > 1 ? 's' : ''} uploaded</p>
+            </div>
+            ${imagesHTML}
+            <button onclick="closeModal()" style="width: 100%; padding: 0.75rem; background: #111827; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 1rem;">Close Preview</button>
+        </div>
+    `;
+    showModal('Image Preview', content);
+}
+
+function previewPitchDeck() {
+    const pitchUpload = document.getElementById('pitch-upload');
+    if (!pitchUpload || !pitchUpload.files.length) {
+        showNotification('No pitch deck to preview', 'info');
+        return;
+    }
+    
+    const file = pitchUpload.files[0];
+    const content = `
+        <div style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+            <h3 style="color: #40E0D0; margin-bottom: 1rem;">Pitch Deck</h3>
+            <div style="background: #111827; padding: 2rem; border-radius: 8px; border: 1px solid #4B5563; margin-bottom: 1.5rem;">
+                <p style="color: #fff; font-weight: 600; margin-bottom: 0.5rem;">${file.name}</p>
+                <p style="color: #9CA3AF; font-size: 0.875rem;">${(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                <p style="color: #9CA3AF; font-size: 0.875rem; margin-top: 0.5rem;">Type: ${file.type || 'Unknown'}</p>
+            </div>
+            <p style="color: #9CA3AF; margin-bottom: 1.5rem;">✓ File uploaded and ready for submission</p>
+            <button onclick="closeModal()" style="width: 100%; padding: 0.75rem; background: #111827; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; font-weight: 600; cursor: pointer;">Close</button>
+        </div>
+    `;
+    showModal('Pitch Deck Preview', content);
+}
+
+function previewVideo() {
+    const videoUpload = document.getElementById('video-upload');
+    if (!videoUpload || !videoUpload.files.length) {
+        showNotification('No video to preview', 'info');
+        return;
+    }
+    
+    const file = videoUpload.files[0];
+    const url = URL.createObjectURL(file);
+    
+    const content = `
+        <div>
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎬</div>
+                <h3 style="color: #40E0D0; margin-bottom: 0.5rem;">Demo Video</h3>
+                <p style="font-size: 0.875rem; color: #9CA3AF;">${file.name}</p>
+            </div>
+            <video controls style="width: 100%; border-radius: 8px; border: 1px solid #4B5563; margin-bottom: 1rem;">
+                <source src="${url}" type="${file.type}">
+                Your browser does not support the video tag.
+            </video>
+            <div style="background: #111827; padding: 1rem; border-radius: 8px; border: 1px solid #4B5563; margin-bottom: 1rem;">
+                <p style="color: #9CA3AF; font-size: 0.875rem;">Size: ${(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                <p style="color: #9CA3AF; font-size: 0.875rem;">Type: ${file.type}</p>
+            </div>
+            <button onclick="closeModal()" style="width: 100%; padding: 0.75rem; background: #111827; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; font-weight: 600; cursor: pointer;">Close Preview</button>
+        </div>
+    `;
+    showModal('Video Preview', content);
+}
 
 // Add CSS animations
 const style = document.createElement('style');
