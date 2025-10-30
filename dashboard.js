@@ -1733,12 +1733,155 @@ function editListing() {
 }
 
 function submitListing() {
+    // Get the listing data that was entered
+    const listingData = {
+        projectName: document.getElementById('project-name')?.value || 'Untitled Project',
+        category: document.getElementById('project-category')?.value || 'app',
+        investmentType: document.getElementById('investment-type')?.value || 'equity',
+        seekingAmount: document.getElementById('seeking-amount')?.value || '0',
+        valuation: document.getElementById('valuation')?.value || null,
+        overview: document.getElementById('project-overview')?.value || '',
+        useOfFunds: document.getElementById('use-of-funds')?.value || '',
+        submittedDate: new Date().toISOString(),
+        status: 'pending', // pending, active, paused
+        views: 0,
+        inquiries: 0,
+        offers: 0
+    };
+    
+    // Store in localStorage (in a real app, this would be sent to a server)
+    let listings = JSON.parse(localStorage.getItem('investorListings') || '[]');
+    listings.push(listingData);
+    localStorage.setItem('investorListings', JSON.stringify(listings));
+    
     closeModal();
     showNotification('Listing submitted for admin review!', 'success');
     setTimeout(() => {
         showNotification('You\'ll receive an email once approved (24-48 hours)', 'info');
+        // Refresh the listings display
+        displayUserListings();
     }, 2000);
 }
+
+function displayUserListings() {
+    const listings = JSON.parse(localStorage.getItem('investorListings') || '[]');
+    const listingsContainer = document.getElementById('active-listings-section');
+    
+    if (!listingsContainer) return;
+    
+    if (listings.length === 0) {
+        listingsContainer.innerHTML = `
+            <div style="text-align: center; padding: 3rem 1rem;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">📋</div>
+                <h4 style="color: #fff; margin-bottom: 0.5rem;">No Active Listings</h4>
+                <p style="color: #9CA3AF; margin-bottom: 1.5rem;">Create your first listing to attract investors</p>
+                <button onclick="showListingModal()" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Create Your First Listing</button>
+            </div>
+        `;
+    } else {
+        let listingsHTML = '';
+        listings.forEach((listing, index) => {
+            const statusColor = listing.status === 'active' ? '#10B981' : listing.status === 'paused' ? '#FBB624' : '#A855F7';
+            const statusText = listing.status === 'active' ? 'ACTIVE' : listing.status === 'paused' ? 'PAUSED' : 'PENDING REVIEW';
+            const daysAgo = Math.floor((new Date() - new Date(listing.submittedDate)) / (1000 * 60 * 60 * 24));
+            
+            listingsHTML += `
+                <div style="background: #111827; padding: 1.5rem; border-radius: 8px; border: 1px solid #40E0D0; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                        <div style="flex: 1;">
+                            <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 0.5rem;">
+                                <h4 style="color: #40E0D0; font-size: 1.25rem;">${listing.projectName}</h4>
+                                <span style="background: rgba(${statusColor === '#10B981' ? '16, 185, 129' : statusColor === '#FBB624' ? '251, 191, 36' : '168, 85, 247'}, 0.2); color: ${statusColor}; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">${statusText}</span>
+                            </div>
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 1rem;">Seeking: $${parseFloat(listing.seekingAmount).toLocaleString()} AUD • ${listing.investmentType.replace('-', ' ').charAt(0).toUpperCase() + listing.investmentType.replace('-', ' ').slice(1)}</p>
+                            
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1.5rem;">
+                                <div>
+                                    <p style="color: #6B7280; font-size: 0.75rem;">Views</p>
+                                    <p style="color: #fff; font-weight: 600; font-size: 1.25rem;">${listing.views}</p>
+                                </div>
+                                <div>
+                                    <p style="color: #6B7280; font-size: 0.75rem;">Inquiries</p>
+                                    <p style="color: #fff; font-weight: 600; font-size: 1.25rem;">${listing.inquiries}</p>
+                                </div>
+                                <div>
+                                    <p style="color: #6B7280; font-size: 0.75rem;">Offers</p>
+                                    <p style="color: #fff; font-weight: 600; font-size: 1.25rem;">${listing.offers}</p>
+                                </div>
+                                <div>
+                                    <p style="color: #6B7280; font-size: 0.75rem;">Listed</p>
+                                    <p style="color: #fff; font-weight: 600;">${daysAgo === 0 ? 'Today' : daysAgo === 1 ? 'Yesterday' : daysAgo + ' days ago'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 0.75rem; padding-top: 1rem; border-top: 1px solid #4B5563; flex-wrap: wrap;">
+                        ${listing.status === 'active' ? `<button onclick="viewListingAnalytics(${index})" style="flex: 1; min-width: 150px; padding: 0.5rem 1rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">View Analytics</button>` : ''}
+                        ${listing.status === 'active' && listing.inquiries > 0 ? `<button onclick="viewListingOffers(${index})" style="padding: 0.5rem 1rem; background: #111827; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; font-weight: 600; cursor: pointer;">View Inquiries (${listing.inquiries})</button>` : ''}
+                        <button onclick="editUserListing(${index})" style="padding: 0.5rem 1rem; background: #111827; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer; font-weight: 600;">✏️ Edit</button>
+                        <button onclick="pauseListing(${index})" style="padding: 0.5rem 1rem; background: #111827; color: ${listing.status === 'paused' ? '#10B981' : '#FBB624'}; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer; font-weight: 600;">${listing.status === 'paused' ? '▶️ Activate' : '⏸️ Pause'}</button>
+                    </div>
+                </div>
+            `;
+        });
+        
+        listingsContainer.innerHTML = listingsHTML;
+    }
+}
+
+function editUserListing(index) {
+    const listings = JSON.parse(localStorage.getItem('investorListings') || '[]');
+    const listing = listings[index];
+    
+    if (!listing) {
+        showNotification('Listing not found', 'error');
+        return;
+    }
+    
+    // Store the index being edited
+    sessionStorage.setItem('editingListingIndex', index);
+    
+    // Show the proposal modal with pre-filled data
+    showProposalModal();
+    
+    // Pre-fill the form fields after a short delay to ensure modal is rendered
+    setTimeout(() => {
+        if (document.getElementById('project-name')) document.getElementById('project-name').value = listing.projectName;
+        if (document.getElementById('project-category')) document.getElementById('project-category').value = listing.category;
+        if (document.getElementById('investment-type')) document.getElementById('investment-type').value = listing.investmentType;
+        if (document.getElementById('seeking-amount')) document.getElementById('seeking-amount').value = listing.seekingAmount;
+        if (document.getElementById('valuation') && listing.valuation) document.getElementById('valuation').value = listing.valuation;
+        if (document.getElementById('project-overview')) document.getElementById('project-overview').value = listing.overview;
+        if (document.getElementById('use-of-funds')) document.getElementById('use-of-funds').value = listing.useOfFunds;
+    }, 100);
+}
+
+function pauseListing(index) {
+    const listings = JSON.parse(localStorage.getItem('investorListings') || '[]');
+    if (listings[index]) {
+        listings[index].status = listings[index].status === 'paused' ? 'active' : 'paused';
+        localStorage.setItem('investorListings', JSON.stringify(listings));
+        showNotification(`Listing ${listings[index].status === 'paused' ? 'paused' : 'activated'} successfully`, 'success');
+        displayUserListings();
+    }
+}
+
+function viewListingAnalytics(index) {
+    showNotification('Analytics feature coming soon - track views, clicks, and engagement', 'info');
+}
+
+function viewListingOffers(index) {
+    showNotification('Inquiries & offers feature coming soon - all communication handled by Clippit Admin', 'info');
+}
+
+// Initialize listings display when the investor opportunities section is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Display user listings if we're on the investor opportunities page
+    setTimeout(() => {
+        displayUserListings();
+    }, 500);
+});
 
 // Add CSS animations
 const style = document.createElement('style');
