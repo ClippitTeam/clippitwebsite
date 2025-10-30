@@ -1447,9 +1447,22 @@ function showProposalModal() {
 
 function submitProposal(e) {
     e.preventDefault();
-    const projectName = document.getElementById('project-name').value;
+    
+    // Store the proposal data in sessionStorage so it can be accessed later
+    const proposalData = {
+        projectName: document.getElementById('project-name').value,
+        category: document.getElementById('project-category').value,
+        investmentType: document.getElementById('investment-type').value,
+        seekingAmount: document.getElementById('seeking-amount').value,
+        valuation: document.getElementById('valuation').value || null,
+        overview: document.getElementById('project-overview').value,
+        useOfFunds: document.getElementById('use-of-funds').value
+    };
+    
+    sessionStorage.setItem('currentListingData', JSON.stringify(proposalData));
+    
     closeModal();
-    showNotification(`Proposal for "${projectName}" saved!`, 'success');
+    showNotification(`Proposal for "${proposalData.projectName}" saved!`, 'success');
     setTimeout(() => showAssetsModal(), 500);
 }
 
@@ -1570,14 +1583,18 @@ function submitAssets(e) {
 }
 
 function showReviewModal() {
-    // Get all the entered data
-    const projectName = document.getElementById('project-name')?.value || 'Your Project Name';
-    const category = document.getElementById('project-category')?.value || 'category';
-    const investmentType = document.getElementById('investment-type')?.value || 'equity';
-    const seekingAmount = document.getElementById('seeking-amount')?.value || '0';
-    const valuation = document.getElementById('valuation')?.value || 'Not specified';
-    const overview = document.getElementById('project-overview')?.value || 'Project overview...';
-    const useOfFunds = document.getElementById('use-of-funds')?.value || 'Use of funds...';
+    // Retrieve the stored listing data from sessionStorage
+    const storedData = sessionStorage.getItem('currentListingData');
+    const listingData = storedData ? JSON.parse(storedData) : {};
+    
+    // Use the stored data
+    const projectName = listingData.projectName || 'Your Project Name';
+    const category = listingData.category || 'category';
+    const investmentType = listingData.investmentType || 'equity';
+    const seekingAmount = listingData.seekingAmount || '0';
+    const valuation = listingData.valuation || 'Not specified';
+    const overview = listingData.overview || 'Project overview...';
+    const useOfFunds = listingData.useOfFunds || 'Use of funds...';
     
     // Get file info
     const imageUpload = document.getElementById('image-upload');
