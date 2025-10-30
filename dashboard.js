@@ -1291,19 +1291,19 @@ function showVerificationModal() {
 
             <div>
                 <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Proof of ID (Upload)</label>
-                <div style="border: 2px dashed #4B5563; border-radius: 8px; padding: 2rem; text-align: center; cursor: pointer;" onclick="document.getElementById('id-upload').click()">
+                <div id="id-upload-area" style="border: 2px dashed #4B5563; border-radius: 8px; padding: 2rem; text-align: center; cursor: pointer;" onclick="document.getElementById('id-upload').click()">
                     <div style="font-size: 2rem; margin-bottom: 0.5rem;">📄</div>
                     <p style="font-size: 0.875rem;">Click to upload ID (Driver's License, Passport)</p>
-                    <input type="file" id="id-upload" style="display: none;" accept=".pdf,.jpg,.png">
+                    <input type="file" id="id-upload" style="display: none;" accept=".pdf,.jpg,.png,.jpeg" onchange="handleFileUpload(this, 'id-upload-area', 'ID Document')">
                 </div>
             </div>
 
             <div>
                 <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Proof of Business Ownership</label>
-                <div style="border: 2px dashed #4B5563; border-radius: 8px; padding: 2rem; text-align: center; cursor: pointer;" onclick="document.getElementById('business-upload').click()">
+                <div id="business-upload-area" style="border: 2px dashed #4B5563; border-radius: 8px; padding: 2rem; text-align: center; cursor: pointer;" onclick="document.getElementById('business-upload').click()">
                     <div style="font-size: 2rem; margin-bottom: 0.5rem;">📄</div>
                     <p style="font-size: 0.875rem;">Click to upload business registration</p>
-                    <input type="file" id="business-upload" style="display: none;" accept=".pdf,.jpg,.png">
+                    <input type="file" id="business-upload" style="display: none;" accept=".pdf,.jpg,.png,.jpeg" onchange="handleFileUpload(this, 'business-upload-area', 'Business Document')">
                 </div>
             </div>
 
@@ -1313,8 +1313,65 @@ function showVerificationModal() {
     showModal('Step 1: Verification', content);
 }
 
+function handleFileUpload(input, areaId, documentType) {
+    const file = input.files[0];
+    const uploadArea = document.getElementById(areaId);
+    
+    if (file && uploadArea) {
+        // Update the upload area to show the file was selected
+        uploadArea.innerHTML = `
+            <div style="font-size: 2rem; margin-bottom: 0.5rem; color: #10B981;">✓</div>
+            <p style="font-size: 0.875rem; color: #10B981; font-weight: 600;">${file.name}</p>
+            <p style="font-size: 0.75rem; color: #9CA3AF; margin-top: 0.5rem;">${(file.size / 1024).toFixed(2)} KB</p>
+            <button type="button" onclick="removeFile('${input.id}', '${areaId}', '${documentType}')" style="margin-top: 0.75rem; padding: 0.5rem 1rem; background: transparent; color: #EF4444; border: 1px solid #EF4444; border-radius: 6px; font-size: 0.875rem; cursor: pointer;">Remove File</button>
+        `;
+        uploadArea.style.borderColor = '#10B981';
+        uploadArea.style.background = 'rgba(16, 185, 129, 0.1)';
+        uploadArea.style.cursor = 'default';
+        
+        showNotification(`${documentType} uploaded: ${file.name}`, 'success');
+    }
+}
+
+function removeFile(inputId, areaId, documentType) {
+    const input = document.getElementById(inputId);
+    const uploadArea = document.getElementById(areaId);
+    
+    if (input) input.value = '';
+    
+    if (uploadArea) {
+        const isIdUpload = areaId === 'id-upload-area';
+        uploadArea.innerHTML = `
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📄</div>
+            <p style="font-size: 0.875rem;">${isIdUpload ? 'Click to upload ID (Driver\'s License, Passport)' : 'Click to upload business registration'}</p>
+            <input type="file" id="${inputId}" style="display: none;" accept=".pdf,.jpg,.png,.jpeg" onchange="handleFileUpload(this, '${areaId}', '${documentType}')">
+        `;
+        uploadArea.style.borderColor = '#4B5563';
+        uploadArea.style.background = 'transparent';
+        uploadArea.style.cursor = 'pointer';
+        uploadArea.onclick = () => document.getElementById(inputId).click();
+        
+        showNotification(`${documentType} removed`, 'info');
+    }
+}
+
 function submitVerification(e) {
     e.preventDefault();
+    
+    // Check if both files are uploaded
+    const idUpload = document.getElementById('id-upload');
+    const businessUpload = document.getElementById('business-upload');
+    
+    if (!idUpload.files.length) {
+        showNotification('Please upload your ID document', 'warning');
+        return;
+    }
+    
+    if (!businessUpload.files.length) {
+        showNotification('Please upload your business registration document', 'warning');
+        return;
+    }
+    
     closeModal();
     showNotification('Verification documents submitted!', 'success');
     setTimeout(() => showProposalModal(), 500);
