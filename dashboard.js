@@ -1318,16 +1318,23 @@ function handleFileUpload(input, areaId, documentType) {
     const uploadArea = document.getElementById(areaId);
     
     if (file && uploadArea) {
-        // Update the upload area to show the file was selected
+        // Keep the input element but hide it, and show the success message
+        const inputElement = input;
         uploadArea.innerHTML = `
             <div style="font-size: 2rem; margin-bottom: 0.5rem; color: #10B981;">✓</div>
             <p style="font-size: 0.875rem; color: #10B981; font-weight: 600;">${file.name}</p>
             <p style="font-size: 0.75rem; color: #9CA3AF; margin-top: 0.5rem;">${(file.size / 1024).toFixed(2)} KB</p>
             <button type="button" onclick="removeFile('${input.id}', '${areaId}', '${documentType}')" style="margin-top: 0.75rem; padding: 0.5rem 1rem; background: transparent; color: #EF4444; border: 1px solid #EF4444; border-radius: 6px; font-size: 0.875rem; cursor: pointer;">Remove File</button>
         `;
+        
+        // Re-append the input element (hidden) so the form can still access it
+        inputElement.style.display = 'none';
+        uploadArea.appendChild(inputElement);
+        
         uploadArea.style.borderColor = '#10B981';
         uploadArea.style.background = 'rgba(16, 185, 129, 0.1)';
         uploadArea.style.cursor = 'default';
+        uploadArea.onclick = null; // Remove the click handler
         
         showNotification(`${documentType} uploaded: ${file.name}`, 'success');
     }
