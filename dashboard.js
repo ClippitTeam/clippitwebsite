@@ -1385,6 +1385,10 @@ function submitVerification(e) {
 }
 
 function showProposalModal() {
+    // Get any saved data from sessionStorage
+    const storedData = sessionStorage.getItem('currentListingData');
+    const savedData = storedData ? JSON.parse(storedData) : {};
+    
     const content = `
         <form onsubmit="submitProposal(event)" style="display: flex; flex-direction: column; gap: 1rem;">
             <div style="background: #111827; padding: 1.5rem; border-radius: 8px; border: 1px solid #40E0D0; margin-bottom: 1rem;">
@@ -1394,17 +1398,17 @@ function showProposalModal() {
 
             <div>
                 <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Project Name</label>
-                <input type="text" id="project-name" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                <input type="text" id="project-name" value="${savedData.projectName || ''}" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
             </div>
 
             <div>
                 <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Category</label>
                 <select id="project-category" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
                     <option value="">Select category</option>
-                    <option value="app">Mobile App</option>
-                    <option value="website">Website</option>
-                    <option value="software">Software</option>
-                    <option value="company">Company/Business</option>
+                    <option value="app" ${savedData.category === 'app' ? 'selected' : ''}>Mobile App</option>
+                    <option value="website" ${savedData.category === 'website' ? 'selected' : ''}>Website</option>
+                    <option value="software" ${savedData.category === 'software' ? 'selected' : ''}>Software</option>
+                    <option value="company" ${savedData.category === 'company' ? 'selected' : ''}>Company/Business</option>
                 </select>
             </div>
 
@@ -1412,31 +1416,31 @@ function showProposalModal() {
                 <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Investment Type</label>
                 <select id="investment-type" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
                     <option value="">Select type</option>
-                    <option value="equity">Equity Funding</option>
-                    <option value="buyout">Full Buyout</option>
-                    <option value="partnership">Partnership</option>
-                    <option value="acquisition">Acquisition</option>
+                    <option value="equity" ${savedData.investmentType === 'equity' ? 'selected' : ''}>Equity Funding</option>
+                    <option value="buyout" ${savedData.investmentType === 'buyout' ? 'selected' : ''}>Full Buyout</option>
+                    <option value="partnership" ${savedData.investmentType === 'partnership' ? 'selected' : ''}>Partnership</option>
+                    <option value="acquisition" ${savedData.investmentType === 'acquisition' ? 'selected' : ''}>Acquisition</option>
                 </select>
             </div>
 
             <div>
                 <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Seeking Amount (AUD)</label>
-                <input type="number" id="seeking-amount" required min="1000" step="1000" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                <input type="number" id="seeking-amount" value="${savedData.seekingAmount || ''}" required min="1000" step="1000" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
             </div>
 
             <div>
                 <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Current Valuation (if applicable)</label>
-                <input type="number" id="valuation" min="0" step="1000" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                <input type="number" id="valuation" value="${savedData.valuation || ''}" min="0" step="1000" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
             </div>
 
             <div>
                 <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Project Overview</label>
-                <textarea id="project-overview" rows="4" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; resize: vertical;" placeholder="Describe your project, what problem it solves, and the market opportunity..."></textarea>
+                <textarea id="project-overview" rows="4" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; resize: vertical;" placeholder="Describe your project, what problem it solves, and the market opportunity...">${savedData.overview || ''}</textarea>
             </div>
 
             <div>
                 <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Use of Funds</label>
-                <textarea id="use-of-funds" rows="3" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; resize: vertical;" placeholder="How will the investment be used?"></textarea>
+                <textarea id="use-of-funds" rows="3" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; resize: vertical;" placeholder="How will the investment be used?">${savedData.useOfFunds || ''}</textarea>
             </div>
 
             <button type="submit" style="background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; padding: 0.75rem 1.5rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Continue to Upload Assets</button>
@@ -1515,6 +1519,14 @@ function handleAssetUpload(input, areaId, assetType) {
         const fileCount = input.files.length;
         const fileNames = Array.from(input.files).map(f => f.name).join(', ');
         const totalSize = Array.from(input.files).reduce((sum, f) => sum + f.size, 0);
+        
+        // Store file information for preview
+        const fileInfo = {
+            count: fileCount,
+            names: Array.from(input.files).map(f => f.name),
+            type: assetType
+        };
+        sessionStorage.setItem(`upload_${input.id}`, JSON.stringify(fileInfo));
         
         uploadArea.innerHTML = `
             <div style="font-size: 2rem; margin-bottom: 0.5rem; color: #10B981;">✓</div>
