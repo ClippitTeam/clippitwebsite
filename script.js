@@ -260,18 +260,30 @@ function handleLogin(event) {
     } else if (currentLoginType === 'customer') {
         // Customer demo accounts (for demonstration purposes)
         // In production, this would validate against a database
-        if (username && password && password.length >= 6) {
+        const customerAccounts = {
+            'customer@clippit.today': 'Customer123!',
+            'john@techstart.com': 'TechStart2025!',
+            'sarah@fitlife.com': 'FitLife2025!'
+        };
+        
+        if (customerAccounts[username] && customerAccounts[username] === password) {
             isValid = true;
         } else {
-            errorMessage = 'Invalid credentials. Password must be at least 6 characters.';
+            errorMessage = 'Invalid customer credentials. Please check your username and password.';
         }
     } else if (currentLoginType === 'investor') {
         // Investor demo accounts (for demonstration purposes)
         // In production, this would validate against a database
-        if (username && password && password.length >= 6) {
+        const investorAccounts = {
+            'investor@clippit.today': 'Investor123!',
+            'john.smith@venture.com': 'Venture2025!',
+            'emma.davis@capital.com': 'Capital2025!'
+        };
+        
+        if (investorAccounts[username] && investorAccounts[username] === password) {
             isValid = true;
         } else {
-            errorMessage = 'Invalid credentials. Password must be at least 6 characters.';
+            errorMessage = 'Invalid investor credentials. Please check your username and password.';
         }
     }
     
