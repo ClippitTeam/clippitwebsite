@@ -1570,16 +1570,125 @@ function submitAssets(e) {
 }
 
 function showReviewModal() {
+    // Get all the entered data
+    const projectName = document.getElementById('project-name')?.value || 'Your Project Name';
+    const category = document.getElementById('project-category')?.value || 'category';
+    const investmentType = document.getElementById('investment-type')?.value || 'equity';
+    const seekingAmount = document.getElementById('seeking-amount')?.value || '0';
+    const valuation = document.getElementById('valuation')?.value || 'Not specified';
+    const overview = document.getElementById('project-overview')?.value || 'Project overview...';
+    const useOfFunds = document.getElementById('use-of-funds')?.value || 'Use of funds...';
+    
+    // Get file info
+    const imageUpload = document.getElementById('image-upload');
+    const pitchUpload = document.getElementById('pitch-upload');
+    const videoUpload = document.getElementById('video-upload');
+    
+    const imageCount = imageUpload?.files.length || 0;
+    const hasPitch = pitchUpload?.files.length > 0;
+    const hasVideo = videoUpload?.files.length > 0;
+    
     const content = `
-        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-            <div style="background: #111827; padding: 1.5rem; border-radius: 8px; border: 1px solid #40E0D0; margin-bottom: 1rem; text-align: center;">
-                <div style="font-size: 3rem; margin-bottom: 0.5rem;">✅</div>
-                <h3 style="color: #40E0D0; margin-bottom: 0.5rem;">Step 4: Review & Submit</h3>
-                <p style="font-size: 0.875rem; color: #9CA3AF;">Your listing is ready for admin review</p>
+        <div style="display: flex; flex-direction: column; gap: 1.5rem; max-height: 70vh; overflow-y: auto;">
+            <div style="background: #111827; padding: 1.5rem; border-radius: 8px; border: 1px solid #40E0D0; margin-bottom: 1rem; text-align: center; position: sticky; top: 0; z-index: 10;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">👁️</div>
+                <h3 style="color: #40E0D0; margin-bottom: 0.5rem;">Preview Your Listing</h3>
+                <p style="font-size: 0.875rem; color: #9CA3AF;">This is how investors will see your listing</p>
             </div>
 
-            <div style="background: #111827; padding: 1.5rem; border-radius: 8px;">
-                <h4 style="color: #fff; margin-bottom: 1rem;">What Happens Next?</h4>
+            <!-- Investor View Preview -->
+            <div style="background: #111827; padding: 2rem; border-radius: 12px; border: 2px solid #40E0D0;">
+                <!-- Header -->
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 2rem;">
+                    <div style="flex: 1;">
+                        <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
+                            <div style="font-size: 3rem;">💼</div>
+                            <div>
+                                <h2 style="color: #40E0D0; font-size: 1.75rem; margin-bottom: 0.5rem;">${projectName}</h2>
+                                <p style="color: #9CA3AF; text-transform: capitalize;">${category.replace('-', ' ')}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="background: rgba(64, 224, 208, 0.2); color: #40E0D0; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600;">
+                        ${investmentType.replace('-', ' ').toUpperCase()}
+                    </div>
+                </div>
+
+                <!-- Investment Details -->
+                <div style="background: #1F2937; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
+                        <div>
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Seeking Amount</p>
+                            <p style="color: #40E0D0; font-size: 1.5rem; font-weight: 800;">$${parseFloat(seekingAmount).toLocaleString()} AUD</p>
+                        </div>
+                        <div>
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Current Valuation</p>
+                            <p style="color: #fff; font-size: 1.25rem; font-weight: 700;">${valuation !== 'Not specified' ? '$' + parseFloat(valuation).toLocaleString() + ' AUD' : valuation}</p>
+                        </div>
+                        <div>
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Investment Type</p>
+                            <p style="color: #fff; font-size: 1.25rem; font-weight: 700; text-transform: capitalize;">${investmentType.replace('-', ' ')}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Overview -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: #40E0D0; font-size: 1.25rem; margin-bottom: 1rem;">📋 Project Overview</h3>
+                    <div style="background: #1F2937; padding: 1.5rem; border-radius: 8px;">
+                        <p style="color: #9CA3AF; line-height: 1.6; white-space: pre-wrap;">${overview}</p>
+                    </div>
+                </div>
+
+                <!-- Use of Funds -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: #40E0D0; font-size: 1.25rem; margin-bottom: 1rem;">💰 Use of Funds</h3>
+                    <div style="background: #1F2937; padding: 1.5rem; border-radius: 8px;">
+                        <p style="color: #9CA3AF; line-height: 1.6; white-space: pre-wrap;">${useOfFunds}</p>
+                    </div>
+                </div>
+
+                <!-- Assets -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: #40E0D0; font-size: 1.25rem; margin-bottom: 1rem;">📎 Assets & Materials</h3>
+                    <div style="background: #1F2937; padding: 1.5rem; border-radius: 8px;">
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <span style="font-size: 1.5rem;">🖼️</span>
+                                <p style="color: ${imageCount > 0 ? '#10B981' : '#6B7280'};">
+                                    ${imageCount > 0 ? `${imageCount} project image${imageCount > 1 ? 's' : ''} attached` : 'No images uploaded'}
+                                </p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <span style="font-size: 1.5rem;">📊</span>
+                                <p style="color: ${hasPitch ? '#10B981' : '#6B7280'};">
+                                    ${hasPitch ? 'Pitch deck attached' : 'No pitch deck uploaded'}
+                                </p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <span style="font-size: 1.5rem;">🎬</span>
+                                <p style="color: ${hasVideo ? '#10B981' : '#6B7280'};">
+                                    ${hasVideo ? 'Demo video attached' : 'No demo video uploaded'}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Investor Actions Preview -->
+                <div style="padding: 1.5rem; background: #1F2937; border-radius: 8px; border: 1px dashed #4B5563;">
+                    <p style="color: #9CA3AF; font-size: 0.875rem; text-align: center; margin-bottom: 1rem;">Investors will see these action buttons:</p>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 150px; padding: 0.75rem; background: rgba(64, 224, 208, 0.2); color: #40E0D0; border-radius: 8px; text-align: center; font-weight: 600;">💬 Ask Question</div>
+                        <div style="flex: 1; min-width: 150px; padding: 0.75rem; background: rgba(64, 224, 208, 0.2); color: #40E0D0; border-radius: 8px; text-align: center; font-weight: 600;">💰 Make Offer</div>
+                        <div style="flex: 1; min-width: 150px; padding: 0.75rem; background: rgba(64, 224, 208, 0.2); color: #40E0D0; border-radius: 8px; text-align: center; font-weight: 600;">📥 Request Details</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- What Happens Next -->
+            <div style="background: #111827; padding: 1.5rem; border-radius: 8px; border: 1px solid #4B5563;">
+                <h4 style="color: #fff; margin-bottom: 1rem;">✅ What Happens Next?</h4>
                 <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                     <div style="display: flex; gap: 1rem;">
                         <span style="color: #40E0D0;">1.</span>
@@ -1595,21 +1704,32 @@ function showReviewModal() {
                     </div>
                     <div style="display: flex; gap: 1rem;">
                         <span style="color: #40E0D0;">4.</span>
-                        <p style="font-size: 0.875rem; color: #9CA3AF;">All communication is handled through Clippit Admin</p>
+                        <p style="font-size: 0.875rem; color: #9CA3AF;">All communication is handled securely through Clippit Admin</p>
                     </div>
                 </div>
             </div>
 
-            <div style="background: rgba(64, 224, 208, 0.1); padding: 1rem; border-radius: 8px; font-size: 0.875rem;">
-                <p>✓ NDA protection for all parties</p>
-                <p>✓ Track views, questions, and offers in real-time</p>
+            <div style="background: rgba(64, 224, 208, 0.1); padding: 1rem; border-radius: 8px; font-size: 0.875rem; border: 1px solid rgba(64, 224, 208, 0.3);">
+                <p style="margin-bottom: 0.5rem;">✓ NDA protection for all parties</p>
+                <p style="margin-bottom: 0.5rem;">✓ Track views, questions, and offers in real-time</p>
                 <p>✓ Full analytics dashboard access</p>
             </div>
 
-            <button onclick="submitListing()" style="background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; padding: 0.75rem 1.5rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer; width: 100%;">Submit for Review</button>
+            <div style="display: flex; gap: 1rem; position: sticky; bottom: 0; background: #1F2937; padding: 1rem 0;">
+                <button onclick="editListing()" style="flex: 1; background: transparent; color: #40E0D0; border: 2px solid #40E0D0; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer;">← Go Back & Edit</button>
+                <button onclick="submitListing()" style="flex: 1; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Submit for Review →</button>
+            </div>
         </div>
     `;
     showModal('Review & Submit', content);
+}
+
+function editListing() {
+    closeModal();
+    showNotification('Returning to edit your listing...', 'info');
+    setTimeout(() => {
+        showProposalModal();
+    }, 500);
 }
 
 function submitListing() {
