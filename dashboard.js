@@ -1,5 +1,10 @@
 // Dashboard Interactive Features
 
+// Authentication Check - Redirect if not logged in
+if (!sessionStorage.getItem('isLoggedIn') || sessionStorage.getItem('loginType') !== 'customer') {
+    window.location.href = 'login.html';
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Create modal container
     createModalContainer();

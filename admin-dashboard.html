@@ -427,24 +427,24 @@
                 <div class="dashboard-card">
                     <div class="card-header">
                         <h2>Integrations</h2>
-                        <button class="card-action">Configure →</button>
+                        <button class="card-action" onclick="document.querySelector('[href=\'#integrations\']').click()">Configure →</button>
                     </div>
                     <div class="card-content">
-                        <div class="integration-item">
+                        <div class="integration-item" onclick="configureIntegration('MYOB')" style="cursor: pointer;">
                             <div class="integration-logo">📊</div>
                             <div class="integration-info">
                                 <h4>MYOB</h4>
                                 <p class="integration-status connected">Connected</p>
                             </div>
                         </div>
-                        <div class="integration-item">
+                        <div class="integration-item" onclick="configureIntegration('Xero')" style="cursor: pointer;">
                             <div class="integration-logo">💼</div>
                             <div class="integration-info">
                                 <h4>Xero</h4>
                                 <p class="integration-status connected">Connected</p>
                             </div>
                         </div>
-                        <div class="integration-item">
+                        <div class="integration-item" onclick="configureIntegration('Google Analytics')" style="cursor: pointer;">
                             <div class="integration-logo">📈</div>
                             <div class="integration-info">
                                 <h4>Google Analytics</h4>

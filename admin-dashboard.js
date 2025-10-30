@@ -1,5 +1,10 @@
 // Admin Dashboard Interactive Features
 
+// Authentication Check - Redirect if not logged in
+if (!sessionStorage.getItem('isLoggedIn') || sessionStorage.getItem('loginType') !== 'admin') {
+    window.location.href = 'login.html';
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Create modal container
     createModalContainer();
@@ -1101,7 +1106,8 @@ function showProjectMenu(projectId) {
             <button onclick="quickProjectAction('${projectId}', 'Assign Team')" style="width: 100%; padding: 0.75rem; background: #111827; color: #fff; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer; text-align: left;">👥 Assign Team</button>
             <button onclick="quickProjectAction('${projectId}', 'View Files')" style="width: 100%; padding: 0.75rem; background: #111827; color: #fff; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer; text-align: left;">📁 View Files</button>
             <button onclick="quickProjectAction('${projectId}', 'Send Update')" style="width: 100%; padding: 0.75rem; background: #111827; color: #fff; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer; text-align: left;">📧 Send Update</button>
-            <button onclick="quickProjectAction('${projectId}', 'Archive')" style="width: 100%; padding: 0.75rem; background: #111827; color: #EF4444; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer; text-align: left;">🗄️ Archive Project</button>
+            <button onclick="quickProjectAction('${projectId}', 'Archive')" style="width: 100%; padding: 0.75rem; background: #111827; color: #fff; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer; text-align: left;">🗄️ Archive Project</button>
+            <button onclick="removeProject('${projectId}')" style="width: 100%; padding: 0.75rem; background: #111827; color: #EF4444; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer; text-align: left;">🗑️ Delete Project</button>
         </div>
     `;
     showModal('Project Actions', content);
@@ -1109,7 +1115,336 @@ function showProjectMenu(projectId) {
 
 function quickProjectAction(projectId, action) {
     closeModal();
-    showNotification(`${action} - ${projectId}`, 'info');
+    
+    if (action === 'Edit') {
+        showEditProjectModal(projectId);
+    } else if (action === 'Update Status') {
+        showUpdateProjectStatusModal(projectId);
+    } else if (action === 'Assign Team') {
+        showAssignProjectTeamModal(projectId);
+    } else if (action === 'View Files') {
+        showProjectFilesModal(projectId);
+    } else if (action === 'Send Update') {
+        showSendProjectUpdateModal(projectId);
+    } else if (action === 'Archive') {
+        archiveProject(projectId);
+    }
+}
+
+// Edit Project Modal
+function showEditProjectModal(projectId) {
+    const content = `
+        <form onsubmit="saveProjectEdit(event, '${projectId}')" style="display: flex; flex-direction: column; gap: 1rem;">
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Project Name *</label>
+                <input type="text" id="edit-project-name" value="E-Commerce Platform" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Client *</label>
+                <select id="edit-project-client" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                    <option value="techstart" selected>TechStart Inc.</option>
+                    <option value="fitlife">FitLife App</option>
+                    <option value="globalcorp">GlobalCorp</option>
+                    <option value="connecthub">ConnectHub</option>
+                </select>
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Status *</label>
+                <select id="edit-project-status" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                    <option value="planning">Planning</option>
+                    <option value="in-progress" selected>In Progress</option>
+                    <option value="review">In Review</option>
+                    <option value="completed">Completed</option>
+                    <option value="on-hold">On Hold</option>
+                </select>
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Due Date *</label>
+                <input type="date" id="edit-project-due-date" value="2025-10-28" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Budget</label>
+                <input type="number" id="edit-project-budget" value="25000" min="0" step="100" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;" placeholder="Project budget">
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" style="flex: 1; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; padding: 0.75rem 1.5rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Save Changes</button>
+                <button type="button" onclick="closeModal()" style="flex: 1; background: transparent; color: #40E0D0; border: 2px solid #40E0D0; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer;">Cancel</button>
+            </div>
+        </form>
+    `;
+    showModal('Edit Project', content);
+}
+
+function saveProjectEdit(e, projectId) {
+    e.preventDefault();
+    const projectName = document.getElementById('edit-project-name').value;
+    closeModal();
+    showNotification(`Project "${projectName}" updated successfully!`, 'success');
+}
+
+// Update Project Status Modal
+function showUpdateProjectStatusModal(projectId) {
+    const content = `
+        <form onsubmit="updateProjectStatus(event, '${projectId}')" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div style="background: #111827; padding: 1.5rem; border-radius: 8px; border: 1px solid #4B5563;">
+                <h4 style="color: #fff; margin-bottom: 1rem;">Select New Status</h4>
+                <select id="project-new-status" required style="width: 100%; padding: 0.75rem; background: #1F2937; border: 1px solid #4B5563; border-radius: 8px; color: #fff; font-size: 1rem;">
+                    <option value="planning">📋 Planning</option>
+                    <option value="in-progress" selected>⚡ In Progress</option>
+                    <option value="review">👀 In Review</option>
+                    <option value="completed">✅ Completed</option>
+                    <option value="on-hold">⏸️ On Hold</option>
+                    <option value="cancelled">❌ Cancelled</option>
+                </select>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Status Update Note (Optional)</label>
+                <textarea id="status-update-note" rows="3" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; resize: vertical;" placeholder="Add a note about this status change..."></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <input type="checkbox" id="notify-client-status" checked style="width: 20px; height: 20px;">
+                <label for="notify-client-status" style="color: #fff;">Notify client about status change</label>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" style="flex: 1; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; padding: 0.75rem 1.5rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Update Status</button>
+                <button type="button" onclick="closeModal()" style="flex: 1; background: transparent; color: #40E0D0; border: 2px solid #40E0D0; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer;">Cancel</button>
+            </div>
+        </form>
+    `;
+    showModal('Update Project Status', content);
+}
+
+function updateProjectStatus(e, projectId) {
+    e.preventDefault();
+    const newStatus = document.getElementById('project-new-status').value;
+    const statusLabels = {
+        'planning': 'Planning',
+        'in-progress': 'In Progress',
+        'review': 'In Review',
+        'completed': 'Completed',
+        'on-hold': 'On Hold',
+        'cancelled': 'Cancelled'
+    };
+    closeModal();
+    showNotification(`Project status updated to "${statusLabels[newStatus]}"`, 'success');
+}
+
+// Assign Project Team Modal
+function showAssignProjectTeamModal(projectId) {
+    const content = `
+        <form onsubmit="saveProjectTeam(event, '${projectId}')" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div style="background: #111827; padding: 1.5rem; border-radius: 8px; border: 1px solid #4B5563;">
+                <h4 style="color: #fff; margin-bottom: 1rem;">Select Team Members</h4>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #1F2937; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" checked style="width: 20px; height: 20px;">
+                        <div style="flex: 1;">
+                            <span style="color: #fff; font-weight: 600;">Sarah Chen</span>
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-top: 0.25rem;">Senior Developer</p>
+                        </div>
+                    </label>
+                    
+                    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #1F2937; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" checked style="width: 20px; height: 20px;">
+                        <div style="flex: 1;">
+                            <span style="color: #fff; font-weight: 600;">Marcus Rodriguez</span>
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-top: 0.25rem;">UI/UX Designer</p>
+                        </div>
+                    </label>
+                    
+                    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #1F2937; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" style="width: 20px; height: 20px;">
+                        <div style="flex: 1;">
+                            <span style="color: #fff; font-weight: 600;">Emily Watson</span>
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-top: 0.25rem;">Project Manager</p>
+                        </div>
+                    </label>
+                    
+                    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #1F2937; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" style="width: 20px; height: 20px;">
+                        <div style="flex: 1;">
+                            <span style="color: #fff; font-weight: 600;">Alex Thompson</span>
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-top: 0.25rem;">Backend Developer</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" style="flex: 1; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; padding: 0.75rem 1.5rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Save Team</button>
+                <button type="button" onclick="closeModal()" style="flex: 1; background: transparent; color: #40E0D0; border: 2px solid #40E0D0; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer;">Cancel</button>
+            </div>
+        </form>
+    `;
+    showModal('Assign Team Members', content);
+}
+
+function saveProjectTeam(e, projectId) {
+    e.preventDefault();
+    closeModal();
+    showNotification('Project team updated successfully!', 'success');
+}
+
+// Project Files Modal
+function showProjectFilesModal(projectId) {
+    const content = `
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div style="background: #111827; padding: 1.5rem; border-radius: 8px; border: 1px solid #4B5563;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h4 style="color: #fff; margin: 0;">Project Files</h4>
+                    <button onclick="uploadProjectFile('${projectId}')" style="padding: 0.5rem 1rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer;">+ Upload File</button>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background: #1F2937; border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="font-size: 1.5rem;">📄</span>
+                            <div>
+                                <p style="color: #fff; font-weight: 600; margin-bottom: 0.25rem;">design-mockups.pdf</p>
+                                <p style="color: #9CA3AF; font-size: 0.75rem;">2.4 MB • Uploaded 2 days ago</p>
+                            </div>
+                        </div>
+                        <button onclick="downloadFile('design-mockups.pdf')" style="padding: 0.5rem 1rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 6px; cursor: pointer; font-size: 0.875rem;">Download</button>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background: #1F2937; border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="font-size: 1.5rem;">🖼️</span>
+                            <div>
+                                <p style="color: #fff; font-weight: 600; margin-bottom: 0.25rem;">assets.zip</p>
+                                <p style="color: #9CA3AF; font-size: 0.75rem;">15.8 MB • Uploaded 5 days ago</p>
+                            </div>
+                        </div>
+                        <button onclick="downloadFile('assets.zip')" style="padding: 0.5rem 1rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 6px; cursor: pointer; font-size: 0.875rem;">Download</button>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background: #1F2937; border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="font-size: 1.5rem;">📊</span>
+                            <div>
+                                <p style="color: #fff; font-weight: 600; margin-bottom: 0.25rem;">requirements.docx</p>
+                                <p style="color: #9CA3AF; font-size: 0.75rem;">890 KB • Uploaded 1 week ago</p>
+                            </div>
+                        </div>
+                        <button onclick="downloadFile('requirements.docx')" style="padding: 0.5rem 1rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 6px; cursor: pointer; font-size: 0.875rem;">Download</button>
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="closeModal()" style="background: transparent; color: #40E0D0; border: 2px solid #40E0D0; padding: 0.75rem; border-radius: 50px; font-weight: 600; cursor: pointer;">Close</button>
+        </div>
+    `;
+    showModal('Project Files', content);
+}
+
+function uploadProjectFile(projectId) {
+    showNotification('File upload feature coming soon!', 'info');
+}
+
+function downloadFile(filename) {
+    showNotification(`Downloading ${filename}...`, 'info');
+}
+
+// Send Project Update Modal
+function showSendProjectUpdateModal(projectId) {
+    const content = `
+        <form onsubmit="sendProjectUpdate(event, '${projectId}')" style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="background: #111827; padding: 1rem; border-radius: 8px; border: 1px solid #4B5563;">
+                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.25rem;">To:</p>
+                <p style="color: #fff; font-weight: 600;">John Davis (TechStart Inc.)</p>
+                <p style="color: #9CA3AF; font-size: 0.875rem;">john@techstart.com</p>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Subject *</label>
+                <input type="text" id="update-subject" value="Project Update: E-Commerce Platform" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Message *</label>
+                <textarea id="update-message" rows="8" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; resize: vertical;" placeholder="Type your project update here..."></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <input type="checkbox" id="include-progress" checked style="width: 20px; height: 20px;">
+                <label for="include-progress" style="color: #fff;">Include progress report</label>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" style="flex: 1; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; padding: 0.75rem 1.5rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Send Update</button>
+                <button type="button" onclick="closeModal()" style="flex: 1; background: transparent; color: #40E0D0; border: 2px solid #40E0D0; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer;">Cancel</button>
+            </div>
+        </form>
+    `;
+    showModal('Send Project Update', content);
+}
+
+function sendProjectUpdate(e, projectId) {
+    e.preventDefault();
+    const subject = document.getElementById('update-subject').value;
+    closeModal();
+    showNotification(`Project update "${subject}" sent to client!`, 'success');
+}
+
+// Archive Project
+function archiveProject(projectId) {
+    const content = `
+        <div style="text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🗄️</div>
+            <h3 style="color: #fff; font-size: 1.5rem; margin-bottom: 1rem;">Archive Project?</h3>
+            <p style="color: #9CA3AF; margin-bottom: 2rem;">This will move the project to the archive. You can restore it later if needed.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button onclick="confirmArchiveProject('${projectId}')" style="background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; padding: 0.75rem 1.5rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Archive Project</button>
+                <button onclick="closeModal()" style="background: transparent; color: #40E0D0; border: 2px solid #40E0D0; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer;">Cancel</button>
+            </div>
+        </div>
+    `;
+    showModal('Confirm Archive', content);
+}
+
+function confirmArchiveProject(projectId) {
+    closeModal();
+    showNotification('Project archived successfully!', 'success');
+}
+
+// Remove/Delete Project
+function removeProject(projectId) {
+    const content = `
+        <div style="text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 1rem; color: #EF4444;">⚠️</div>
+            <h3 style="color: #fff; font-size: 1.5rem; margin-bottom: 1rem;">Delete Project?</h3>
+            <p style="color: #9CA3AF; margin-bottom: 1rem;">This will permanently delete the project and all associated data.</p>
+            <p style="color: #EF4444; font-weight: 600; margin-bottom: 2rem;">This action cannot be undone!</p>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button onclick="confirmDeleteProject('${projectId}')" style="background: #EF4444; color: #fff; padding: 0.75rem 1.5rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Delete Project</button>
+                <button onclick="closeModal()" style="background: transparent; color: #40E0D0; border: 2px solid #40E0D0; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer;">Cancel</button>
+            </div>
+        </div>
+    `;
+    showModal('Confirm Deletion', content);
+}
+
+function confirmDeleteProject(projectId) {
+    // Find and remove the project row from both table and grid views
+    const tableRows = document.querySelectorAll(`tr[onclick*="${projectId}"]`);
+    tableRows.forEach(row => {
+        row.style.transition = 'opacity 0.3s';
+        row.style.opacity = '0';
+        setTimeout(() => row.remove(), 300);
+    });
+    
+    const gridCards = document.querySelectorAll(`div[onclick*="${projectId}"]`);
+    gridCards.forEach(card => {
+        card.style.transition = 'opacity 0.3s';
+        card.style.opacity = '0';
+        setTimeout(() => card.remove(), 300);
+    });
+    
+    closeModal();
+    showNotification('Project deleted successfully!', 'success');
 }
 
 // Admin Clients Tab Functions
@@ -1211,7 +1546,357 @@ function clientQuickAction(action) {
 
 function clientMenuAction(clientId, action) {
     closeModal();
-    showNotification(`${action} for ${clientId}`, 'info');
+    
+    if (action === 'Edit') {
+        showEditClientModal(clientId);
+    } else if (action === 'View Projects') {
+        showClientProjectsModal(clientId);
+    } else if (action === 'Send Email') {
+        showSendClientEmailModal(clientId);
+    } else if (action === 'View Invoices') {
+        showClientInvoicesModal(clientId);
+    } else if (action === 'Add Note') {
+        showAddClientNoteModal(clientId);
+    } else if (action === 'Deactivate') {
+        showDeactivateClientModal(clientId);
+    }
+}
+
+// Edit Client Modal
+function showEditClientModal(clientId) {
+    const content = `
+        <form onsubmit="saveClientEdit(event, '${clientId}')" style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: #fff;">First Name *</label>
+                    <input type="text" id="edit-client-first-name" value="John" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Last Name *</label>
+                    <input type="text" id="edit-client-last-name" value="Davis" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                </div>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Company *</label>
+                <input type="text" id="edit-client-company" value="TechStart Inc." required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Email *</label>
+                <input type="email" id="edit-client-email" value="john@techstart.com" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Phone</label>
+                <input type="tel" id="edit-client-phone" value="+61 412 345 678" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Address</label>
+                <textarea id="edit-client-address" rows="2" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; resize: vertical;">123 Tech Street, Sydney NSW 2000</textarea>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" style="flex: 1; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; padding: 0.75rem 1.5rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Save Changes</button>
+                <button type="button" onclick="closeModal()" style="flex: 1; background: transparent; color: #40E0D0; border: 2px solid #40E0D0; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer;">Cancel</button>
+            </div>
+        </form>
+    `;
+    showModal('Edit Client', content);
+}
+
+function saveClientEdit(e, clientId) {
+    e.preventDefault();
+    const firstName = document.getElementById('edit-client-first-name').value;
+    const lastName = document.getElementById('edit-client-last-name').value;
+    const company = document.getElementById('edit-client-company').value;
+    closeModal();
+    showNotification(`Client "${firstName} ${lastName}" (${company}) updated successfully!`, 'success');
+}
+
+// View Client Projects Modal
+function showClientProjectsModal(clientId) {
+    const content = `
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div style="background: #111827; padding: 1.5rem; border-radius: 8px; border: 1px solid #4B5563;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h4 style="color: #fff; margin: 0;">Active Projects</h4>
+                    <button onclick="closeModal(); showNewProjectModal();" style="padding: 0.5rem 1rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer;">+ New Project</button>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <div style="padding: 1rem; background: #1F2937; border-radius: 8px; border-left: 3px solid #40E0D0;">
+                        <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 0.5rem;">
+                            <div style="flex: 1;">
+                                <h5 style="color: #40E0D0; font-size: 1.125rem; margin-bottom: 0.25rem;">E-Commerce Platform</h5>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Full-stack development project</p>
+                            </div>
+                            <span style="background: rgba(64, 224, 208, 0.2); color: #40E0D0; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">IN PROGRESS</span>
+                        </div>
+                        <div style="display: flex; gap: 1rem; color: #9CA3AF; font-size: 0.875rem;">
+                            <span>💰 $25,000</span>
+                            <span>📅 Due: Oct 28, 2025</span>
+                            <span>👥 Sarah Chen, Marcus Rodriguez</span>
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 1rem; background: #1F2937; border-radius: 8px; border-left: 3px solid #FBB624;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                            <div style="flex: 1;">
+                                <h5 style="color: #FBB624; font-size: 1.125rem; margin-bottom: 0.25rem;">Mobile App Redesign</h5>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">UI/UX overhaul project</p>
+                            </div>
+                            <span style="background: rgba(251, 191, 36, 0.2); color: #FBB624; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">PLANNING</span>
+                        </div>
+                        <div style="display: flex; gap: 1rem; color: #9CA3AF; font-size: 0.875rem;">
+                            <span>💰 $15,000</span>
+                            <span>📅 Due: Nov 15, 2025</span>
+                            <span>👥 Marcus Rodriguez</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="background: #111827; padding: 1.5rem; border-radius: 8px; border: 1px solid #4B5563;">
+                <h4 style="color: #fff; margin-bottom: 1rem;">Completed Projects (3)</h4>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem; background: #1F2937; border-radius: 6px;">
+                        <span style="color: #fff;">Corporate Website</span>
+                        <span style="color: #10B981;">✓ Completed</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem; background: #1F2937; border-radius: 6px;">
+                        <span style="color: #fff;">Brand Identity Design</span>
+                        <span style="color: #10B981;">✓ Completed</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem; background: #1F2937; border-radius: 6px;">
+                        <span style="color: #fff;">SEO Optimization</span>
+                        <span style="color: #10B981;">✓ Completed</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="closeModal()" style="background: transparent; color: #40E0D0; border: 2px solid #40E0D0; padding: 0.75rem; border-radius: 50px; font-weight: 600; cursor: pointer;">Close</button>
+        </div>
+    `;
+    showModal('Client Projects - TechStart Inc.', content);
+}
+
+// Send Email to Client Modal
+function showSendClientEmailModal(clientId) {
+    const content = `
+        <form onsubmit="sendClientEmail(event, '${clientId}')" style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="background: #111827; padding: 1rem; border-radius: 8px; border: 1px solid #4B5563;">
+                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.25rem;">To:</p>
+                <p style="color: #fff; font-weight: 600;">John Davis</p>
+                <p style="color: #9CA3AF; font-size: 0.875rem;">john@techstart.com</p>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Subject *</label>
+                <input type="text" id="client-email-subject" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;" placeholder="Enter email subject">
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Message *</label>
+                <textarea id="client-email-message" rows="10" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; resize: vertical;" placeholder="Type your message here..."></textarea>
+            </div>
+            
+            <div style="background: #111827; padding: 1rem; border-radius: 8px; border: 1px solid #4B5563;">
+                <h5 style="color: #fff; margin-bottom: 0.75rem;">Attachments (Optional)</h5>
+                <button type="button" onclick="showNotification('File attachment feature coming soon!', 'info')" style="width: 100%; padding: 0.75rem; background: #1F2937; color: #40E0D0; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer;">📎 Attach Files</button>
+            </div>
+            
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <input type="checkbox" id="client-email-copy" checked style="width: 20px; height: 20px;">
+                <label for="client-email-copy" style="color: #fff;">Send a copy to myself</label>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" style="flex: 1; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; padding: 0.75rem 1.5rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Send Email</button>
+                <button type="button" onclick="closeModal()" style="flex: 1; background: transparent; color: #40E0D0; border: 2px solid #40E0D0; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer;">Cancel</button>
+            </div>
+        </form>
+    `;
+    showModal('Send Email to Client', content);
+}
+
+function sendClientEmail(e, clientId) {
+    e.preventDefault();
+    const subject = document.getElementById('client-email-subject').value;
+    closeModal();
+    showNotification(`Email "${subject}" sent to client successfully!`, 'success');
+}
+
+// View Client Invoices Modal
+function showClientInvoicesModal(clientId) {
+    const content = `
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div style="background: #111827; padding: 1.5rem; border-radius: 8px; border: 1px solid #4B5563;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h4 style="color: #fff; margin: 0;">Client Invoices</h4>
+                    <button onclick="closeModal(); showCreateInvoiceModal();" style="padding: 0.5rem 1rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer;">+ New Invoice</button>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div style="text-align: center; padding: 1rem; background: #1F2937; border-radius: 8px;">
+                        <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.25rem;">Total Billed</p>
+                        <p style="color: #40E0D0; font-size: 1.5rem; font-weight: 700;">$45,000</p>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: #1F2937; border-radius: 8px;">
+                        <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.25rem;">Paid</p>
+                        <p style="color: #10B981; font-size: 1.5rem; font-weight: 700;">$30,000</p>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: #1F2937; border-radius: 8px;">
+                        <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.25rem;">Outstanding</p>
+                        <p style="color: #FBB624; font-size: 1.5rem; font-weight: 700;">$15,000</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <div style="padding: 1rem; background: #1F2937; border-radius: 8px; border-left: 3px solid #FBB624;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                            <div>
+                                <h5 style="color: #FBB624; font-size: 1.125rem; margin-bottom: 0.25rem;">INV-1235</h5>
+                                <p style="color: #9CA3AF; font-size: 0.875rem;">E-Commerce Platform Development</p>
+                            </div>
+                            <span style="background: rgba(251, 191, 36, 0.2); color: #FBB624; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">PENDING</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; color: #9CA3AF; font-size: 0.875rem;">
+                            <span>💰 $15,000</span>
+                            <span>📅 Due: Oct 30, 2025</span>
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 1rem; background: #1F2937; border-radius: 8px; border-left: 3px solid #10B981;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                            <div>
+                                <h5 style="color: #10B981; font-size: 1.125rem; margin-bottom: 0.25rem;">INV-1198</h5>
+                                <p style="color: #9CA3AF; font-size: 0.875rem;">Corporate Website - Final Payment</p>
+                            </div>
+                            <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">PAID</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; color: #9CA3AF; font-size: 0.875rem;">
+                            <span>💰 $18,000</span>
+                            <span>📅 Paid: Sep 15, 2025</span>
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 1rem; background: #1F2937; border-radius: 8px; border-left: 3px solid #10B981;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                            <div>
+                                <h5 style="color: #10B981; font-size: 1.125rem; margin-bottom: 0.25rem;">INV-1156</h5>
+                                <p style="color: #9CA3AF; font-size: 0.875rem;">Brand Identity Design</p>
+                            </div>
+                            <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">PAID</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; color: #9CA3AF; font-size: 0.875rem;">
+                            <span>💰 $12,000</span>
+                            <span>📅 Paid: Aug 20, 2025</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="closeModal()" style="background: transparent; color: #40E0D0; border: 2px solid #40E0D0; padding: 0.75rem; border-radius: 50px; font-weight: 600; cursor: pointer;">Close</button>
+        </div>
+    `;
+    showModal('Client Invoices - TechStart Inc.', content);
+}
+
+// Add Client Note Modal
+function showAddClientNoteModal(clientId) {
+    const content = `
+        <form onsubmit="saveClientNote(event, '${clientId}')" style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="background: #111827; padding: 1rem; border-radius: 8px; border: 1px solid #4B5563;">
+                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.25rem;">Adding note for:</p>
+                <p style="color: #40E0D0; font-weight: 600; font-size: 1.125rem;">John Davis (TechStart Inc.)</p>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Note Category</label>
+                <select id="note-category" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                    <option value="general">📝 General Note</option>
+                    <option value="meeting">📅 Meeting Notes</option>
+                    <option value="call">📞 Phone Call</option>
+                    <option value="feedback">💬 Client Feedback</option>
+                    <option value="important">⚠️ Important</option>
+                </select>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Note *</label>
+                <textarea id="client-note" rows="8" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; resize: vertical;" placeholder="Type your note here..."></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <input type="checkbox" id="note-pinned" style="width: 20px; height: 20px;">
+                <label for="note-pinned" style="color: #fff;">Pin this note to top</label>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" style="flex: 1; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; padding: 0.75rem 1.5rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Save Note</button>
+                <button type="button" onclick="closeModal()" style="flex: 1; background: transparent; color: #40E0D0; border: 2px solid #40E0D0; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer;">Cancel</button>
+            </div>
+        </form>
+    `;
+    showModal('Add Client Note', content);
+}
+
+function saveClientNote(e, clientId) {
+    e.preventDefault();
+    const note = document.getElementById('client-note').value;
+    const category = document.getElementById('note-category').value;
+    closeModal();
+    showNotification(`Note saved successfully for client!`, 'success');
+}
+
+// Deactivate Client Modal
+function showDeactivateClientModal(clientId) {
+    const content = `
+        <div style="text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 1rem; color: #EF4444;">⚠️</div>
+            <h3 style="color: #fff; font-size: 1.5rem; margin-bottom: 1rem;">Deactivate Client?</h3>
+            <p style="color: #9CA3AF; margin-bottom: 1rem;">This will deactivate the client account and revoke their access.</p>
+            <p style="color: #FBB624; font-weight: 600; margin-bottom: 2rem;">This action can be reversed later if needed.</p>
+            
+            <div style="background: #111827; padding: 1.5rem; border-radius: 8px; border: 1px solid #4B5563; text-align: left; margin-bottom: 1.5rem;">
+                <h4 style="color: #fff; margin-bottom: 0.75rem;">What happens when you deactivate:</h4>
+                <ul style="color: #9CA3AF; font-size: 0.875rem; padding-left: 1.5rem; margin: 0;">
+                    <li>Client login access will be revoked</li>
+                    <li>Projects will remain but marked as "Client Inactive"</li>
+                    <li>Invoices and payment history preserved</li>
+                    <li>Can be reactivated at any time</li>
+                </ul>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button onclick="confirmDeactivateClient('${clientId}')" style="background: #EF4444; color: #fff; padding: 0.75rem 1.5rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Deactivate Client</button>
+                <button onclick="closeModal()" style="background: transparent; color: #40E0D0; border: 2px solid #40E0D0; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer;">Cancel</button>
+            </div>
+        </div>
+    `;
+    showModal('Confirm Deactivation', content);
+}
+
+function confirmDeactivateClient(clientId) {
+    // Find and fade out the client row/card
+    const tableRows = document.querySelectorAll(`tr[onclick*="${clientId}"]`);
+    tableRows.forEach(row => {
+        row.style.transition = 'opacity 0.3s';
+        row.style.opacity = '0';
+        setTimeout(() => row.remove(), 300);
+    });
+    
+    const gridCards = document.querySelectorAll(`div[onclick*="${clientId}"]`);
+    gridCards.forEach(card => {
+        card.style.transition = 'opacity 0.3s';
+        card.style.opacity = '0';
+        setTimeout(() => card.remove(), 300);
+    });
+    
+    closeModal();
+    showNotification('Client deactivated successfully', 'success');
 }
 
 // Admin Team Tab Functions
@@ -1313,6 +1998,7 @@ function showTeamMemberMenu(memberId) {
             <button onclick="teamMemberMenuAction('${memberId}', 'Send Message')" style="width: 100%; padding: 0.75rem; background: #111827; color: #fff; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer; text-align: left;">💬 Send Message</button>
             <button onclick="teamMemberMenuAction('${memberId}', 'View Performance')" style="width: 100%; padding: 0.75rem; background: #111827; color: #fff; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer; text-align: left;">📊 View Performance</button>
             <button onclick="teamMemberMenuAction('${memberId}', 'Manage Access')" style="width: 100%; padding: 0.75rem; background: #111827; color: #fff; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer; text-align: left;">🔐 Manage Access</button>
+            <button onclick="removeTeamMember('${memberId}')" style="width: 100%; padding: 0.75rem; background: #111827; color: #EF4444; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer; text-align: left;">🗑️ Remove Team Member</button>
         </div>
     `;
     showModal('Team Member Actions', content);
@@ -1356,9 +2042,39 @@ function showAddTeamMemberModal() {
 
 function addTeamMember(e) {
     e.preventDefault();
+    
     const memberName = document.getElementById('team-member-name').value;
+    const memberEmail = document.getElementById('team-member-email').value;
+    const memberRole = document.getElementById('team-member-role').value;
+    const memberPhone = document.getElementById('team-member-phone').value;
+    const startDate = document.getElementById('team-member-start-date').value;
+    
+    // Generate secure credentials
+    const username = memberEmail;
+    const tempPassword = generateSecurePassword();
+    const memberId = 'TM-' + Date.now().toString().slice(-6);
+    
+    // Save team member to localStorage
+    const teamMembers = JSON.parse(localStorage.getItem('teamMembers') || '[]');
+    teamMembers.push({
+        id: memberId,
+        name: memberName,
+        email: memberEmail,
+        role: memberRole,
+        phone: memberPhone,
+        username: username,
+        tempPassword: tempPassword,
+        startDate: startDate,
+        status: 'pending_first_login',
+        createdDate: new Date().toISOString(),
+        lastLogin: null
+    });
+    localStorage.setItem('teamMembers', JSON.stringify(teamMembers));
+    
     closeModal();
-    showNotification(`Team member "${memberName}" added successfully!`, 'success');
+    
+    // Show onboarding success modal with credentials
+    showTeamMemberOnboardingModal(memberName, memberEmail, username, tempPassword, memberRole, memberPhone);
 }
 
 function teamMemberQuickAction(action) {
@@ -1382,6 +2098,10 @@ function teamMemberMenuAction(memberId, action) {
         showSendMessageModal('Team Member', 'member@clippit.com');
     } else if (action === 'View Projects') {
         showTeamMemberProjectsModal('Team Member', memberId);
+    } else if (action === 'Edit Profile') {
+        showEditTeamMemberModal(memberId);
+    } else if (action === 'Manage Access') {
+        showManageAccessModal(memberId);
     } else {
         showNotification(`${action} for ${memberId}`, 'info');
     }
@@ -1533,6 +2253,389 @@ function assignTask(e, memberId, memberName) {
 }
 
 // View Team Member Projects Modal
+// Team Member Onboarding Modal (similar to client onboarding)
+function showTeamMemberOnboardingModal(memberName, memberEmail, username, tempPassword, role, phone) {
+    const loginUrl = window.location.origin + '/login.html';
+    
+    const roleNames = {
+        'developer': 'Developer',
+        'designer': 'UI/UX Designer', 
+        'manager': 'Project Manager',
+        'support': 'Support Specialist',
+        'marketing': 'Marketing'
+    };
+    
+    const content = `
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <!-- Success Header -->
+            <div style="text-align: center; padding: 1.5rem; background: linear-gradient(135deg, rgba(64, 224, 208, 0.2), rgba(54, 184, 168, 0.1)); border-radius: 12px; border: 1px solid rgba(64, 224, 208, 0.3);">
+                <div style="font-size: 4rem; margin-bottom: 0.5rem;">✅</div>
+                <h3 style="color: #40E0D0; font-size: 1.5rem; margin-bottom: 0.5rem;">Team Member Added!</h3>
+                <p style="color: #9CA3AF;">${memberName} - ${roleNames[role]}</p>
+            </div>
+
+            <!-- Generated Credentials -->
+            <div style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563;">
+                <h4 style="color: #fff; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>🔑</span> Login Credentials Generated
+                </h4>
+                
+                <div style="background: #0F1419; padding: 1rem; border-radius: 8px; border: 1px solid #40E0D0; margin-bottom: 0.75rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <label style="color: #9CA3AF; font-size: 0.875rem;">Username (Email):</label>
+                        <button onclick="copyToClipboard('${username}')" style="padding: 0.25rem 0.5rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 4px; cursor: pointer; font-size: 0.75rem;">Copy</button>
+                    </div>
+                    <p style="color: #40E0D0; font-weight: 600; font-size: 1.125rem; word-break: break-all;">${username}</p>
+                </div>
+                
+                <div style="background: #0F1419; padding: 1rem; border-radius: 8px; border: 1px solid #FBB624; margin-bottom: 0.75rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <label style="color: #9CA3AF; font-size: 0.875rem;">Temporary Password:</label>
+                        <button onclick="copyToClipboard('${tempPassword}')" style="padding: 0.25rem 0.5rem; background: transparent; color: #FBB624; border: 1px solid #FBB624; border-radius: 4px; cursor: pointer; font-size: 0.75rem;">Copy</button>
+                    </div>
+                    <p style="color: #FBB624; font-weight: 600; font-size: 1.125rem; font-family: monospace;">${tempPassword}</p>
+                    <p style="color: #9CA3AF; font-size: 0.75rem; margin-top: 0.5rem;">⚠️ Team member must change this password on first login</p>
+                </div>
+                
+                <div style="background: #0F1419; padding: 1rem; border-radius: 8px; border: 1px solid #4B5563;">
+                    <label style="color: #9CA3AF; font-size: 0.875rem; display: block; margin-bottom: 0.5rem;">Login URL:</label>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="text" value="${loginUrl}" readonly style="flex: 1; padding: 0.5rem; background: #1F2937; border: 1px solid #4B5563; border-radius: 4px; color: #fff; font-size: 0.875rem;">
+                        <button onclick="copyToClipboard('${loginUrl}')" style="padding: 0.5rem 0.75rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 4px; cursor: pointer; font-size: 0.75rem; white-space: nowrap;">Copy URL</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Welcome Email Preview -->
+            <div style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563;">
+                <h4 style="color: #fff; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>📧</span> Welcome Email Preview
+                </h4>
+                
+                <div style="background: #1F2937; padding: 1.5rem; border-radius: 8px; border: 1px solid #4B5563; max-height: 300px; overflow-y: auto;">
+                    <div style="border-bottom: 1px solid #4B5563; padding-bottom: 1rem; margin-bottom: 1rem;">
+                        <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.25rem;">To: ${memberEmail}</p>
+                        <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.25rem;">From: hr@clippit.com</p>
+                        <p style="color: #fff; font-weight: 600; margin-top: 0.75rem;">Subject: Welcome to the Clippit Team! 🎉</p>
+                    </div>
+                    
+                    <div style="color: #fff; line-height: 1.6;">
+                        <p style="margin-bottom: 1rem;">Hi ${memberName},</p>
+                        
+                        <p style="margin-bottom: 1rem;">Welcome to Clippit! Your team member account has been created. We're excited to have you on board as our new ${roleNames[role]}.</p>
+                        
+                        <p style="margin-bottom: 0.5rem; font-weight: 600; color: #40E0D0;">Your Login Details:</p>
+                        <div style="background: #111827; padding: 1rem; border-radius: 6px; margin-bottom: 1rem; border-left: 3px solid #40E0D0;">
+                            <p style="margin-bottom: 0.5rem;"><strong>Username:</strong> ${username}</p>
+                            <p style="margin-bottom: 0.5rem;"><strong>Temporary Password:</strong> ${tempPassword}</p>
+                            <p style="margin-bottom: 0.5rem;"><strong>Login URL:</strong> <span style="color: #40E0D0;">${loginUrl}</span></p>
+                        </div>
+                        
+                        <p style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(251, 191, 36, 0.1); border-left: 3px solid #FBB624; border-radius: 4px; color: #FBB624;">
+                            ⚠️ <strong>Important:</strong> You'll be required to change your password when you first log in for security purposes.
+                        </p>
+                        
+                        <p style="margin-bottom: 0.5rem; font-weight: 600;">What You Can Access:</p>
+                        <ul style="margin-bottom: 1rem; padding-left: 1.5rem;">
+                            <li>Team dashboard and project management tools</li>
+                            <li>Assigned tasks and project updates</li>
+                            <li>Internal communication and messaging</li>
+                            <li>Team calendar and meeting schedules</li>
+                            <li>Company resources and documentation</li>
+                        </ul>
+                        
+                        <p style="margin-bottom: 1rem;">If you have any questions, feel free to reach out to your manager or our support team.</p>
+                        
+                        <p style="margin-bottom: 0.5rem;">Welcome aboard!</p>
+                        <p style="font-weight: 600; color: #40E0D0;">The Clippit Team</p>
+                        
+                        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #4B5563; color: #9CA3AF; font-size: 0.75rem;">
+                            <p>Need help? Contact us at hr@clippit.com or +61 2 1234 5678</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Options -->
+            <div style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563;">
+                <h4 style="color: #fff; margin-bottom: 1rem;">Send Welcome Notifications</h4>
+                
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #1F2937; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" id="send-team-email" checked style="width: 20px; height: 20px;">
+                        <div style="flex: 1;">
+                            <span style="color: #fff; font-weight: 600;">📧 Send Welcome Email</span>
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-top: 0.25rem;">Email will be sent to: ${memberEmail}</p>
+                        </div>
+                    </label>
+                    
+                    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #1F2937; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" id="send-team-sms" ${phone ? 'checked' : ''} ${!phone ? 'disabled' : ''} style="width: 20px; height: 20px;">
+                        <div style="flex: 1;">
+                            <span style="color: #fff; font-weight: 600;">📱 Send SMS Notification</span>
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-top: 0.25rem;">${phone ? 'SMS will be sent to: ' + phone : 'No phone number provided'}</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <button onclick="sendTeamMemberWelcome('${memberName}', '${memberEmail}', '${phone}', '${username}', '${tempPassword}')" style="padding: 0.75rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 50px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <span>📤</span> Send Notifications
+                </button>
+                <button onclick="closeModal()" style="padding: 0.75rem; background: transparent; color: #40E0D0; border: 2px solid #40E0D0; border-radius: 50px; font-weight: 600; cursor: pointer;">
+                    Done
+                </button>
+            </div>
+            
+            <div style="text-align: center; padding: 1rem; background: rgba(64, 224, 208, 0.1); border-radius: 8px; border: 1px solid rgba(64, 224, 208, 0.3);">
+                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">
+                    💡 <strong style="color: #fff;">Pro Tip:</strong> Save these credentials securely. The team member will need them for first login.
+                </p>
+                <p style="color: #9CA3AF; font-size: 0.875rem;">
+                    Status: <span style="color: #FBB624; font-weight: 600;">Pending First Login</span>
+                </p>
+            </div>
+        </div>
+    `;
+    
+    showModal('Team Member Onboarding - ' + memberName, content);
+}
+
+function sendTeamMemberWelcome(memberName, email, phone, username, password) {
+    const sendEmail = document.getElementById('send-team-email').checked;
+    const sendSMS = document.getElementById('send-team-sms').checked;
+    
+    let notifications = [];
+    
+    if (sendEmail) {
+        notifications.push('email');
+        showNotification('Welcome email sent to ' + email, 'success');
+    }
+    
+    if (sendSMS && phone) {
+        notifications.push('SMS');
+        setTimeout(() => {
+            showNotification('SMS notification sent to ' + phone, 'success');
+        }, 1000);
+    }
+    
+    setTimeout(() => {
+        closeModal();
+        showNotification(`Team member "${memberName}" onboarded successfully! ${notifications.join(' and ')} sent.`, 'success');
+    }, 2000);
+}
+
+// Edit Team Member Function
+function showEditTeamMemberModal(memberId) {
+    // In a real implementation, fetch team member data from storage
+    const content = `
+        <form onsubmit="saveTeamMemberEdit(event, '${memberId}')" style="display: flex; flex-direction: column; gap: 1rem;">
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Full Name</label>
+                <input type="text" id="edit-team-member-name" value="Sarah Chen" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Email</label>
+                <input type="email" id="edit-team-member-email" value="sarah.chen@clippit.com" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Role</label>
+                <select id="edit-team-member-role" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                    <option value="developer" selected>Developer</option>
+                    <option value="designer">UI/UX Designer</option>
+                    <option value="manager">Project Manager</option>
+                    <option value="support">Support Specialist</option>
+                    <option value="marketing">Marketing</option>
+                </select>
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Phone</label>
+                <input type="tel" id="edit-team-member-phone" value="+61 423 456 789" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+            </div>
+            <button type="submit" style="background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; padding: 0.75rem 1.5rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Save Changes</button>
+        </form>
+    `;
+    showModal('Edit Team Member', content);
+}
+
+function saveTeamMemberEdit(e, memberId) {
+    e.preventDefault();
+    const memberName = document.getElementById('edit-team-member-name').value;
+    closeModal();
+    showNotification(`Team member "${memberName}" updated successfully!`, 'success');
+}
+
+// Manage Access Modal
+function showManageAccessModal(memberId) {
+    const content = `
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563;">
+                <h4 style="color: #fff; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>👤</span> Team Member: Sarah Chen
+                </h4>
+                <p style="color: #9CA3AF; font-size: 0.875rem;">Current Role: <span style="color: #40E0D0; font-weight: 600;">Senior Developer</span></p>
+            </div>
+
+            <div style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563;">
+                <h4 style="color: #fff; margin-bottom: 1rem;">Dashboard Access</h4>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #1F2937; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" checked style="width: 20px; height: 20px;">
+                        <div style="flex: 1;">
+                            <span style="color: #fff; font-weight: 600;">📊 Dashboard Overview</span>
+                            <p style="color: #9CA3AF; font-size: 0.75rem; margin-top: 0.25rem;">View main dashboard and metrics</p>
+                        </div>
+                    </label>
+                    
+                    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #1F2937; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" checked style="width: 20px; height: 20px;">
+                        <div style="flex: 1;">
+                            <span style="color: #fff; font-weight: 600;">💼 Projects</span>
+                            <p style="color: #9CA3AF; font-size: 0.75rem; margin-top: 0.25rem;">View and manage assigned projects</p>
+                        </div>
+                    </label>
+                    
+                    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #1F2937; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" style="width: 20px; height: 20px;">
+                        <div style="flex: 1;">
+                            <span style="color: #fff; font-weight: 600;">👥 Clients</span>
+                            <p style="color: #9CA3AF; font-size: 0.75rem; margin-top: 0.25rem;">Access client information</p>
+                        </div>
+                    </label>
+                    
+                    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #1F2937; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" style="width: 20px; height: 20px;">
+                        <div style="flex: 1;">
+                            <span style="color: #fff; font-weight: 600;">💰 Invoices</span>
+                            <p style="color: #9CA3AF; font-size: 0.75rem; margin-top: 0.25rem;">View and manage invoices</p>
+                        </div>
+                    </label>
+                    
+                    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #1F2937; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" checked style="width: 20px; height: 20px;">
+                        <div style="flex: 1;">
+                            <span style="color: #fff; font-weight: 600;">🎫 Support Tickets</span>
+                            <p style="color: #9CA3AF; font-size: 0.75rem; margin-top: 0.25rem;">Manage support tickets</p>
+                        </div>
+                    </label>
+                    
+                    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #1F2937; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" style="width: 20px; height: 20px;">
+                        <div style="flex: 1;">
+                            <span style="color: #fff; font-weight: 600;">⚙️ Settings</span>
+                            <p style="color: #9CA3AF; font-size: 0.75rem; margin-top: 0.25rem;">Access admin settings</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563;">
+                <h4 style="color: #fff; margin-bottom: 1rem;">Project Permissions</h4>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #1F2937; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" checked style="width: 20px; height: 20px;">
+                        <span style="color: #fff;">Can create new projects</span>
+                    </label>
+                    
+                    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #1F2937; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" checked style="width: 20px; height: 20px;">
+                        <span style="color: #fff;">Can edit assigned projects</span>
+                    </label>
+                    
+                    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #1F2937; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" style="width: 20px; height: 20px;">
+                        <span style="color: #fff;">Can delete projects</span>
+                    </label>
+                    
+                    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #1F2937; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" checked style="width: 20px; height: 20px;">
+                        <span style="color: #fff;">Can view all projects</span>
+                    </label>
+                </div>
+            </div>
+
+            <div style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563;">
+                <h4 style="color: #fff; margin-bottom: 1rem;">Financial Permissions</h4>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #1F2937; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" style="width: 20px; height: 20px;">
+                        <span style="color: #fff;">Can create invoices</span>
+                    </label>
+                    
+                    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #1F2937; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" style="width: 20px; height: 20px;">
+                        <span style="color: #fff;">Can view financial reports</span>
+                    </label>
+                    
+                    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #1F2937; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" style="width: 20px; height: 20px;">
+                        <span style="color: #fff;">Can approve expenses</span>
+                    </label>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                <button onclick="saveAccessPermissions('${memberId}')" style="flex: 1; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; padding: 0.75rem 1.5rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Save Permissions</button>
+                <button onclick="closeModal()" style="flex: 1; background: transparent; color: #40E0D0; border: 2px solid #40E0D0; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer;">Cancel</button>
+            </div>
+        </div>
+    `;
+    showModal('Manage Access Permissions', content);
+}
+
+function saveAccessPermissions(memberId) {
+    closeModal();
+    showNotification('Access permissions updated successfully!', 'success');
+}
+
+// Remove Team Member Function
+function removeTeamMember(memberId) {
+    const content = `
+        <div style="text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 1rem; color: #EF4444;">⚠️</div>
+            <h3 style="color: #fff; font-size: 1.5rem; margin-bottom: 1rem;">Remove Team Member?</h3>
+            <p style="color: #9CA3AF; margin-bottom: 2rem;">This will deactivate the team member's account and revoke their access. This action can be reversed later if needed.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button onclick="confirmRemoveTeamMember('${memberId}')" style="background: #EF4444; color: #fff; padding: 0.75rem 1.5rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Remove Member</button>
+                <button onclick="closeModal()" style="background: transparent; color: #40E0D0; border: 2px solid #40E0D0; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer;">Cancel</button>
+            </div>
+        </div>
+    `;
+    showModal('Confirm Removal', content);
+}
+
+function confirmRemoveTeamMember(memberId) {
+    // In a real implementation, update the team member status in storage
+    const teamMembers = JSON.parse(localStorage.getItem('teamMembers') || '[]');
+    const updatedMembers = teamMembers.map(member => {
+        if (member.id === memberId) {
+            return { ...member, status: 'deactivated' };
+        }
+        return member;
+    });
+    localStorage.setItem('teamMembers', JSON.stringify(updatedMembers));
+    
+    // Find and remove the row from both table and grid views
+    const tableRows = document.querySelectorAll(`tr[onclick*="${memberId}"]`);
+    tableRows.forEach(row => {
+        row.style.transition = 'opacity 0.3s';
+        row.style.opacity = '0';
+        setTimeout(() => row.remove(), 300);
+    });
+    
+    const gridCards = document.querySelectorAll(`div[onclick*="${memberId}"]`);
+    gridCards.forEach(card => {
+        card.style.transition = 'opacity 0.3s';
+        card.style.opacity = '0';
+        setTimeout(() => card.remove(), 300);
+    });
+    
+    closeModal();
+    showNotification('Team member removed successfully', 'success');
+}
+
 function showTeamMemberProjectsModal(memberName, memberId) {
     // Get assigned tasks from local storage
     const allTasks = JSON.parse(localStorage.getItem('assignedTasks') || '[]');

@@ -35,32 +35,73 @@
                 </div>
 
                 <div class="login-options">
-                    <a href="customer-dashboard.html" class="login-option-card">
+                    <div onclick="showLoginForm('customer')" class="login-option-card" style="cursor: pointer;">
                         <div class="option-icon customer">👤</div>
                         <div class="option-content">
                             <h3>Customer Login</h3>
                             <p>Access your projects, track progress, and manage your account</p>
                         </div>
                         <div class="option-arrow">→</div>
-                    </a>
+                    </div>
 
-                    <a href="investor-dashboard.html" class="login-option-card">
+                    <div onclick="showLoginForm('investor')" class="login-option-card" style="cursor: pointer;">
                         <div class="option-icon investor">💼</div>
                         <div class="option-content">
                             <h3>Investor Login</h3>
                             <p>View portfolio companies and investment opportunities</p>
                         </div>
                         <div class="option-arrow">→</div>
-                    </a>
+                    </div>
 
-                    <a href="admin-dashboard.html" class="login-option-card">
+                    <div onclick="showLoginForm('admin')" class="login-option-card" style="cursor: pointer;">
                         <div class="option-icon admin">⚙️</div>
                         <div class="option-content">
                             <h3>Admin Login</h3>
                             <p>Manage system settings and administrative functions</p>
                         </div>
                         <div class="option-arrow">→</div>
-                    </a>
+                    </div>
+                </div>
+
+                <!-- Login Form (Hidden by default) -->
+                <div id="login-form-container" style="display: none; margin-top: 2rem;">
+                    <button onclick="backToSelection()" style="margin-bottom: 1rem; padding: 0.5rem 1rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; cursor: pointer;">← Back to Selection</button>
+                    
+                    <div style="background: #1F2937; padding: 2rem; border-radius: 16px; border: 1px solid #374151;">
+                        <div style="text-align: center; margin-bottom: 2rem;">
+                            <div id="login-form-icon" style="font-size: 3rem; margin-bottom: 1rem;">👤</div>
+                            <h2 id="login-form-title" style="color: #40E0D0; font-size: 1.5rem; margin-bottom: 0.5rem;">Customer Login</h2>
+                            <p style="color: #9CA3AF;">Enter your credentials to access your dashboard</p>
+                        </div>
+
+                        <form id="login-form" onsubmit="handleLogin(event)" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; color: #fff; font-weight: 500;">Username / Email</label>
+                                <input type="text" id="login-username" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; font-size: 1rem;" placeholder="Enter your email address">
+                            </div>
+
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; color: #fff; font-weight: 500;">Password</label>
+                                <input type="password" id="login-password" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; font-size: 1rem;" placeholder="Enter your password">
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <label style="display: flex; align-items: center; gap: 0.5rem; color: #9CA3AF; cursor: pointer;">
+                                    <input type="checkbox" style="width: 18px; height: 18px;">
+                                    <span>Remember me</span>
+                                </label>
+                                <a href="#" style="color: #40E0D0; text-decoration: none;">Forgot password?</a>
+                            </div>
+
+                            <button type="submit" style="width: 100%; padding: 1rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 50px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                                Sign In
+                            </button>
+                        </form>
+
+                        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #374151; text-align: center;">
+                            <p style="color: #9CA3AF; font-size: 0.875rem;">Don't have an account? <a href="index.html#contact" style="color: #40E0D0; text-decoration: none;">Contact us</a></p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="login-footer">
@@ -71,5 +112,12 @@
     </section>
 
     <script src="script.js"></script>
+    <script>
+        // Clear any existing sessions when landing on login page
+        // This ensures users must authenticate fresh each time
+        sessionStorage.removeItem('isLoggedIn');
+        sessionStorage.removeItem('loginType');
+        sessionStorage.removeItem('username');
+    </script>
 </body>
 </html>
