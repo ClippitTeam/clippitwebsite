@@ -21,6 +21,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check subscription status and update UI
     checkSubscriptionStatus();
     
+    // Load approved investor listings
+    loadApprovedListings();
+    
     // Navigation interactions
     setupNavigation();
     
@@ -699,6 +702,83 @@ function submitNewMessage(e) {
     const subject = document.getElementById('new-message-subject').value;
     closeModal();
     showNotification('Message sent successfully to Clippit Admin!', 'success');
+}
+
+// Load approved investor listings from localStorage
+function loadApprovedListings() {
+    const listings = JSON.parse(localStorage.getItem('investorListings') || '[]');
+    const approvedListings = listings.filter(listing => listing.status === 'approved');
+    
+    // Find the opportunities grid container
+    const opportunitiesGrid = document.querySelector('.opportunities-grid');
+    
+    if (!opportunitiesGrid || approvedListings.length === 0) return;
+    
+    // Generate HTML for each approved listing
+    approvedListings.forEach(listing => {
+        const categoryIcons = {
+            'tech': '💻',
+            'health': '🏥',
+            'finance': '💰',
+            'education': '📚',
+            'ecommerce': '🛒',
+            'saas': '☁️',
+            'mobile': '📱',
+            'other': '🚀'
+        };
+        
+        const investmentTypeLabels = {
+            'equity': 'Equity Investment',
+            'debt': 'Debt Financing',
+            'revenue-share': 'Revenue Share',
+            'buyout': 'Business Buyout',
+            'partnership': 'Partnership'
+        };
+        
+        const icon = categoryIcons[listing.category] || '🚀';
+        const typeLabel = investmentTypeLabels[listing.investmentType] || listing.investmentType;
+        
+        const cardHTML = `
+            <div class="opportunity-card" style="background: #1F2937; border: 1px solid #4B5563; border-radius: 12px; padding: 1.5rem; transition: all 0.3s;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                    <div>
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">${icon}</div>
+                        <h3 style="color: #F59E0B; font-size: 1.25rem; margin-bottom: 0.5rem;">${listing.projectName}</h3>
+                        <span style="background: rgba(245, 158, 11, 0.2); color: #F59E0B; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">${typeLabel}</span>
+                    </div>
+                </div>
+                
+                <p style="color: #9CA3AF; font-size: 0.875rem; line-height: 1.6; margin-bottom: 1rem;">${listing.overview.substring(0, 150)}${listing.overview.length > 150 ? '...' : ''}</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div style="background: #111827; padding: 0.75rem; border-radius: 8px;">
+                        <p style="color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem;">Seeking</p>
+                        <p style="color: #F59E0B; font-weight: 700; font-size: 1.125rem;">$${parseFloat(listing.seekingAmount).toLocaleString()}</p>
+                    </div>
+                    ${listing.valuation ? `
+                    <div style="background: #111827; padding: 0.75rem; border-radius: 8px;">
+                        <p style="color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem;">Valuation</p>
+                        <p style="color: #10B981; font-weight: 600;">$${parseFloat(listing.valuation).toLocaleString()}</p>
+                    </div>
+                    ` : ''}
+                </div>
+                
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button onclick="showInvestModal('${listing.projectName.replace(/'/g, "\\'")}');" style="flex: 1; min-width: 120px; padding: 0.75rem; background: linear-gradient(135deg, #F59E0B, #D97706); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">💰 Invest</button>
+                    ${listing.investmentType === 'buyout' ? `
+                    <button onclick="showOfferModal('${listing.projectName.replace(/'/g, "\\'")}');" style="flex: 1; min-width: 120px; padding: 0.75rem; background: #1F2937; color: #F59E0B; border: 1px solid #F59E0B; border-radius: 8px; font-weight: 600; cursor: pointer;">🤝 Make Offer</button>
+                    ` : ''}
+                    <button onclick="showQuestionModal('${listing.projectName.replace(/'/g, "\\'")}');" style="padding: 0.75rem 1rem; background: #111827; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer;">💬</button>
+                </div>
+            </div>
+        `;
+        
+        // Insert the card into the grid
+        opportunitiesGrid.insertAdjacentHTML('beforeend', cardHTML);
+    });
+    
+    // Apply lock/unlock based on subscription status
+    updateOpportunitiesAccess();
 }
 
 // Add CSS animations

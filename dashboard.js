@@ -1780,17 +1780,22 @@ function editListing() {
 }
 
 function submitListing() {
-    // Get the listing data that was entered
+    // Get the listing data from sessionStorage (stored during submitProposal)
+    const storedData = sessionStorage.getItem('currentListingData');
+    const savedData = storedData ? JSON.parse(storedData) : {};
+    
+    // Create the listing data with unique ID and metadata
     const listingData = {
-        projectName: document.getElementById('project-name')?.value || 'Untitled Project',
-        category: document.getElementById('project-category')?.value || 'app',
-        investmentType: document.getElementById('investment-type')?.value || 'equity',
-        seekingAmount: document.getElementById('seeking-amount')?.value || '0',
-        valuation: document.getElementById('valuation')?.value || null,
-        overview: document.getElementById('project-overview')?.value || '',
-        useOfFunds: document.getElementById('use-of-funds')?.value || '',
+        id: 'listing-' + Date.now(), // Add unique ID for admin dashboard to reference
+        projectName: savedData.projectName || 'Untitled Project',
+        category: savedData.category || 'tech',
+        investmentType: savedData.investmentType || 'equity',
+        seekingAmount: savedData.seekingAmount || '0',
+        valuation: savedData.valuation || null,
+        overview: savedData.overview || '',
+        useOfFunds: savedData.useOfFunds || '',
         submittedDate: new Date().toISOString(),
-        status: 'pending', // pending, active, paused
+        status: 'pending', // pending, approved, rejected, needs_revision
         views: 0,
         inquiries: 0,
         offers: 0
@@ -1800,6 +1805,9 @@ function submitListing() {
     let listings = JSON.parse(localStorage.getItem('investorListings') || '[]');
     listings.push(listingData);
     localStorage.setItem('investorListings', JSON.stringify(listings));
+    
+    // Clear the session storage since we're done
+    sessionStorage.removeItem('currentListingData');
     
     closeModal();
     showNotification('Listing submitted for admin review!', 'success');

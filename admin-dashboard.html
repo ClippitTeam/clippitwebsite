@@ -73,6 +73,11 @@
                     <span class="nav-label">Invoices</span>
                     <span class="nav-badge">3</span>
                 </a>
+                <a href="#investor-listings" class="nav-item">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-label">Investor Listings</span>
+                    <span class="nav-badge">2</span>
+                </a>
                 <a href="https://www.clippit.online/" target="_blank" class="nav-item">
                     <span class="nav-icon">🌐</span>
                     <span class="nav-label">Domains</span>
@@ -1454,6 +1459,184 @@
             </div>
             <!-- End Invoices Section -->
 
+            <!-- Investor Listings Section -->
+            <div id="section-investor-listings" class="dashboard-section" style="display: none;">
+                <section class="investor-listings-admin-section">
+                    <!-- Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <div>
+                            <h2 style="color: #40E0D0; font-size: 1.75rem; margin-bottom: 0.5rem;">Investor Listings</h2>
+                            <p style="color: #9CA3AF;">Review and approve pending investor portfolio listings</p>
+                        </div>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                        <div style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Pending Review</p>
+                            <h3 style="color: #FBB624; font-size: 2rem; font-weight: 800;">2</h3>
+                            <p style="color: #9CA3AF; font-size: 0.875rem;">Awaiting approval</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Approved</p>
+                            <h3 style="color: #10B981; font-size: 2rem; font-weight: 800;">8</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">Live on portfolio</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Rejected</p>
+                            <h3 style="color: #EF4444; font-size: 2rem; font-weight: 800;">1</h3>
+                            <p style="color: #9CA3AF; font-size: 0.875rem;">Needs revision</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(64, 224, 208, 0.1), rgba(54, 184, 168, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(64, 224, 208, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Total Listings</p>
+                            <h3 style="color: #40E0D0; font-size: 2rem; font-weight: 800;">11</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">+2 this month</p>
+                        </div>
+                    </div>
+
+                    <!-- Pending Listings -->
+                    <div style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 2rem;">
+                        <h3 style="color: #FBB624; font-size: 1.5rem; margin-bottom: 1.5rem;">⏳ Pending Review</h3>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                            <!-- Listing 1 -->
+                            <div style="background: #111827; padding: 2rem; border-radius: 12px; border: 1px solid #4B5563;">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1.5rem;">
+                                    <div style="flex: 1;">
+                                        <h4 style="color: #40E0D0; font-size: 1.25rem; margin-bottom: 0.5rem;">TechStart Inc. - E-Commerce Platform</h4>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Submitted by: John Davis • john@techstart.com</p>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem;">Submitted: Oct 28, 2025 at 3:42 PM</p>
+                                    </div>
+                                    <span style="background: rgba(251, 191, 36, 0.2); color: #FBB624; padding: 0.5rem 1rem; border-radius: 12px; font-size: 0.875rem; font-weight: 600;">PENDING</span>
+                                </div>
+
+                                <div style="background: #1F2937; padding: 1.5rem; border-radius: 8px; border: 1px solid #4B5563; margin-bottom: 1.5rem;">
+                                    <h5 style="color: #fff; margin-bottom: 1rem;">Project Details</h5>
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                                        <div>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.25rem;">Industry</p>
+                                            <p style="color: #fff; font-weight: 600;">E-Commerce</p>
+                                        </div>
+                                        <div>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.25rem;">Project Value</p>
+                                            <p style="color: #FBB624; font-weight: 600; font-size: 1.125rem;">$25,000</p>
+                                        </div>
+                                        <div>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.25rem;">Status</p>
+                                            <p style="color: #10B981; font-weight: 600;">Completed</p>
+                                        </div>
+                                        <div>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.25rem;">Technologies</p>
+                                            <p style="color: #fff;">React, Node.js, MongoDB</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Description</p>
+                                        <p style="color: #fff; line-height: 1.6;">A fully responsive e-commerce platform featuring real-time inventory management, secure payment processing, and advanced analytics dashboard. Built with modern technologies for optimal performance and scalability.</p>
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; gap: 1rem;">
+                                    <button onclick="approveInvestorListing('listing-001', 'TechStart Inc. - E-Commerce Platform')" style="flex: 1; padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #10B981, #059669); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">✓ Approve & Publish</button>
+                                    <button onclick="reviewInvestorListing('listing-001')" style="flex: 1; padding: 0.75rem 1.5rem; background: transparent; color: #40E0D0; border: 2px solid #40E0D0; border-radius: 8px; font-weight: 600; cursor: pointer;">📝 Request Changes</button>
+                                    <button onclick="rejectInvestorListing('listing-001', 'TechStart Inc. - E-Commerce Platform')" style="flex: 1; padding: 0.75rem 1.5rem; background: transparent; color: #EF4444; border: 2px solid #EF4444; border-radius: 8px; font-weight: 600; cursor: pointer;">✕ Reject</button>
+                                </div>
+                            </div>
+
+                            <!-- Listing 2 -->
+                            <div style="background: #111827; padding: 2rem; border-radius: 12px; border: 1px solid #4B5563;">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1.5rem;">
+                                    <div style="flex: 1;">
+                                        <h4 style="color: #40E0D0; font-size: 1.25rem; margin-bottom: 0.5rem;">FitLife - Mobile App Development</h4>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Submitted by: Sarah Miller • sarah@fitlife.com</p>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem;">Submitted: Oct 27, 2025 at 10:15 AM</p>
+                                    </div>
+                                    <span style="background: rgba(251, 191, 36, 0.2); color: #FBB624; padding: 0.5rem 1rem; border-radius: 12px; font-size: 0.875rem; font-weight: 600;">PENDING</span>
+                                </div>
+
+                                <div style="background: #1F2937; padding: 1.5rem; border-radius: 8px; border: 1px solid #4B5563; margin-bottom: 1.5rem;">
+                                    <h5 style="color: #fff; margin-bottom: 1rem;">Project Details</h5>
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                                        <div>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.25rem;">Industry</p>
+                                            <p style="color: #fff; font-weight: 600;">Health & Fitness</p>
+                                        </div>
+                                        <div>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.25rem;">Project Value</p>
+                                            <p style="color: #FBB624; font-weight: 600; font-size: 1.125rem;">$18,500</p>
+                                        </div>
+                                        <div>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.25rem;">Status</p>
+                                            <p style="color: #10B981; font-weight: 600;">Completed</p>
+                                        </div>
+                                        <div>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.25rem;">Technologies</p>
+                                            <p style="color: #fff;">React Native, Firebase</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Description</p>
+                                        <p style="color: #fff; line-height: 1.6;">Cross-platform mobile fitness application with workout tracking, nutrition planning, and social features. Includes gamification elements and integration with popular fitness wearables.</p>
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; gap: 1rem;">
+                                    <button onclick="approveInvestorListing('listing-002', 'FitLife - Mobile App Development')" style="flex: 1; padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #10B981, #059669); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">✓ Approve & Publish</button>
+                                    <button onclick="reviewInvestorListing('listing-002')" style="flex: 1; padding: 0.75rem 1.5rem; background: transparent; color: #40E0D0; border: 2px solid #40E0D0; border-radius: 8px; font-weight: 600; cursor: pointer;">📝 Request Changes</button>
+                                    <button onclick="rejectInvestorListing('listing-002', 'FitLife - Mobile App Development')" style="flex: 1; padding: 0.75rem 1.5rem; background: transparent; color: #EF4444; border: 2px solid #EF4444; border-radius: 8px; font-weight: 600; cursor: pointer;">✕ Reject</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Approved Listings -->
+                    <div style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151;">
+                        <h3 style="color: #10B981; font-size: 1.5rem; margin-bottom: 1.5rem;">✓ Approved Listings (8)</h3>
+                        
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid #374151;">
+                                        <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Project</th>
+                                        <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Client</th>
+                                        <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Industry</th>
+                                        <th style="padding: 1rem; text-align: right; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Value</th>
+                                        <th style="padding: 1rem; text-align: center; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Approved</th>
+                                        <th style="padding: 1rem; text-align: right; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="border-bottom: 1px solid #374151;">
+                                        <td style="padding: 1rem; color: #fff; font-weight: 600;">Corporate Website Redesign</td>
+                                        <td style="padding: 1rem; color: #9CA3AF;">GlobalCorp</td>
+                                        <td style="padding: 1rem; color: #9CA3AF;">Corporate</td>
+                                        <td style="padding: 1rem; text-align: right; color: #FBB624; font-weight: 600;">$32,000</td>
+                                        <td style="padding: 1rem; text-align: center; color: #9CA3AF; font-size: 0.875rem;">Oct 15, 2025</td>
+                                        <td style="padding: 1rem; text-align: right;">
+                                            <button onclick="showNotification('Feature coming soon!', 'info')" style="padding: 0.25rem 0.75rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 6px; cursor: pointer; font-size: 0.875rem;">View</button>
+                                        </td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #374151;">
+                                        <td style="padding: 1rem; color: #fff; font-weight: 600;">SaaS Dashboard Platform</td>
+                                        <td style="padding: 1rem; color: #9CA3AF;">CloudSync Ltd</td>
+                                        <td style="padding: 1rem; color: #9CA3AF;">SaaS</td>
+                                        <td style="padding: 1rem; text-align: right; color: #FBB624; font-weight: 600;">$45,000</td>
+                                        <td style="padding: 1rem; text-align: center; color: #9CA3AF; font-size: 0.875rem;">Sep 28, 2025</td>
+                                        <td style="padding: 1rem; text-align: right;">
+                                            <button onclick="showNotification('Feature coming soon!', 'info')" style="padding: 0.25rem 0.75rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 6px; cursor: pointer; font-size: 0.875rem;">View</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- End Investor Listings Section -->
+
             <!-- Support/Tickets Section -->
             <div id="section-tickets" class="dashboard-section" style="display: none;">
                 <section class="tickets-admin-section">
@@ -2294,6 +2477,36 @@
         </main>
     </div>
 
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase Configuration -->
+    <script src="supabase-config.js"></script>
+    
     <script src="admin-dashboard.js"></script>
+    <script>
+        // Check authentication on page load
+        (async function() {
+            const user = await checkAuth();
+            if (!user) return; // Will redirect to login
+            
+            // Get user profile to verify admin role
+            const profile = await getUserProfile(user.id);
+            if (!profile || profile.role !== 'admin') {
+                alert('Access denied. Admin privileges required.');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Update UI with user info
+            const userName = profile.full_name || profile.email.split('@')[0];
+            const userNameElements = document.querySelectorAll('.user-name');
+            userNameElements.forEach(el => el.textContent = userName);
+            
+            // Update avatar with initials
+            const initials = userName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            const avatarElements = document.querySelectorAll('.user-avatar');
+            avatarElements.forEach(el => el.textContent = initials);
+        })();
+    </script>
 </body>
 </html>

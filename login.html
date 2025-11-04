@@ -111,13 +111,141 @@
         </div>
     </section>
 
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase Configuration -->
+    <script src="supabase-config.js"></script>
+    
     <script src="script.js"></script>
     <script>
         // Clear any existing sessions when landing on login page
-        // This ensures users must authenticate fresh each time
-        sessionStorage.removeItem('isLoggedIn');
-        sessionStorage.removeItem('loginType');
-        sessionStorage.removeItem('username');
+        async function clearSession() {
+            await supabase.auth.signOut();
+            sessionStorage.clear();
+            localStorage.clear();
+        }
+        
+        clearSession();
+
+        // Handle login with Supabase
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            const loginType = window.currentLoginType || 'customer';
+            
+            try {
+                // Show loading state
+                const submitBtn = event.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Signing in...';
+                submitBtn.disabled = true;
+                
+                // Sign in with Supabase
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) throw error;
+                
+                // Get user profile to check role
+                const profile = await getUserProfile(data.user.id);
+                
+                if (!profile) {
+                    throw new Error('User profile not found');
+                }
+                
+                // Verify the user's role matches the selected login type
+                if (profile.role !== loginType && loginType !== 'admin') {
+                    throw new Error(`This account is not registered as a ${loginType}. Please select the correct login type.`);
+                }
+                
+                // For admin, check if they have admin role
+                if (loginType === 'admin' && profile.role !== 'admin') {
+                    throw new Error('You do not have admin privileges.');
+                }
+                
+                // Store login info
+                sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('loginType', profile.role);
+                sessionStorage.setItem('userId', data.user.id);
+                sessionStorage.setItem('userEmail', data.user.email);
+                
+                // Redirect based on role
+                switch(profile.role) {
+                    case 'admin':
+                        window.location.href = 'admin-dashboard.html';
+                        break;
+                    case 'customer':
+                        window.location.href = 'customer-dashboard.html';
+                        break;
+                    case 'investor':
+                        window.location.href = 'investor-dashboard.html';
+                        break;
+                    case 'team':
+                        window.location.href = 'customer-dashboard.html'; // Team members use customer dashboard
+                        break;
+                    default:
+                        window.location.href = 'index.html';
+                }
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                
+                // Reset button
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                
+                // Show error message
+                let errorMessage = 'Login failed. Please check your credentials.';
+                if (error.message.includes('Invalid login credentials')) {
+                    errorMessage = 'Invalid email or password. Please try again.';
+                } else if (error.message.includes('Email not confirmed')) {
+                    errorMessage = 'Please verify your email before logging in.';
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                alert(errorMessage);
+            }
+        }
+
+        // Store current login type
+        window.currentLoginType = 'customer';
+
+        function showLoginForm(type) {
+            window.currentLoginType = type;
+            
+            // Hide selection, show form
+            document.querySelector('.login-options').style.display = 'none';
+            document.querySelector('.login-footer').style.display = 'none';
+            document.getElementById('login-form-container').style.display = 'block';
+            
+            // Update form UI based on type
+            const icons = {
+                customer: '👤',
+                investor: '💼',
+                admin: '⚙️'
+            };
+            
+            const titles = {
+                customer: 'Customer Login',
+                investor: 'Investor Login',
+                admin: 'Admin Login'
+            };
+            
+            document.getElementById('login-form-icon').textContent = icons[type];
+            document.getElementById('login-form-title').textContent = titles[type];
+        }
+
+        function backToSelection() {
+            document.querySelector('.login-options').style.display = 'flex';
+            document.querySelector('.login-footer').style.display = 'block';
+            document.getElementById('login-form-container').style.display = 'none';
+            document.getElementById('login-form').reset();
+        }
     </script>
 </body>
 </html>

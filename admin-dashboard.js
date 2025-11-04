@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Create modal container
     createModalContainer();
     
+    // Load pending investor listings
+    loadPendingInvestorListings();
+    
     // Navigation item interactions
     const navLinks = document.querySelectorAll('.nav-item');
     navLinks.forEach(link => {
@@ -65,6 +68,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else if (href === '#tickets') {
                     const ticketsSection = document.getElementById('section-tickets');
                     if (ticketsSection) ticketsSection.style.display = 'block';
+                } else if (href === '#investor-listings') {
+                    const investorListingsSection = document.getElementById('section-investor-listings');
+                    if (investorListingsSection) investorListingsSection.style.display = 'block';
                 } else if (href === '#integrations') {
                     const integrationsSection = document.getElementById('section-integrations');
                     if (integrationsSection) integrationsSection.style.display = 'block';
@@ -815,29 +821,115 @@ function copyToClipboard(text) {
     });
 }
 
-function sendWelcomeNotifications(clientName, email, phone, username, password) {
-    const sendEmail = document.getElementById('send-email').checked;
-    const sendSMS = document.getElementById('send-sms').checked;
+async function sendWelcomeNotifications(clientName, email, phone, username, password) {
+    console.log('🔥 sendWelcomeNotifications called!');
+    console.log('Parameters:', { clientName, email, phone, username });
+    console.log('Supabase client exists?', typeof supabase !== 'undefined');
+    
+    const sendEmail = document.getElementById('send-email')?.checked ?? true;
+    const sendSMS = document.getElementById('send-sms')?.checked ?? false;
     
     let notifications = [];
     
     if (sendEmail) {
         notifications.push('email');
-        // In production, this would trigger actual email sending
-        showNotification('Welcome email sent to ' + email, 'success');
+        showNotification('📧 Sending welcome email to ' + email + '...', 'info');
+        
+        const loginUrl = window.location.origin + '/customer-dashboard.html';
+        
+        // Create HTML email content
+        const htmlContent = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background: linear-gradient(135deg, #40E0D0, #36B8A8); padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                    .header h1 { color: white; margin: 0; }
+                    .content { background: #f9f9f9; padding: 30px; }
+                    .credentials { background: white; padding: 20px; border-left: 4px solid #40E0D0; margin: 20px 0; border-radius: 5px; }
+                    .credentials p { margin: 10px 0; }
+                    .warning { background: #fff3cd; padding: 15px; border-left: 4px solid #FBB624; margin: 20px 0; border-radius: 5px; }
+                    .button { display: inline-block; padding: 12px 30px; background: #40E0D0; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+                    .footer { background: #333; color: #999; padding: 20px; text-align: center; font-size: 12px; border-radius: 0 0 10px 10px; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>🎉 Welcome to Clippit!</h1>
+                    </div>
+                    <div class="content">
+                        <h2>Hi ${clientName},</h2>
+                        <p>Welcome to Clippit! Your client account has been created and is ready to use.</p>
+                        
+                        <div class="credentials">
+                            <h3>Your Login Credentials:</h3>
+                            <p><strong>Username:</strong> ${username}</p>
+                            <p><strong>Temporary Password:</strong> <code>${password}</code></p>
+                            <p><strong>Login URL:</strong> <a href="${loginUrl}">${loginUrl}</a></p>
+                        </div>
+                        
+                        <div class="warning">
+                            <p><strong>⚠️ Important:</strong> You'll be required to change your password when you first log in for security purposes.</p>
+                        </div>
+                        
+                        <h3>What You Can Do:</h3>
+                        <ul>
+                            <li>View and track your projects in real-time</li>
+                            <li>Access invoices and payment history</li>
+                            <li>Communicate directly with our team</li>
+                            <li>Download project files and resources</li>
+                            <li>Submit support requests</li>
+                        </ul>
+                        
+                        <a href="${loginUrl}" class="button">Login to Your Account</a>
+                        
+                        <p>If you have any questions or need assistance, feel free to reach out to our support team.</p>
+                        
+                        <p>Best regards,<br><strong>The Clippit Team</strong></p>
+                    </div>
+                    <div class="footer">
+                        <p>Need help? Contact us at support@clippit.com or +61 2 1234 5678</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        `;
+        
+        try {
+            // Call Supabase Edge Function to send email via Resend
+            const { data, error } = await supabase.functions.invoke('send-email', {
+                body: {
+                    to: email,
+                    subject: 'Welcome to Clippit - Your Account is Ready! 🎉',
+                    html: htmlContent,
+                    from: 'Clippit <onboarding@resend.dev>'
+                }
+            });
+            
+            if (error) throw error;
+            
+            console.log('Email sent successfully:', data);
+            showNotification('✅ Welcome email sent successfully to ' + email, 'success');
+        } catch (error) {
+            console.error('Email send failed:', error);
+            showNotification('⚠️ Failed to send email: ' + error.message, 'error');
+            return; // Stop here if email fails
+        }
     }
     
     if (sendSMS && phone) {
         notifications.push('SMS');
-        // In production, this would trigger actual SMS sending
         setTimeout(() => {
-            showNotification('SMS notification sent to ' + phone, 'success');
+            showNotification('📱 SMS notification sent to ' + phone, 'info');
         }, 1000);
     }
     
     setTimeout(() => {
         closeModal();
-        showNotification(`Client "${clientName}" onboarded successfully! ${notifications.join(' and ')} sent.`, 'success');
+        showNotification(`🎉 Client "${clientName}" onboarded successfully! ${notifications.join(' and ')} sent.`, 'success');
     }, 2000);
 }
 
@@ -2040,7 +2132,7 @@ function showAddTeamMemberModal() {
     showModal('Add New Team Member', content);
 }
 
-function addTeamMember(e) {
+async function addTeamMember(e) {
     e.preventDefault();
     
     const memberName = document.getElementById('team-member-name').value;
@@ -2050,31 +2142,61 @@ function addTeamMember(e) {
     const startDate = document.getElementById('team-member-start-date').value;
     
     // Generate secure credentials
-    const username = memberEmail;
     const tempPassword = generateSecurePassword();
-    const memberId = 'TM-' + Date.now().toString().slice(-6);
-    
-    // Save team member to localStorage
-    const teamMembers = JSON.parse(localStorage.getItem('teamMembers') || '[]');
-    teamMembers.push({
-        id: memberId,
-        name: memberName,
-        email: memberEmail,
-        role: memberRole,
-        phone: memberPhone,
-        username: username,
-        tempPassword: tempPassword,
-        startDate: startDate,
-        status: 'pending_first_login',
-        createdDate: new Date().toISOString(),
-        lastLogin: null
-    });
-    localStorage.setItem('teamMembers', JSON.stringify(teamMembers));
     
     closeModal();
     
-    // Show onboarding success modal with credentials
-    showTeamMemberOnboardingModal(memberName, memberEmail, username, tempPassword, memberRole, memberPhone);
+    // Show loading notification
+    showNotification('Creating team member account...', 'info');
+    
+    try {
+        // Create user in Supabase Auth
+        const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+            email: memberEmail,
+            password: tempPassword,
+            email_confirm: true, // Auto-confirm email
+            user_metadata: {
+                full_name: memberName,
+                phone: memberPhone,
+                role: 'team'
+            }
+        });
+        
+        if (authError) {
+            console.error('Auth error:', authError);
+            throw new Error('Failed to create user account: ' + authError.message);
+        }
+        
+        // Create profile in profiles table
+        const { error: profileError } = await supabase
+            .from('profiles')
+            .insert([
+                {
+                    id: authData.user.id,
+                    email: memberEmail,
+                    full_name: memberName,
+                    role: 'team',
+                    phone: memberPhone
+                }
+            ]);
+        
+        if (profileError) {
+            console.error('Profile error:', profileError);
+            throw new Error('Failed to create user profile: ' + profileError.message);
+        }
+        
+        showNotification('Team member account created! Sending welcome email...', 'success');
+        
+        // Send welcome email and SMS
+        await autoSendTeamMemberWelcome(memberName, memberEmail, memberPhone, memberEmail, tempPassword, memberRole);
+        
+    } catch (error) {
+        console.error('Error creating team member:', error);
+        showNotification('Error: ' + error.message, 'error');
+        
+        // Show fallback modal with credentials for manual sending
+        showTeamMemberOnboardingModal(memberName, memberEmail, memberEmail, tempPassword, memberRole, memberPhone);
+    }
 }
 
 function teamMemberQuickAction(action) {
@@ -2403,28 +2525,239 @@ function showTeamMemberOnboardingModal(memberName, memberEmail, username, tempPa
     showModal('Team Member Onboarding - ' + memberName, content);
 }
 
-function sendTeamMemberWelcome(memberName, email, phone, username, password) {
-    const sendEmail = document.getElementById('send-team-email').checked;
-    const sendSMS = document.getElementById('send-team-sms').checked;
+async function sendTeamMemberWelcome(memberName, email, phone, username, password) {
+    console.log('🔥 sendTeamMemberWelcome called!');
+    console.log('Parameters:', { memberName, email, phone, username });
+    console.log('Supabase client exists?', typeof supabase !== 'undefined');
+    
+    const sendEmail = document.getElementById('send-team-email')?.checked ?? true;
+    const sendSMS = document.getElementById('send-team-sms')?.checked ?? false;
     
     let notifications = [];
     
     if (sendEmail) {
         notifications.push('email');
-        showNotification('Welcome email sent to ' + email, 'success');
+        showNotification('📧 Sending welcome email to ' + email + '...', 'info');
+        
+        const loginUrl = window.location.origin + '/login.html';
+        
+        // Create HTML email content
+        const htmlContent = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background: linear-gradient(135deg, #40E0D0, #36B8A8); padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                    .header h1 { color: white; margin: 0; }
+                    .content { background: #f9f9f9; padding: 30px; }
+                    .credentials { background: white; padding: 20px; border-left: 4px solid #40E0D0; margin: 20px 0; border-radius: 5px; }
+                    .credentials p { margin: 10px 0; }
+                    .warning { background: #fff3cd; padding: 15px; border-left: 4px solid #FBB624; margin: 20px 0; border-radius: 5px; }
+                    .button { display: inline-block; padding: 12px 30px; background: #40E0D0; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+                    .footer { background: #333; color: #999; padding: 20px; text-align: center; font-size: 12px; border-radius: 0 0 10px 10px; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>🎉 Welcome to the Clippit Team!</h1>
+                    </div>
+                    <div class="content">
+                        <h2>Hi ${memberName},</h2>
+                        <p>Welcome to Clippit! Your team member account has been created and is ready to use.</p>
+                        
+                        <div class="credentials">
+                            <h3>Your Login Credentials:</h3>
+                            <p><strong>Username:</strong> ${username}</p>
+                            <p><strong>Temporary Password:</strong> <code>${password}</code></p>
+                            <p><strong>Login URL:</strong> <a href="${loginUrl}">${loginUrl}</a></p>
+                        </div>
+                        
+                        <div class="warning">
+                            <p><strong>⚠️ Important:</strong> You'll be required to change your password when you first log in for security purposes.</p>
+                        </div>
+                        
+                        <h3>What You Can Access:</h3>
+                        <ul>
+                            <li>Team dashboard and project management tools</li>
+                            <li>Assigned tasks and project updates</li>
+                            <li>Internal communication and messaging</li>
+                            <li>Team calendar and meeting schedules</li>
+                            <li>Company resources and documentation</li>
+                        </ul>
+                        
+                        <a href="${loginUrl}" class="button">Login to Your Account</a>
+                        
+                        <p>If you have any questions, feel free to reach out to your manager or our support team.</p>
+                        
+                        <p>Welcome aboard!<br><strong>The Clippit Team</strong></p>
+                    </div>
+                    <div class="footer">
+                        <p>Need help? Contact us at support@clippit.com or +61 2 1234 5678</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        `;
+        
+        try {
+            console.log('📧 Calling Supabase Edge Function...');
+            
+            // Call Supabase Edge Function to send email via Resend
+            const { data, error } = await supabase.functions.invoke('send-email', {
+                body: {
+                    to: email,
+                    subject: 'Welcome to Clippit - Your Team Account is Ready! 🎉',
+                    html: htmlContent,
+                    from: 'Clippit Team <onboarding@resend.dev>'
+                }
+            });
+            
+            if (error) {
+                console.error('❌ Supabase function error:', error);
+                throw error;
+            }
+            
+            console.log('✅ Email sent successfully:', data);
+            showNotification('✅ Welcome email sent successfully to ' + email, 'success');
+        } catch (error) {
+            console.error('❌ Email send failed:', error);
+            showNotification('⚠️ Failed to send email: ' + error.message, 'error');
+            return; // Stop here if email fails
+        }
     }
     
     if (sendSMS && phone) {
         notifications.push('SMS');
         setTimeout(() => {
-            showNotification('SMS notification sent to ' + phone, 'success');
+            showNotification('📱 SMS notification sent to ' + phone, 'info');
         }, 1000);
     }
     
     setTimeout(() => {
         closeModal();
-        showNotification(`Team member "${memberName}" onboarded successfully! ${notifications.join(' and ')} sent.`, 'success');
+        showNotification(`🎉 Team member "${memberName}" onboarded successfully! ${notifications.join(' and ')} sent.`, 'success');
     }, 2000);
+}
+
+// Auto-send welcome email when team member is added using Supabase Edge Function + Resend
+async function autoSendTeamMemberWelcome(memberName, email, phone, username, password, role) {
+    showNotification('📧 Sending welcome email to ' + email + '...', 'info');
+    
+    const loginUrl = window.location.origin + '/login.html';
+    
+    const roleNames = {
+        'developer': 'Developer',
+        'designer': 'UI/UX Designer',
+        'manager': 'Project Manager',
+        'support': 'Support Specialist',
+        'marketing': 'Marketing'
+    };
+    
+    // Create HTML email content
+    const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background: linear-gradient(135deg, #40E0D0, #36B8A8); padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                .header h1 { color: white; margin: 0; }
+                .content { background: #f9f9f9; padding: 30px; }
+                .credentials { background: white; padding: 20px; border-left: 4px solid #40E0D0; margin: 20px 0; border-radius: 5px; }
+                .credentials p { margin: 10px 0; }
+                .warning { background: #fff3cd; padding: 15px; border-left: 4px solid #FBB624; margin: 20px 0; border-radius: 5px; }
+                .button { display: inline-block; padding: 12px 30px; background: #40E0D0; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+                .footer { background: #333; color: #999; padding: 20px; text-align: center; font-size: 12px; border-radius: 0 0 10px 10px; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>🎉 Welcome to Clippit!</h1>
+                </div>
+                <div class="content">
+                    <h2>Hi ${memberName},</h2>
+                    <p>Welcome to the Clippit team! Your account has been created and is ready to use.</p>
+                    
+                    <div class="credentials">
+                        <h3>Your Login Credentials:</h3>
+                        <p><strong>Username:</strong> ${username}</p>
+                        <p><strong>Temporary Password:</strong> <code>${password}</code></p>
+                        <p><strong>Login URL:</strong> <a href="${loginUrl}">${loginUrl}</a></p>
+                        <p><strong>Role:</strong> ${roleNames[role] || role}</p>
+                    </div>
+                    
+                    <div class="warning">
+                        <p><strong>⚠️ Important:</strong> You'll be required to change your password when you first log in for security purposes.</p>
+                    </div>
+                    
+                    <h3>What You Can Access:</h3>
+                    <ul>
+                        <li>Team dashboard and project management tools</li>
+                        <li>Assigned tasks and project updates</li>
+                        <li>Internal communication and messaging</li>
+                        <li>Team calendar and meeting schedules</li>
+                        <li>Company resources and documentation</li>
+                    </ul>
+                    
+                    <a href="${loginUrl}" class="button">Login to Your Account</a>
+                    
+                    <p>If you have any questions, feel free to reach out to your manager or our support team.</p>
+                    
+                    <p>Welcome aboard!<br><strong>The Clippit Team</strong></p>
+                </div>
+                <div class="footer">
+                    <p>Need help? Contact us at support@clippit.com or +61 2 1234 5678</p>
+                </div>
+            </div>
+        </body>
+        </html>
+    `;
+    
+    try {
+        // Call Supabase Edge Function
+        const { data, error } = await supabase.functions.invoke('send-email', {
+            body: {
+                to: email,
+                subject: 'Welcome to Clippit - Your Team Account is Ready! 🎉',
+                html: htmlContent,
+                from: 'Clippit Team <onboarding@resend.dev>' // Change this after domain verification
+            }
+        });
+        
+        if (error) throw error;
+        
+        console.log('Email sent successfully:', data);
+        showNotification('✅ Welcome email sent successfully to ' + memberName, 'success');
+        
+        // Show SMS notification if phone provided
+        if (phone) {
+            setTimeout(() => {
+                showNotification('📱 SMS notification sent to ' + phone, 'info');
+            }, 1000);
+        }
+        
+        // Show final confirmation
+        setTimeout(() => {
+            showNotification(`🎉 ${memberName} onboarded! Credentials sent to ${email}`, 'success');
+        }, 2000);
+        
+        return true;
+    } catch (error) {
+        console.error('Email send failed:', error);
+        showNotification('⚠️ Email failed to send. Showing credentials for manual delivery.', 'warning');
+        
+        // Show fallback modal with credentials for manual sending
+        setTimeout(() => {
+            showTeamMemberOnboardingModal(memberName, email, username, password, role || 'developer', phone);
+        }, 1500);
+        
+        return false;
+    }
 }
 
 // Edit Team Member Function
@@ -2776,6 +3109,159 @@ function exportInvoices() {
     setTimeout(() => {
         showNotification('Invoices exported successfully!', 'success');
     }, 1500);
+}
+
+// Investor Listings Management Functions
+function approveInvestorListing(listingId, listingName) {
+    const content = `
+        <div style="text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 1rem; color: #10B981;">✅</div>
+            <h3 style="color: #fff; font-size: 1.5rem; margin-bottom: 1rem;">Approve Listing?</h3>
+            <p style="color: #9CA3AF; margin-bottom: 1rem;">This will publish "${listingName}" to the investor portfolio page.</p>
+            <p style="color: #10B981; font-weight: 600; margin-bottom: 2rem;">This project will be visible to all investors.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button onclick="confirmApproveInvestorListing('${listingId}', '${listingName}')" style="background: linear-gradient(135deg, #10B981, #059669); color: #fff; padding: 0.75rem 1.5rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Approve & Publish</button>
+                <button onclick="closeModal()" style="background: transparent; color: #40E0D0; border: 2px solid #40E0D0; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer;">Cancel</button>
+            </div>
+        </div>
+    `;
+    showModal('Confirm Approval', content);
+}
+
+function confirmApproveInvestorListing(listingId, listingName) {
+    // Save to localStorage
+    const listings = JSON.parse(localStorage.getItem('investorListings') || '[]');
+    const updatedListings = listings.map(listing => {
+        if (listing.id === listingId) {
+            return { ...listing, status: 'approved', approvedDate: new Date().toISOString() };
+        }
+        return listing;
+    });
+    localStorage.setItem('investorListings', JSON.stringify(updatedListings));
+    
+    // Remove from pending section
+    const listingElements = document.querySelectorAll(`[onclick*="${listingId}"]`);
+    listingElements.forEach(el => {
+        const container = el.closest('.dashboard-section');
+        if (container) {
+            el.style.transition = 'opacity 0.3s';
+            el.style.opacity = '0';
+            setTimeout(() => el.remove(), 300);
+        }
+    });
+    
+    closeModal();
+    showNotification(`"${listingName}" approved and published to investor portfolio!`, 'success');
+}
+
+function rejectInvestorListing(listingId, listingName) {
+    const content = `
+        <form onsubmit="confirmRejectInvestorListing(event, '${listingId}', '${listingName}')" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div style="text-align: center;">
+                <div style="font-size: 4rem; margin-bottom: 1rem; color: #EF4444;">⚠️</div>
+                <h3 style="color: #fff; font-size: 1.5rem; margin-bottom: 1rem;">Reject Listing?</h3>
+                <p style="color: #9CA3AF; margin-bottom: 1rem;">"${listingName}" will be rejected and not published.</p>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Reason for Rejection *</label>
+                <textarea id="rejection-reason" rows="4" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; resize: vertical;" placeholder="Explain why this listing is being rejected..."></textarea>
+                <p style="color: #9CA3AF; font-size: 0.875rem; margin-top: 0.5rem;">This message will be sent to the client.</p>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" style="flex: 1; background: #EF4444; color: #fff; padding: 0.75rem 1.5rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Reject Listing</button>
+                <button type="button" onclick="closeModal()" style="flex: 1; background: transparent; color: #40E0D0; border: 2px solid #40E0D0; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer;">Cancel</button>
+            </div>
+        </form>
+    `;
+    showModal('Reject Listing', content);
+}
+
+function confirmRejectInvestorListing(e, listingId, listingName) {
+    e.preventDefault();
+    const reason = document.getElementById('rejection-reason').value;
+    
+    // Save to localStorage
+    const listings = JSON.parse(localStorage.getItem('investorListings') || '[]');
+    const updatedListings = listings.map(listing => {
+        if (listing.id === listingId) {
+            return { ...listing, status: 'rejected', rejectionReason: reason, rejectedDate: new Date().toISOString() };
+        }
+        return listing;
+    });
+    localStorage.setItem('investorListings', JSON.stringify(updatedListings));
+    
+    // Remove from pending section
+    const listingElements = document.querySelectorAll(`[onclick*="${listingId}"]`);
+    listingElements.forEach(el => {
+        const container = el.closest('.dashboard-section');
+        if (container) {
+            el.style.transition = 'opacity 0.3s';
+            el.style.opacity = '0';
+            setTimeout(() => el.remove(), 300);
+        }
+    });
+    
+    closeModal();
+    showNotification(`"${listingName}" rejected. Rejection notice sent to client.`, 'success');
+}
+
+function reviewInvestorListing(listingId) {
+    const content = `
+        <form onsubmit="sendReviewRequest(event, '${listingId}')" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <div style="font-size: 3rem; margin-bottom: 0.5rem;">📝</div>
+                <h3 style="color: #40E0D0; font-size: 1.5rem; margin-bottom: 0.5rem;">Request Changes</h3>
+                <p style="color: #9CA3AF;">Send feedback to the client for revisions</p>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Feedback & Requested Changes *</label>
+                <textarea id="review-feedback" rows="6" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; resize: vertical;" placeholder="Describe what changes are needed for approval..."></textarea>
+            </div>
+            
+            <div style="background: #111827; padding: 1rem; border-radius: 8px; border: 1px solid #4B5563;">
+                <h5 style="color: #fff; margin-bottom: 0.75rem;">Common Review Items:</h5>
+                <ul style="color: #9CA3AF; font-size: 0.875rem; padding-left: 1.5rem; margin: 0;">
+                    <li>Add more project details or description</li>
+                    <li>Include technologies or tools used</li>
+                    <li>Provide project timeline or duration</li>
+                    <li>Add screenshots or project visuals</li>
+                    <li>Clarify project value or budget</li>
+                </ul>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" style="flex: 1; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; padding: 0.75rem 1.5rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Send Review Request</button>
+                <button type="button" onclick="closeModal()" style="flex: 1; background: transparent; color: #40E0D0; border: 2px solid #40E0D0; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer;">Cancel</button>
+            </div>
+        </form>
+    `;
+    showModal('Request Changes', content);
+}
+
+function sendReviewRequest(e, listingId) {
+    e.preventDefault();
+    const feedback = document.getElementById('review-feedback').value;
+    
+    // Save to localStorage
+    const listings = JSON.parse(localStorage.getItem('investorListings') || '[]');
+    const updatedListings = listings.map(listing => {
+        if (listing.id === listingId) {
+            return { 
+                ...listing, 
+                status: 'needs_revision', 
+                reviewFeedback: feedback, 
+                reviewRequestedDate: new Date().toISOString() 
+            };
+        }
+        return listing;
+    });
+    localStorage.setItem('investorListings', JSON.stringify(updatedListings));
+    
+    closeModal();
+    showNotification('Review request sent to client with feedback', 'success');
 }
 
 // Admin Support/Tickets Tab Functions
@@ -3426,6 +3912,76 @@ function sendInvestorInvitation(e) {
     
     // Show success modal with invitation details
     showInvestorInvitationSuccess(firstName + ' ' + lastName, email, invitationCode, invitationLink, packageType);
+}
+
+// Load pending investor listings from localStorage
+function loadPendingInvestorListings() {
+    const listings = JSON.parse(localStorage.getItem('investorListings') || '[]');
+    const pendingListings = listings.filter(listing => listing.status === 'pending');
+    
+    const listingsContainer = document.getElementById('pending-investor-listings');
+    
+    if (!listingsContainer) return;
+    
+    if (pendingListings.length === 0) {
+        listingsContainer.innerHTML = `
+            <div style="text-align: center; padding: 3rem; background: #111827; border-radius: 12px; border: 1px solid #4B5563;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">📋</div>
+                <h4 style="color: #fff; margin-bottom: 0.5rem;">No Pending Listings</h4>
+                <p style="color: #9CA3AF;">All investor listings have been reviewed.</p>
+            </div>
+        `;
+    } else {
+        let listingsHTML = '';
+        pendingListings.forEach(listing => {
+            const daysAgo = Math.floor((new Date() - new Date(listing.submittedDate)) / (1000 * 60 * 60 * 24));
+            const timeText = daysAgo === 0 ? 'Today' : daysAgo === 1 ? 'Yesterday' : `${daysAgo} days ago`;
+            
+            listingsHTML += `
+                <div style="background: #111827; padding: 1.5rem; border-radius: 12px; border: 1px solid #4B5563; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                        <div style="flex: 1;">
+                            <h4 style="color: #40E0D0; font-size: 1.25rem; margin-bottom: 0.5rem;">${listing.projectName}</h4>
+                            <p style="color: #9CA3AF; font-size: 0.875rem;">Submitted ${timeText}</p>
+                        </div>
+                        <span style="background: rgba(168, 85, 247, 0.2); color: #A855F7; padding: 0.5rem 1rem; border-radius: 12px; font-size: 0.875rem; font-weight: 600;">PENDING REVIEW</span>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div>
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.25rem;">Category</p>
+                            <p style="color: #fff; font-weight: 600; text-transform: capitalize;">${listing.category.replace('-', ' ')}</p>
+                        </div>
+                        <div>
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.25rem;">Investment Type</p>
+                            <p style="color: #fff; font-weight: 600; text-transform: capitalize;">${listing.investmentType.replace('-', ' ')}</p>
+                        </div>
+                        <div>
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.25rem;">Seeking Amount</p>
+                            <p style="color: #40E0D0; font-weight: 700; font-size: 1.125rem;">$${parseFloat(listing.seekingAmount).toLocaleString()}</p>
+                        </div>
+                        <div>
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.25rem;">Valuation</p>
+                            <p style="color: #fff; font-weight: 600;">${listing.valuation ? '$' + parseFloat(listing.valuation).toLocaleString() : 'Not specified'}</p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 1.5rem; padding: 1rem; background: #1F2937; border-radius: 8px;">
+                        <h5 style="color: #fff; margin-bottom: 0.5rem; font-size: 0.875rem;">Project Overview</h5>
+                        <p style="color: #9CA3AF; font-size: 0.875rem; line-height: 1.6;">${listing.overview.substring(0, 200)}${listing.overview.length > 200 ? '...' : ''}</p>
+                    </div>
+                    
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                        <button onclick="approveInvestorListing('${listing.id}', '${listing.projectName.replace(/'/g, "\\'")}')" style="flex: 1; min-width: 150px; padding: 0.75rem 1rem; background: linear-gradient(135deg, #10B981, #059669); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">✓ Approve</button>
+                        <button onclick="rejectInvestorListing('${listing.id}', '${listing.projectName.replace(/'/g, "\\'")}')" style="flex: 1; min-width: 150px; padding: 0.75rem 1rem; background: linear-gradient(135deg, #EF4444, #DC2626); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">✕ Reject</button>
+                        <button onclick="reviewInvestorListing('${listing.id}')" style="padding: 0.75rem 1rem; background: #1F2937; color: #FBB624; border: 1px solid #4B5563; border-radius: 8px; font-weight: 600; cursor: pointer;">📝 Request Changes</button>
+                    </div>
+                </div>
+            `;
+        });
+        
+        listingsContainer.innerHTML = listingsHTML;
+    }
 }
 
 function showInvestorInvitationSuccess(investorName, email, invitationCode, invitationLink, packageType) {
