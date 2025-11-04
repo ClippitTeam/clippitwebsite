@@ -135,10 +135,12 @@
             const password = document.getElementById('login-password').value;
             const loginType = window.currentLoginType || 'customer';
             
+            // Get submit button reference outside try block
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            
             try {
                 // Show loading state
-                const submitBtn = event.target.querySelector('button[type="submit"]');
-                const originalText = submitBtn.textContent;
                 submitBtn.textContent = 'Signing in...';
                 submitBtn.disabled = true;
                 
