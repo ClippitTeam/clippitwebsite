@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 
-// Temporarily hardcoded for testing - MUST move back to secrets after testing
-const RESEND_API_KEY = 're_NBtB9iWY_PZn8TNtGQKDZ1c39XhnVxjQZ'
+// Get API key from environment variable (set in Supabase secrets)
+const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
