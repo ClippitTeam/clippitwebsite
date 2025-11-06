@@ -1,7 +1,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts"
 
-// Get API key from environment variable (set in Supabase secrets)
-const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
+// Hardcoded SMTP configuration
+const SMTP_HOST = 'smtp.office365.com'
+const SMTP_PORT = 587
+const SMTP_USER = 'admin@clippit.today'
+const SMTP_PASS = '!Kaide1986'
+const SMTP_FROM = 'Clippit <admin@clippit.today>'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -22,38 +27,50 @@ serve(async (req) => {
   }
 
   try {
-    const { to, subject, html, from = 'Clippit <onboarding@resend.dev>' }: EmailRequest = await req.json()
+    const { to, subject, html, from = SMTP_FROM }: EmailRequest = await req.json()
 
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
+    // Create SMTP client
+    const client = new SMTPClient({
+      connection: {
+        hostname: SMTP_HOST,
+        port: SMTP_PORT,
+        tls: true,
+        auth: {
+          username: SMTP_USER,
+          password: SMTP_PASS,
+        },
       },
-      body: JSON.stringify({
-        from,
-        to,
-        subject,
-        html,
-      }),
     })
 
-    const data = await res.json()
+    // Send email
+    await client.send({
+      from: from,
+      to: to,
+      subject: subject,
+      content: 'auto',
+      html: html,
+    })
 
-    if (!res.ok) {
-      throw new Error(data.message || 'Failed to send email')
-    }
+    await client.close()
 
     return new Response(
-      JSON.stringify({ success: true, data }),
+      JSON.stringify({ 
+        success: true, 
+        message: 'Email sent successfully',
+        data: { to, subject, from }
+      }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       }
     )
   } catch (error) {
+    console.error('Email send error:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message || 'Failed to send email',
+        details: error.toString()
+      }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,

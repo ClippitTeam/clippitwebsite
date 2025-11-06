@@ -905,7 +905,7 @@ async function sendWelcomeNotifications(clientName, email, phone, username, pass
                     to: email,
                     subject: 'Welcome to Clippit - Your Account is Ready! 🎉',
                     html: htmlContent,
-                    from: 'Clippit <onboarding@resend.dev>'
+                    from: 'Clippit <admin@clippit.today>'
                 }
             });
             
@@ -2611,7 +2611,7 @@ async function sendTeamMemberWelcome(memberName, email, phone, username, passwor
                     to: email,
                     subject: 'Welcome to Clippit - Your Team Account is Ready! 🎉',
                     html: htmlContent,
-                    from: 'Clippit Team <onboarding@resend.dev>'
+                    from: 'Clippit Team <admin@clippit.today>'
                 }
             });
             
@@ -2725,7 +2725,7 @@ async function autoSendTeamMemberWelcome(memberName, email, phone, username, pas
                 to: email,
                 subject: 'Welcome to Clippit - Your Team Account is Ready! 🎉',
                 html: htmlContent,
-                from: 'Clippit Team <onboarding@resend.dev>' // Change this after domain verification
+                from: 'Clippit Team <admin@clippit.today>'
             }
         });
         
