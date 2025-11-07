@@ -6,6 +6,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
 // Microsoft Graph API Configuration
@@ -26,11 +27,17 @@ async function getAccessToken(): Promise<string> {
   // Return cached token if still valid
   const now = Date.now();
   if (accessToken && tokenExpiry > now) {
+    console.log('Using cached access token');
     return accessToken;
   }
 
+  console.log('Acquiring new access token from Microsoft...');
+  console.log('Tenant ID configured:', TENANT_ID ? 'Yes' : 'No');
+  console.log('Client ID configured:', CLIENT_ID ? 'Yes' : 'No');
+  console.log('Client Secret configured:', CLIENT_SECRET ? 'Yes' : 'No');
+
   const tokenEndpoint = `https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token`;
-  
+
   const params = new URLSearchParams({
     client_id: CLIENT_ID,
     scope: 'https://graph.microsoft.com/.default',
@@ -48,16 +55,19 @@ async function getAccessToken(): Promise<string> {
     });
 
     if (!response.ok) {
-      const error = await response.text();
-      console.error('Token acquisition failed:', error);
-      throw new Error(`Failed to get access token: ${response.status}`);
+      const errorText = await response.text();
+      console.error('Token acquisition failed');
+      console.error('Status:', response.status);
+      console.error('Response:', errorText);
+      throw new Error(`Failed to get access token: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
     accessToken = data.access_token;
     // Set expiry to 5 minutes before actual expiry for safety
     tokenExpiry = now + ((data.expires_in - 300) * 1000);
-    
+
+    console.log('Access token acquired successfully');
     return accessToken;
   } catch (error) {
     console.error('Error getting access token:', error);
@@ -161,8 +171,12 @@ async function sendEmail(formData: {
 
   // Send email via Microsoft Graph
   const graphEndpoint = `https://graph.microsoft.com/v1.0/users/${SENDER_EMAIL}/sendMail`;
-  
+
   try {
+    console.log('Attempting to send email via Microsoft Graph...');
+    console.log('Graph endpoint:', graphEndpoint);
+    console.log('Sender email:', SENDER_EMAIL);
+
     const response = await fetch(graphEndpoint, {
       method: 'POST',
       headers: {
@@ -173,11 +187,23 @@ async function sendEmail(formData: {
     });
 
     if (!response.ok) {
-      const error = await response.text();
-      console.error('Email sending failed:', error);
-      throw new Error(`Failed to send email: ${response.status}`);
+      const errorText = await response.text();
+      console.error('Microsoft Graph API Error:');
+      console.error('Status:', response.status);
+      console.error('Response:', errorText);
+
+      // Try to parse the error as JSON to get more details
+      try {
+        const errorJson = JSON.parse(errorText);
+        console.error('Error details:', JSON.stringify(errorJson, null, 2));
+      } catch (e) {
+        // Not JSON, already logged as text
+      }
+
+      throw new Error(`Failed to send email: ${response.status} - ${errorText}`);
     }
 
+    console.log('Email sent successfully via Microsoft Graph');
     return { success: true };
   } catch (error) {
     console.error('Error sending email:', error);
