@@ -81,42 +81,41 @@ document.addEventListener('DOMContentLoaded', function() {
             submitButton.textContent = 'Sending...';
             
             try {
-                // Get Supabase URL and anon key from config or use default
-                const supabaseUrl = window.SUPABASE_URL || 'https://ehaznoklcisgckglkjot.supabase.co';
-                const supabaseAnonKey = window.SUPABASE_ANON_KEY || '';
+                // Check if supabase client is available
+                if (typeof supabase === 'undefined') {
+                    throw new Error('Supabase client not initialized. Please refresh the page.');
+                }
 
-                // Send to secure backend endpoint
-                const response = await fetch(`${supabaseUrl}/functions/v1/send-contact-email`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${supabaseAnonKey}`,
-                    },
-                    body: JSON.stringify({
+                // Invoke the Supabase edge function
+                const { data, error } = await supabase.functions.invoke('send-contact-email', {
+                    body: {
                         name,
                         email,
                         phone,
                         service,
                         message
-                    })
+                    }
                 });
-                
-                const result = await response.json();
-                
-                if (response.ok && result.success) {
+
+                if (error) {
+                    // Handle errors from the function
+                    console.error('Function error:', error);
+                    const errorMessage = error.message || 'Failed to send message. Please try again.';
+                    showNotification(errorMessage, 'error');
+                } else if (data && data.success) {
                     // Show success message
-                    showNotification(result.message || 'Thank you! We\'ll get back to you soon.', 'success');
-                    
+                    showNotification(data.message || 'Thank you! We\'ll get back to you soon.', 'success');
+
                     // Reset form
                     this.reset();
                 } else {
-                    // Handle errors
-                    const errorMessage = result.error || 'Failed to send message. Please try again.';
+                    // Handle unexpected response
+                    const errorMessage = data?.error || 'Failed to send message. Please try again.';
                     showNotification(errorMessage, 'error');
-                    
+
                     // Log validation errors if present
-                    if (result.errors && Array.isArray(result.errors)) {
-                        console.error('Validation errors:', result.errors);
+                    if (data?.errors && Array.isArray(data.errors)) {
+                        console.error('Validation errors:', data.errors);
                     }
                 }
             } catch (error) {
