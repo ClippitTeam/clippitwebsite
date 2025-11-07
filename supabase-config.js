@@ -6,8 +6,16 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 window.SUPABASE_URL = SUPABASE_URL;
 window.SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;
 
-// Initialize Supabase client
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Initialize Supabase client and expose globally
+// The CDN exposes createClient via window.supabase
+const { createClient } = window.supabase;
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Expose the client globally as 'supabase'
+window.supabase = supabaseClient;
+
+// Also create a local reference for helper functions in this file
+const supabase = supabaseClient;
 
 // Helper function to get current user
 async function getCurrentUser() {
