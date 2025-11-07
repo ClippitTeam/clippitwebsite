@@ -41,32 +41,90 @@ document.addEventListener('DOMContentLoaded', function() {
     // Contact Form Handling
     const contactForm = document.querySelector('.contact-form');
     if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
+        contactForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // Get form data
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData);
+            // Get form inputs
+            const nameInput = this.querySelector('input[type="text"]');
+            const emailInput = this.querySelector('input[type="email"]');
+            const phoneInput = this.querySelector('input[type="tel"]');
+            const serviceInput = this.querySelector('select');
+            const messageInput = this.querySelector('textarea');
+            const submitButton = this.querySelector('button[type="submit"]');
             
-            // Simple validation
-            const name = this.querySelector('input[type="text"]').value;
-            const email = this.querySelector('input[type="email"]').value;
-            const service = this.querySelector('select').value;
-            const message = this.querySelector('textarea').value;
+            // Get values
+            const name = nameInput?.value?.trim() || '';
+            const email = emailInput?.value?.trim() || '';
+            const phone = phoneInput?.value?.trim() || '';
+            const service = serviceInput?.value || '';
+            const message = messageInput?.value?.trim() || '';
             
+            // Client-side validation
             if (!name || !email || !service || !message) {
-                alert('Please fill in all required fields.');
+                showNotification('Please fill in all required fields.', 'error');
                 return;
             }
             
-            // Show success message
-            showNotification('Thank you! We\'ll get back to you soon.', 'success');
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showNotification('Please enter a valid email address.', 'error');
+                return;
+            }
             
-            // Reset form
-            this.reset();
+            if (message.length < 10) {
+                showNotification('Message must be at least 10 characters long.', 'error');
+                return;
+            }
             
-            // In a real application, you would send this data to a server
-            console.log('Form submitted:', { name, email, service, message });
+            // Disable submit button and show loading state
+            const originalButtonText = submitButton.textContent;
+            submitButton.disabled = true;
+            submitButton.textContent = 'Sending...';
+            
+            try {
+                // Get Supabase URL from config or use default
+                const supabaseUrl = window.SUPABASE_URL || 'https://ehaznoklcisgckglkjot.supabase.co';
+                
+                // Send to secure backend endpoint
+                const response = await fetch(`${supabaseUrl}/functions/v1/send-contact-email`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name,
+                        email,
+                        phone,
+                        service,
+                        message
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    // Show success message
+                    showNotification(result.message || 'Thank you! We\'ll get back to you soon.', 'success');
+                    
+                    // Reset form
+                    this.reset();
+                } else {
+                    // Handle errors
+                    const errorMessage = result.error || 'Failed to send message. Please try again.';
+                    showNotification(errorMessage, 'error');
+                    
+                    // Log validation errors if present
+                    if (result.errors && Array.isArray(result.errors)) {
+                        console.error('Validation errors:', result.errors);
+                    }
+                }
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                showNotification('An error occurred. Please try again later.', 'error');
+            } finally {
+                // Re-enable submit button
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+            }
         });
     }
     
@@ -240,55 +298,84 @@ function backToSelection() {
     currentLoginType = '';
 }
 
-function handleLogin(event) {
+async function handleLogin(event) {
     event.preventDefault();
     
     const username = document.getElementById('login-username').value;
     const password = document.getElementById('login-password').value;
+    const submitButton = event.target.querySelector('button[type="submit"]');
     
-    // Validate credentials based on login type
-    let isValid = false;
-    let errorMessage = 'Invalid username or password';
-    
-    if (currentLoginType === 'admin') {
-        // Admin credentials
-        if (username === 'admin@clippit.today' && password === '!Clippit1986') {
-            isValid = true;
-        } else {
-            errorMessage = 'Invalid admin credentials';
-        }
-    } else if (currentLoginType === 'customer') {
-        // Customer credentials (same as admin for demo purposes)
-        // In production, this would validate against a database
-        if (username === 'admin@clippit.today' && password === '!Clippit1986') {
-            isValid = true;
-        } else {
-            errorMessage = 'Invalid customer credentials. Please check your username and password.';
-        }
-    } else if (currentLoginType === 'investor') {
-        // Investor credentials (same as admin for demo purposes)
-        // In production, this would validate against a database
-        if (username === 'admin@clippit.today' && password === '!Clippit1986') {
-            isValid = true;
-        } else {
-            errorMessage = 'Invalid investor credentials. Please check your username and password.';
-        }
+    // Validate inputs
+    if (!username || !password) {
+        showNotification('Please enter both email and password.', 'error');
+        return;
     }
     
-    if (!isValid) {
-        showNotification(errorMessage, 'error');
-        return;
+    // Disable submit button during authentication
+    if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Authenticating...';
     }
     
     showNotification('Authenticating...', 'info');
     
-    setTimeout(() => {
-        // Store session
-        sessionStorage.setItem('isLoggedIn', 'true');
-        sessionStorage.setItem('loginType', currentLoginType);
-        sessionStorage.setItem('username', username);
+    try {
+        // Check if supabase is available
+        if (typeof supabase === 'undefined') {
+            throw new Error('Authentication service not available. Please ensure Supabase is configured.');
+        }
         
-        // Redirect to appropriate dashboard
+        // Authenticate with Supabase
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: username,
+            password: password,
+        });
+        
+        if (error) {
+            console.error('Login error:', error);
+            showNotification('Invalid email or password. Please try again.', 'error');
+            return;
+        }
+        
+        if (!data.user) {
+            showNotification('Login failed. Please try again.', 'error');
+            return;
+        }
+        
+        // Get user profile to check role
+        const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('role, full_name')
+            .eq('id', data.user.id)
+            .single();
+        
+        if (profileError || !profile) {
+            console.error('Profile error:', profileError);
+            showNotification('User profile not found. Please contact support.', 'error');
+            // Sign out the user since profile is missing
+            await supabase.auth.signOut();
+            return;
+        }
+        
+        // Verify user role matches login type
+        const userRole = profile.role;
+        
+        // Map login types to roles
+        const roleMapping = {
+            'admin': 'admin',
+            'customer': 'customer',
+            'investor': 'investor'
+        };
+        
+        const expectedRole = roleMapping[currentLoginType];
+        
+        if (userRole !== expectedRole) {
+            showNotification(`This account is not authorized for ${currentLoginType} access.`, 'error');
+            await supabase.auth.signOut();
+            return;
+        }
+        
+        // Success! Redirect to appropriate dashboard
         const dashboards = {
             customer: 'customer-dashboard.html',
             investor: 'investor-dashboard.html',
@@ -300,5 +387,15 @@ function handleLogin(event) {
         setTimeout(() => {
             window.location.href = dashboards[currentLoginType];
         }, 1000);
-    }, 1000);
+        
+    } catch (error) {
+        console.error('Authentication error:', error);
+        showNotification('An error occurred during login. Please try again.', 'error');
+    } finally {
+        // Re-enable submit button
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Sign In';
+        }
+    }
 }
