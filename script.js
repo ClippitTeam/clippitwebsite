@@ -81,14 +81,16 @@ document.addEventListener('DOMContentLoaded', function() {
             submitButton.textContent = 'Sending...';
             
             try {
-                // Get Supabase URL from config or use default
+                // Get Supabase URL and anon key from config or use default
                 const supabaseUrl = window.SUPABASE_URL || 'https://ehaznoklcisgckglkjot.supabase.co';
-                
+                const supabaseAnonKey = window.SUPABASE_ANON_KEY || '';
+
                 // Send to secure backend endpoint
                 const response = await fetch(`${supabaseUrl}/functions/v1/send-contact-email`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${supabaseAnonKey}`,
                     },
                     body: JSON.stringify({
                         name,
