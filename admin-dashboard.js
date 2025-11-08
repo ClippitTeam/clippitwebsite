@@ -629,38 +629,65 @@ function showAddClientModal() {
     showModal('Add New Client', content);
 }
 
-function addClient(e) {
+async function addClient(e) {
     e.preventDefault();
     const clientName = document.getElementById('client-name').value;
     const clientCompany = document.getElementById('client-company').value;
     const clientEmail = document.getElementById('client-email').value;
     const clientPhone = document.getElementById('client-phone').value;
-    
-    // Generate secure credentials
-    const username = clientEmail;
-    const tempPassword = generateSecurePassword();
-    const clientId = 'CL-' + Date.now().toString().slice(-6);
-    
-    // Save client to localStorage (in production, this would be a database)
-    const clients = JSON.parse(localStorage.getItem('clients') || '[]');
-    clients.push({
-        id: clientId,
-        name: clientName,
-        company: clientCompany,
-        email: clientEmail,
-        phone: clientPhone,
-        username: username,
-        tempPassword: tempPassword,
-        status: 'pending_first_login',
-        createdDate: new Date().toISOString(),
-        lastLogin: null
-    });
-    localStorage.setItem('clients', JSON.stringify(clients));
-    
-    closeModal();
-    
-    // Show onboarding success modal with credentials
-    showClientOnboardingModal(clientName, clientCompany, username, tempPassword, clientEmail, clientPhone);
+
+    // Show loading state
+    const submitButton = e.target.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = 'Creating Account...';
+
+    try {
+        // Check if supabase is available
+        if (typeof supabase === 'undefined') {
+            throw new Error('Supabase client not initialized');
+        }
+
+        // Call the edge function to create account and send invitation
+        const { data, error } = await supabase.functions.invoke('send-invitation', {
+            body: {
+                name: clientName,
+                email: clientEmail,
+                phone: clientPhone,
+                company: clientCompany,
+                role: 'customer'
+            }
+        });
+
+        if (error) {
+            console.error('Invitation error:', error);
+            throw new Error(error.message || 'Failed to send invitation');
+        }
+
+        if (!data || !data.success) {
+            throw new Error(data?.error || 'Failed to create customer account');
+        }
+
+        closeModal();
+
+        // Show success modal with the generated credentials
+        showClientOnboardingModal(
+            clientName,
+            clientCompany,
+            data.data.username,
+            data.data.tempPassword,
+            clientEmail,
+            clientPhone
+        );
+
+    } catch (error) {
+        console.error('Error creating customer:', error);
+        alert(`Error: ${error.message || 'Failed to create customer account. Please try again.'}`);
+
+        // Re-enable submit button
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+    }
 }
 
 function generateSecurePassword() {
@@ -3874,9 +3901,9 @@ function showInviteInvestorModal() {
     showModal('Invite Investor to Lounge', content);
 }
 
-function sendInvestorInvitation(e) {
+async function sendInvestorInvitation(e) {
     e.preventDefault();
-    
+
     const firstName = document.getElementById('investor-first-name').value;
     const lastName = document.getElementById('investor-last-name').value;
     const email = document.getElementById('investor-email').value;
@@ -3884,34 +3911,60 @@ function sendInvestorInvitation(e) {
     const phone = document.getElementById('investor-phone').value;
     const packageType = document.getElementById('investor-package').value;
     const message = document.getElementById('investor-message').value;
-    
-    // Generate unique invitation code
-    const invitationCode = 'INV-' + Date.now().toString(36).toUpperCase();
-    const invitationLink = window.location.origin + '/investor-dashboard.html?invite=' + invitationCode;
-    
-    // Save investor invitation to localStorage
-    const invitations = JSON.parse(localStorage.getItem('investorInvitations') || '[]');
-    invitations.push({
-        invitationCode: invitationCode,
-        firstName: firstName,
-        lastName: lastName,
-        fullName: firstName + ' ' + lastName,
-        email: email,
-        company: company,
-        phone: phone,
-        packageType: packageType,
-        personalMessage: message,
-        invitationLink: invitationLink,
-        status: 'pending',
-        sentDate: new Date().toISOString(),
-        expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days
-    });
-    localStorage.setItem('investorInvitations', JSON.stringify(invitations));
-    
-    closeModal();
-    
-    // Show success modal with invitation details
-    showInvestorInvitationSuccess(firstName + ' ' + lastName, email, invitationCode, invitationLink, packageType);
+
+    const fullName = firstName + ' ' + lastName;
+
+    // Show loading state
+    const submitButton = e.target.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = 'Sending Invitation...';
+
+    try {
+        // Check if supabase is available
+        if (typeof supabase === 'undefined') {
+            throw new Error('Supabase client not initialized');
+        }
+
+        // Call the edge function to create account and send invitation
+        const { data, error } = await supabase.functions.invoke('send-invitation', {
+            body: {
+                name: fullName,
+                email: email,
+                phone: phone,
+                company: company,
+                role: 'investor',
+                packageType: packageType,
+                personalMessage: message
+            }
+        });
+
+        if (error) {
+            console.error('Invitation error:', error);
+            throw new Error(error.message || 'Failed to send invitation');
+        }
+
+        if (!data || !data.success) {
+            throw new Error(data?.error || 'Failed to create investor account');
+        }
+
+        closeModal();
+
+        // Generate invitation code and link for display
+        const invitationCode = 'INV-' + Date.now().toString(36).toUpperCase();
+        const invitationLink = window.location.origin + '/investor-dashboard.html';
+
+        // Show success modal
+        showInvestorInvitationSuccess(fullName, email, invitationCode, invitationLink, packageType);
+
+    } catch (error) {
+        console.error('Error creating investor:', error);
+        alert(`Error: ${error.message || 'Failed to send investor invitation. Please try again.'}`);
+
+        // Re-enable submit button
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+    }
 }
 
 // Load pending investor listings from localStorage
