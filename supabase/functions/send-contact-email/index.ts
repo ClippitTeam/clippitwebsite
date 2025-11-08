@@ -166,7 +166,6 @@ async function sendEmail(formData: {
         },
       ],
     },
-    saveToSentItems: 'true',
   };
 
   // Send email via Microsoft Graph
