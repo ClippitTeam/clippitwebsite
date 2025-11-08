@@ -27,14 +27,8 @@ async function getAccessToken(): Promise<string> {
   // Return cached token if still valid
   const now = Date.now();
   if (accessToken && tokenExpiry > now) {
-    console.log('Using cached access token');
     return accessToken;
   }
-
-  console.log('Acquiring new access token from Microsoft...');
-  console.log('Tenant ID configured:', TENANT_ID ? 'Yes' : 'No');
-  console.log('Client ID configured:', CLIENT_ID ? 'Yes' : 'No');
-  console.log('Client Secret configured:', CLIENT_SECRET ? 'Yes' : 'No');
 
   const tokenEndpoint = `https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token`;
 
@@ -56,10 +50,8 @@ async function getAccessToken(): Promise<string> {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Token acquisition failed');
-      console.error('Status:', response.status);
-      console.error('Response:', errorText);
-      throw new Error(`Failed to get access token: ${response.status} - ${errorText}`);
+      console.error('Token acquisition failed:', response.status, errorText);
+      throw new Error(`Failed to get access token: ${response.status}`);
     }
 
     const data = await response.json();
@@ -67,7 +59,6 @@ async function getAccessToken(): Promise<string> {
     // Set expiry to 5 minutes before actual expiry for safety
     tokenExpiry = now + ((data.expires_in - 300) * 1000);
 
-    console.log('Access token acquired successfully');
     return accessToken;
   } catch (error) {
     console.error('Error getting access token:', error);
@@ -87,95 +78,95 @@ async function sendEmail(formData: {
 }) {
   const token = await getAccessToken();
 
-  // Create email content
-  const emailContent = {
-    message: {
-      subject: `New Contact Form Submission from ${formData.name}`,
-      body: {
-        contentType: 'HTML',
-        content: `
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <style>
-              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-              .header { background: linear-gradient(135deg, #40E0D0, #36B8A8); color: white; padding: 20px; border-radius: 8px 8px 0 0; }
-              .content { background: #f9f9f9; padding: 20px; border-radius: 0 0 8px 8px; }
-              .field { margin-bottom: 15px; }
-              .label { font-weight: bold; color: #40E0D0; }
-              .value { margin-top: 5px; padding: 10px; background: white; border-left: 3px solid #40E0D0; }
-              .footer { margin-top: 20px; padding-top: 20px; border-top: 2px solid #40E0D0; font-size: 12px; color: #666; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <div class="header">
-                <h2>🎯 New Contact Form Submission</h2>
-                <p>You have received a new inquiry from your Clippit website</p>
+  // Create email content with styled HTML template
+  const message = {
+    subject: `New Contact Form Submission from ${formData.name}`,
+    body: {
+      contentType: 'HTML',
+      content: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #40E0D0, #36B8A8); color: white; padding: 20px; border-radius: 8px 8px 0 0; }
+            .content { background: #f9f9f9; padding: 20px; border-radius: 0 0 8px 8px; }
+            .field { margin-bottom: 15px; }
+            .label { font-weight: bold; color: #40E0D0; }
+            .value { margin-top: 5px; padding: 10px; background: white; border-left: 3px solid #40E0D0; }
+            .footer { margin-top: 20px; padding-top: 20px; border-top: 2px solid #40E0D0; font-size: 12px; color: #666; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h2>🎯 New Contact Form Submission</h2>
+              <p>You have received a new inquiry from your Clippit website</p>
+            </div>
+            <div class="content">
+              <div class="field">
+                <div class="label">👤 Name:</div>
+                <div class="value">${formData.name}</div>
               </div>
-              <div class="content">
-                <div class="field">
-                  <div class="label">👤 Name:</div>
-                  <div class="value">${formData.name}</div>
-                </div>
-                <div class="field">
-                  <div class="label">📧 Email:</div>
-                  <div class="value"><a href="mailto:${formData.email}">${formData.email}</a></div>
-                </div>
-                ${formData.phone ? `
-                <div class="field">
-                  <div class="label">📞 Phone:</div>
-                  <div class="value"><a href="tel:${formData.phone}">${formData.phone}</a></div>
-                </div>
-                ` : ''}
-                <div class="field">
-                  <div class="label">🔧 Service Interested In:</div>
-                  <div class="value">${formData.service}</div>
-                </div>
-                <div class="field">
-                  <div class="label">💬 Message:</div>
-                  <div class="value">${formData.message.replace(/\n/g, '<br>')}</div>
-                </div>
-                <div class="footer">
-                  <p>This email was sent from the contact form on clippit.today</p>
-                  <p>Received: ${new Date().toLocaleString('en-US', { 
-                    timeZone: 'Australia/Brisbane',
-                    dateStyle: 'full',
-                    timeStyle: 'long'
-                  })}</p>
-                </div>
+              <div class="field">
+                <div class="label">📧 Email:</div>
+                <div class="value"><a href="mailto:${formData.email}">${formData.email}</a></div>
+              </div>
+              ${formData.phone ? `
+              <div class="field">
+                <div class="label">📞 Phone:</div>
+                <div class="value"><a href="tel:${formData.phone}">${formData.phone}</a></div>
+              </div>
+              ` : ''}
+              <div class="field">
+                <div class="label">🔧 Service Interested In:</div>
+                <div class="value">${formData.service}</div>
+              </div>
+              <div class="field">
+                <div class="label">💬 Message:</div>
+                <div class="value">${formData.message.replace(/\n/g, '<br>')}</div>
+              </div>
+              <div class="footer">
+                <p>This email was sent from the contact form on clippit.today</p>
+                <p>Received: ${new Date().toLocaleString('en-US', {
+                  timeZone: 'Australia/Brisbane',
+                  dateStyle: 'full',
+                  timeStyle: 'long'
+                })}</p>
               </div>
             </div>
-          </body>
-          </html>
-        `,
-      },
-      toRecipients: [
-        {
-          emailAddress: {
-            address: RECIPIENT_EMAIL,
-          },
-        },
-      ],
-      replyTo: [
-        {
-          emailAddress: {
-            address: formData.email,
-          },
-        },
-      ],
+          </div>
+        </body>
+        </html>
+      `,
     },
+    toRecipients: [
+      {
+        emailAddress: {
+          address: RECIPIENT_EMAIL,
+        },
+      },
+    ],
+    replyTo: [
+      {
+        emailAddress: {
+          address: formData.email,
+        },
+      },
+    ],
+  };
+
+  // Create request body
+  const emailContent = {
+    message: message,
+    saveToSentItems: true,
   };
 
   // Send email via Microsoft Graph
   const graphEndpoint = `https://graph.microsoft.com/v1.0/users/${SENDER_EMAIL}/sendMail`;
 
   try {
-    console.log('Attempting to send email via Microsoft Graph...');
-    console.log('Graph endpoint:', graphEndpoint);
-    console.log('Sender email:', SENDER_EMAIL);
-
     const response = await fetch(graphEndpoint, {
       method: 'POST',
       headers: {
@@ -187,22 +178,10 @@ async function sendEmail(formData: {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Microsoft Graph API Error:');
-      console.error('Status:', response.status);
-      console.error('Response:', errorText);
-
-      // Try to parse the error as JSON to get more details
-      try {
-        const errorJson = JSON.parse(errorText);
-        console.error('Error details:', JSON.stringify(errorJson, null, 2));
-      } catch (e) {
-        // Not JSON, already logged as text
-      }
-
-      throw new Error(`Failed to send email: ${response.status} - ${errorText}`);
+      console.error('Email sending failed:', response.status, errorText);
+      throw new Error(`Failed to send email: ${response.status}`);
     }
 
-    console.log('Email sent successfully via Microsoft Graph');
     return { success: true };
   } catch (error) {
     console.error('Error sending email:', error);
