@@ -2168,61 +2168,71 @@ async function addTeamMember(e) {
     const memberPhone = document.getElementById('team-member-phone').value;
     const startDate = document.getElementById('team-member-start-date').value;
     
-    // Generate secure credentials
-    const tempPassword = generateSecurePassword();
-    
-    closeModal();
-    
-    // Show loading notification
-    showNotification('Creating team member account...', 'info');
+    // Show loading state
+    const submitButton = e.target.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = 'Creating Account...';
     
     try {
-        // Create user in Supabase Auth
-        const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-            email: memberEmail,
-            password: tempPassword,
-            email_confirm: true, // Auto-confirm email
-            user_metadata: {
-                full_name: memberName,
-                phone: memberPhone,
-                role: 'team'
+        // Check if supabase is available
+        if (typeof supabase === 'undefined') {
+            throw new Error('Supabase client not initialized');
+        }
+
+        console.log('📤 Calling send-team-invite edge function...');
+        console.log('Request data:', { name: memberName, email: memberEmail, role: memberRole });
+
+        // Call the edge function to create account and send invitation
+        const { data, error } = await supabase.functions.invoke('send-team-invite', {
+            body: {
+                name: memberName,
+                email: memberEmail,
+                phone: memberPhone || '',
+                role: memberRole,
+                loginUrl: window.location.origin + '/login.html'
             }
         });
-        
-        if (authError) {
-            console.error('Auth error:', authError);
-            throw new Error('Failed to create user account: ' + authError.message);
+
+        console.log('📥 Response from edge function:', { data, error });
+
+        if (error) {
+            console.error('❌ Team invitation error:', error);
+            throw new Error(error.message || 'Failed to send team invitation');
         }
-        
-        // Create profile in profiles table
-        const { error: profileError } = await supabase
-            .from('profiles')
-            .insert([
-                {
-                    id: authData.user.id,
-                    email: memberEmail,
-                    full_name: memberName,
-                    role: 'team',
-                    phone: memberPhone
-                }
-            ]);
-        
-        if (profileError) {
-            console.error('Profile error:', profileError);
-            throw new Error('Failed to create user profile: ' + profileError.message);
+
+        if (!data || !data.success) {
+            console.error('❌ Edge function returned failure:', data);
+            throw new Error(data?.error || 'Failed to create team member account');
         }
-        
-        showNotification('Team member account created! Sending welcome email...', 'success');
-        
-        // Send welcome email and SMS
-        await autoSendTeamMemberWelcome(memberName, memberEmail, memberPhone, memberEmail, tempPassword, memberRole);
-        
+
+        console.log('✅ Team member created successfully!');
+        closeModal();
+
+        // Show success message - the edge function already sent the email
+        showNotification(`✅ Team member "${memberName}" created successfully! Welcome email sent to ${memberEmail}`, 'success');
+
     } catch (error) {
-        console.error('Error creating team member:', error);
-        showNotification('Error: ' + error.message, 'error');
+        console.error('❌ Error creating team member:', error);
         
-        // Show fallback modal with credentials for manual sending
-        showTeamMemberOnboardingModal(memberName, memberEmail, memberEmail, tempPassword, memberRole, memberPhone);
+        // Show user-friendly error message
+        let errorMessage = 'Failed to create team member account. ';
+        
+        if (error.message.includes('not allowed')) {
+            errorMessage += 'Please check your Supabase authentication settings.';
+        } else if (error.message.includes('CORS')) {
+            errorMessage += 'There was a network issue. Please try again.';
+        } else if (error.message.includes('User already registered')) {
+            errorMessage += 'This email is already registered.';
+        } else {
+            errorMessage += error.message || 'Please try again.';
+        }
+        
+        alert(errorMessage);
+
+        // Re-enable submit button
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
     }
 }
 
