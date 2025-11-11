@@ -2180,16 +2180,14 @@ async function addTeamMember(e) {
             throw new Error('Supabase client not initialized');
         }
 
-        // Use the same send-invitation function that works for investors
-        // Just pass 'team' as the role type
-        const { data, error } = await supabase.functions.invoke('send-invitation', {
+        // Call the send-team-invite function with correct parameters
+        const { data, error } = await supabase.functions.invoke('send-team-invite', {
             body: {
                 name: memberName,
                 email: memberEmail,
-                phone: memberPhone,
-                company: '', // Not needed for team members
-                role: 'team', // This tells the function it's a team member
-                teamRole: memberRole // The specific team role (developer, designer, etc.)
+                phone: memberPhone || '',
+                role: memberRole, // The team role (developer, designer, manager, etc.)
+                loginUrl: window.location.origin + '/login.html'
             }
         });
 
