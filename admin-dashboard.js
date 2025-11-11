@@ -2180,55 +2180,43 @@ async function addTeamMember(e) {
             throw new Error('Supabase client not initialized');
         }
 
-        console.log('📤 Calling send-team-invite edge function...');
-        console.log('Request data:', { name: memberName, email: memberEmail, role: memberRole });
-
-        // Call the edge function to create account and send invitation
-        const { data, error } = await supabase.functions.invoke('send-team-invite', {
+        // Use the same send-invitation function that works for investors
+        // Just pass 'team' as the role type
+        const { data, error } = await supabase.functions.invoke('send-invitation', {
             body: {
                 name: memberName,
                 email: memberEmail,
-                phone: memberPhone || '',
-                role: memberRole,
-                loginUrl: window.location.origin + '/login.html'
+                phone: memberPhone,
+                company: '', // Not needed for team members
+                role: 'team', // This tells the function it's a team member
+                teamRole: memberRole // The specific team role (developer, designer, etc.)
             }
         });
 
-        console.log('📥 Response from edge function:', { data, error });
-
         if (error) {
-            console.error('❌ Team invitation error:', error);
-            throw new Error(error.message || 'Failed to send team invitation');
+            console.error('Invitation error:', error);
+            throw new Error(error.message || 'Failed to send invitation');
         }
 
         if (!data || !data.success) {
-            console.error('❌ Edge function returned failure:', data);
             throw new Error(data?.error || 'Failed to create team member account');
         }
 
-        console.log('✅ Team member created successfully!');
         closeModal();
 
-        // Show success message - the edge function already sent the email
-        showNotification(`✅ Team member "${memberName}" created successfully! Welcome email sent to ${memberEmail}`, 'success');
+        // Show success with credentials modal (like we do for clients)
+        showTeamMemberOnboardingModal(
+            memberName,
+            memberEmail,
+            data.data.username,
+            data.data.tempPassword,
+            memberRole,
+            memberPhone
+        );
 
     } catch (error) {
-        console.error('❌ Error creating team member:', error);
-        
-        // Show user-friendly error message
-        let errorMessage = 'Failed to create team member account. ';
-        
-        if (error.message.includes('not allowed')) {
-            errorMessage += 'Please check your Supabase authentication settings.';
-        } else if (error.message.includes('CORS')) {
-            errorMessage += 'There was a network issue. Please try again.';
-        } else if (error.message.includes('User already registered')) {
-            errorMessage += 'This email is already registered.';
-        } else {
-            errorMessage += error.message || 'Please try again.';
-        }
-        
-        alert(errorMessage);
+        console.error('Error creating team member:', error);
+        alert(`Error: ${error.message || 'Failed to create team member account. Please try again.'}`);
 
         // Re-enable submit button
         submitButton.disabled = false;
