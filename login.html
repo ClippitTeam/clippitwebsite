@@ -307,7 +307,7 @@
                 
                 // Send password reset email using Supabase
                 const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                    redirectTo: `${window.location.origin}/login.html?reset=true`
+                    redirectTo: `${window.location.origin}/reset-password.html`
                 });
                 
                 if (error) throw error;
