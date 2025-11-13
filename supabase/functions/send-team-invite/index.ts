@@ -9,9 +9,9 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
-// Microcoft Graphoft Graph API Configuration
-const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY') || '';
-
+// Microsoft Graph API Configuration
+const TENANT_ID = Deno.env.get('MSGRAPH_TENANT_ID') || '';
+const CLIENT_ID = Deno.env.get('MSGRAPH_CLIENT_ID') || '';
 const CLIENT_SECRET = Deno.env.get('MSGRAPH_CLIENT_SECRET') || '';
 const SENDER_EMAIL = Deno.env.get('SENDER_EMAIL') || '';
 
