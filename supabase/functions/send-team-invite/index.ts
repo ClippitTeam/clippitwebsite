@@ -306,8 +306,7 @@ serve(async (req) => {
           email: requestData.email,
           full_name: requestData.name,
           role: 'team',
-          phone: requestData.phone || null,
-          team_role: requestData.role // developer, designer, manager, etc.
+          phone: requestData.phone || null
         }
       ]);
 
