@@ -299,9 +299,6 @@ serve(async (req) => {
     const { data: resetData, error: resetError } = await supabase.auth.admin.generateLink({
       type: 'recovery',
       email: email,
-      options: {
-        redirectTo: 'https://clippitteam.github.io/clippitwebsite/reset-password.html'
-      }
     });
 
     if (resetError) {
@@ -309,11 +306,17 @@ serve(async (req) => {
       throw new Error('Failed to generate reset link');
     }
 
-    // Extract the reset token from the generated link and reconstruct with live site URL
-    const resetLink = resetData.properties.action_link.replace(
-      /^https?:\/\/[^\/]+/,
-      'https://clippitteam.github.io/clippitwebsite/reset-password.html'
-    );
+    // Extract the action link and parse the URL
+    const actionLink = resetData.properties.action_link;
+    const url = new URL(actionLink);
+    
+    // Extract token and other parameters from the verification URL
+    const token = url.searchParams.get('token');
+    const type = url.searchParams.get('type');
+    
+    // Construct the reset link with your live site URL
+    // Format: https://clippitteam.github.io/clippitwebsite/reset-password.html#access_token=TOKEN&type=recovery
+    const resetLink = `https://clippitteam.github.io/clippitwebsite/reset-password.html?token=${token}&type=${type}`;
 
     // Send password reset email via Microsoft Graph
     await sendPasswordResetEmail(email, resetLink);
