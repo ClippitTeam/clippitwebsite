@@ -62,6 +62,10 @@ async function getAccessToken(): Promise<string> {
     return accessToken;
   } catch (error) {
     console.error('Error getting access token:', error);
+    console.log('Full token error details:', JSON.stringify(error, null, 2));
+    console.log('Error type:', typeof error);
+    console.log('Error name:', error instanceof Error ? error.name : 'Unknown');
+    console.log('Error message:', error instanceof Error ? error.message : String(error));
     throw error;
   }
 }
@@ -185,6 +189,11 @@ async function sendEmail(formData: {
     return { success: true };
   } catch (error) {
     console.error('Error sending email:', error);
+    console.log('Full email send error details:', JSON.stringify(error, null, 2));
+    console.log('Error type:', typeof error);
+    console.log('Error name:', error instanceof Error ? error.name : 'Unknown');
+    console.log('Error message:', error instanceof Error ? error.message : String(error));
+    console.log('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
     throw error;
   }
 }
@@ -353,11 +362,20 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error processing request:', error);
+    console.log('=== MAIN ERROR HANDLER ===');
+    console.log('Full error details:', JSON.stringify(error, null, 2));
+    console.log('Error type:', typeof error);
+    console.log('Error name:', error instanceof Error ? error.name : 'Unknown');
+    console.log('Error message:', error instanceof Error ? error.message : String(error));
+    console.log('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+    console.log('========================');
     
     return new Response(
       JSON.stringify({ 
         error: 'Failed to send message. Please try again later.',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
+        errorType: error instanceof Error ? error.name : typeof error,
+        stack: error instanceof Error ? error.stack : undefined
       }),
       {
         status: 500,
