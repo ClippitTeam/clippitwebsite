@@ -155,41 +155,7 @@
         
         clearSession();
 
-        // Note: handleLogin function is defined in script.js
-
-        function showLoginForm(type) {
-            window.currentLoginType = type;
-            
-            // Hide selection, show form
-            document.querySelector('.login-options').style.display = 'none';
-            document.querySelector('.login-footer').style.display = 'none';
-            document.getElementById('login-form-container').style.display = 'block';
-            
-            // Update form UI based on type
-            const icons = {
-                customer: '👤',
-                investor: '💼',
-                admin: '⚙️'
-            };
-            
-            const titles = {
-                customer: 'Customer Login',
-                investor: 'Investor Login',
-                admin: 'Admin Login'
-            };
-            
-            document.getElementById('login-form-icon').textContent = icons[type];
-            document.getElementById('login-form-title').textContent = titles[type];
-        }
-
-        function backToSelection() {
-            document.querySelector('.login-options').style.display = 'flex';
-            document.querySelector('.login-footer').style.display = 'block';
-            document.getElementById('login-form-container').style.display = 'none';
-            document.getElementById('login-form').reset();
-        }
-
-        // Forgot Password Functions
+        // Forgot Password Functions (these are called by the HTML above)
         function showForgotPassword(event) {
             event.preventDefault();
             const modal = document.getElementById('forgot-password-modal');
@@ -213,11 +179,9 @@
             const originalText = submitBtn.textContent;
             
             try {
-                // Show loading state
                 submitBtn.textContent = 'Sending...';
                 submitBtn.disabled = true;
                 
-                // Call the custom password reset Edge Function (uses MS Graph)
                 const response = await fetch(`${window.SUPABASE_URL}/functions/v1/send-password-reset`, {
                     method: 'POST',
                     headers: {
@@ -234,11 +198,9 @@
                     throw new Error(result.error || 'Failed to send reset email');
                 }
                 
-                // Show success message
                 document.getElementById('reset-success-message').style.display = 'block';
                 document.getElementById('forgot-password-form').style.display = 'none';
                 
-                // Auto-close after 3 seconds
                 setTimeout(() => {
                     closeForgotPassword();
                     document.getElementById('forgot-password-form').style.display = 'flex';
@@ -246,12 +208,8 @@
                 
             } catch (error) {
                 console.error('Password reset error:', error);
-                
-                // Reset button
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
-                
-                // Show error message
                 alert(error.message || 'Failed to send reset email. Please try again.');
             }
         }
