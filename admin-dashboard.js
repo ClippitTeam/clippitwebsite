@@ -649,13 +649,12 @@ async function addClient(e) {
         }
 
         // Call the edge function to create account and send invitation
-        const { data, error } = await supabase.functions.invoke('send-invitation', {
+        const { data, error } = await supabase.functions.invoke('send-customer-invite', {
             body: {
                 name: clientName,
                 email: clientEmail,
                 phone: clientPhone,
-                company: clientCompany,
-                role: 'customer'
+                company: clientCompany
             }
         });
 

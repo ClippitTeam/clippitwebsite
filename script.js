@@ -376,7 +376,15 @@ async function handleLogin(event) {
             return;
         }
         
-        // Success! Redirect to appropriate dashboard
+        // Success! Store session data
+        sessionStorage.setItem('isLoggedIn', 'true');
+        sessionStorage.setItem('loginType', currentLoginType);
+        sessionStorage.setItem('userId', data.user.id);
+        sessionStorage.setItem('userEmail', data.user.email);
+        sessionStorage.setItem('userName', profile.full_name || '');
+        sessionStorage.setItem('userRole', profile.role);
+        
+        // Redirect to appropriate dashboard
         const dashboards = {
             customer: 'customer-dashboard.html',
             investor: 'investor-dashboard.html',
