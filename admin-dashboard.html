@@ -83,6 +83,11 @@
                     <span class="nav-label">Investor Listings</span>
                     <span class="nav-badge">2</span>
                 </a>
+                <a href="#clippit-projects" class="nav-item">
+                    <span class="nav-icon">🚀</span>
+                    <span class="nav-label">Clippit Projects</span>
+                    <span class="nav-badge">5</span>
+                </a>
                 <a href="https://www.clippit.online/" target="_blank" class="nav-item">
                     <span class="nav-icon">🌐</span>
                     <span class="nav-label">Domains</span>
@@ -1907,6 +1912,274 @@
             </div>
             <!-- End Investor Listings Section -->
 
+            <!-- Clippit Projects Section -->
+            <div id="section-clippit-projects" class="dashboard-section" style="display: none;">
+                <section class="clippit-projects-admin-section">
+                    <!-- Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <div>
+                            <h2 style="color: #40E0D0; font-size: 1.75rem; margin-bottom: 0.5rem;">🚀 Clippit Own Projects</h2>
+                            <p style="color: #9CA3AF;">Manage internal projects and publish to the Investor Lounge</p>
+                        </div>
+                        <button onclick="showCreateClippitProjectModal()" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">+ Create New Project</button>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                        <div style="background: linear-gradient(135deg, rgba(64, 224, 208, 0.1), rgba(54, 184, 168, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(64, 224, 208, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Total Projects</p>
+                            <h3 style="color: #40E0D0; font-size: 2rem; font-weight: 800;">5</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">+2 this month</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(147, 51, 234, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(168, 85, 247, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">In Development</p>
+                            <h3 style="color: #A855F7; font-size: 2rem; font-weight: 800;">3</h3>
+                            <p style="color: #9CA3AF; font-size: 0.875rem;">Active work</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Published to Lounge</p>
+                            <h3 style="color: #FBB624; font-size: 2rem; font-weight: 800;">2</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">35 views total</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Investment Offers</p>
+                            <h3 style="color: #10B981; font-size: 2rem; font-weight: 800;">8</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">+3 new</p>
+                        </div>
+                    </div>
+
+                    <!-- Filter Tabs -->
+                    <div style="display: flex; gap: 1rem; margin-bottom: 2rem; overflow-x: auto; padding-bottom: 0.5rem;">
+                        <button onclick="filterClippitProjects('all')" class="clippit-project-filter-btn active" data-filter="all" style="padding: 0.5rem 1rem; background: rgba(64, 224, 208, 0.2); color: #40E0D0; border: 1px solid #40E0D0; border-radius: 50px; cursor: pointer; white-space: nowrap; font-weight: 600;">All Projects</button>
+                        <button onclick="filterClippitProjects('development')" class="clippit-project-filter-btn" data-filter="development" style="padding: 0.5rem 1rem; background: #111827; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 50px; cursor: pointer; white-space: nowrap;">🔨 In Development</button>
+                        <button onclick="filterClippitProjects('completed')" class="clippit-project-filter-btn" data-filter="completed" style="padding: 0.5rem 1rem; background: #111827; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 50px; cursor: pointer; white-space: nowrap;">✅ Completed</button>
+                        <button onclick="filterClippitProjects('published')" class="clippit-project-filter-btn" data-filter="published" style="padding: 0.5rem 1rem; background: #111827; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 50px; cursor: pointer; white-space: nowrap;">🌐 Published</button>
+                        <button onclick="filterClippitProjects('for-sale')" class="clippit-project-filter-btn" data-filter="for-sale" style="padding: 0.5rem 1rem; background: #111827; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 50px; cursor: pointer; white-space: nowrap;">💰 For Sale</button>
+                        <button onclick="filterClippitProjects('ideas')" class="clippit-project-filter-btn" data-filter="ideas" style="padding: 0.5rem 1rem; background: #111827; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 50px; cursor: pointer; white-space: nowrap;">💡 Project Ideas</button>
+                        <button onclick="showAddIdeaModal()" style="padding: 0.5rem 1rem; background: linear-gradient(135deg, #A855F7, #9333EA); color: #fff; border: none; border-radius: 50px; cursor: pointer; white-space: nowrap; font-weight: 600;">➕ Add Project Idea</button>
+                    </div>
+
+                    <!-- Projects Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                        <!-- Project Card 1 - AI Content Generator (In Development, Published) -->
+                        <div class="clippit-project-card" data-status="development" data-published="true" style="background: #1F2937; border-radius: 12px; border: 1px solid #4B5563; overflow: hidden; transition: all 0.3s;" onmouseenter="this.style.borderColor='#40E0D0'" onmouseleave="this.style.borderColor='#4B5563'">
+                            <div style="position: relative; height: 160px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
+                                <div style="font-size: 4rem;">🤖</div>
+                                <div style="position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem;">
+                                    <span style="background: rgba(168, 85, 247, 0.9); color: #fff; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">DEVELOPING</span>
+                                    <span style="background: rgba(16, 185, 129, 0.9); color: #fff; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">PUBLISHED</span>
+                                </div>
+                            </div>
+                            
+                            <div style="padding: 1.5rem;">
+                                <h3 style="color: #40E0D0; font-size: 1.25rem; margin-bottom: 0.5rem;">AI Content Generator</h3>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 1rem; line-height: 1.6;">Advanced AI-powered tool for generating blog posts, social media content, and marketing copy. Built with GPT-4 and custom training.</p>
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+                                    <div>
+                                        <p style="color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem;">Progress</p>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <div style="flex: 1; height: 6px; background: #374151; border-radius: 3px; overflow: hidden;">
+                                                <div style="width: 65%; height: 100%; background: linear-gradient(90deg, #A855F7, #9333EA);"></div>
+                                            </div>
+                                            <span style="color: #A855F7; font-size: 0.875rem; font-weight: 600;">65%</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p style="color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem;">Est. Value</p>
+                                        <p style="color: #FBB624; font-weight: 600; font-size: 1.125rem;">$85,000</p>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                                    <span style="background: #111827; color: #40E0D0; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">React</span>
+                                    <span style="background: #111827; color: #40E0D0; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">Python</span>
+                                    <span style="background: #111827; color: #40E0D0; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">OpenAI</span>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.75rem; padding-top: 1rem; border-top: 1px solid #374151;">
+                                    <button onclick="viewClippitProject('proj-ai-001')" style="flex: 1; padding: 0.5rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; cursor: pointer; font-size: 0.875rem;">View Details</button>
+                                    <button onclick="togglePublishProject('proj-ai-001', true)" style="flex: 1; padding: 0.5rem; background: linear-gradient(135deg, #FBB624, #F59E0B); color: #111827; border: none; border-radius: 8px; cursor: pointer; font-size: 0.875rem; font-weight: 600;">📊 3 views • 2 offers</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Project Card 2 - E-Learning Platform (Completed, Not Published) -->
+                        <div class="clippit-project-card" data-status="completed" data-published="false" style="background: #1F2937; border-radius: 12px; border: 1px solid #4B5563; overflow: hidden; transition: all 0.3s;" onmouseenter="this.style.borderColor='#40E0D0'" onmouseleave="this.style.borderColor='#4B5563'">
+                            <div style="position: relative; height: 160px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); display: flex; align-items: center; justify-content: center;">
+                                <div style="font-size: 4rem;">📚</div>
+                                <div style="position: absolute; top: 1rem; right: 1rem;">
+                                    <span style="background: rgba(16, 185, 129, 0.9); color: #fff; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">COMPLETED</span>
+                                </div>
+                            </div>
+                            
+                            <div style="padding: 1.5rem;">
+                                <h3 style="color: #40E0D0; font-size: 1.25rem; margin-bottom: 0.5rem;">E-Learning Platform</h3>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 1rem; line-height: 1.6;">Complete online learning management system with video hosting, quizzes, certificates, and student progress tracking.</p>
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+                                    <div>
+                                        <p style="color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem;">Progress</p>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <div style="flex: 1; height: 6px; background: #374151; border-radius: 3px; overflow: hidden;">
+                                                <div style="width: 100%; height: 100%; background: linear-gradient(90deg, #10B981, #059669);"></div>
+                                            </div>
+                                            <span style="color: #10B981; font-size: 0.875rem; font-weight: 600;">100%</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p style="color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem;">Asking Price</p>
+                                        <p style="color: #FBB624; font-weight: 600; font-size: 1.125rem;">$120,000</p>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                                    <span style="background: #111827; color: #40E0D0; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">Next.js</span>
+                                    <span style="background: #111827; color: #40E0D0; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">Node.js</span>
+                                    <span style="background: #111827; color: #40E0D0; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">PostgreSQL</span>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.75rem; padding-top: 1rem; border-top: 1px solid #374151;">
+                                    <button onclick="viewClippitProject('proj-learn-001')" style="flex: 1; padding: 0.5rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; cursor: pointer; font-size: 0.875rem;">View Details</button>
+                                    <button onclick="togglePublishProject('proj-learn-001', false)" style="flex: 1; padding: 0.5rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; cursor: pointer; font-size: 0.875rem; font-weight: 600;">🌐 Publish to Lounge</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Project Card 3 - Social Media Scheduler (Development) -->
+                        <div class="clippit-project-card" data-status="development" data-published="false" style="background: #1F2937; border-radius: 12px; border: 1px solid #4B5563; overflow: hidden; transition: all 0.3s;" onmouseenter="this.style.borderColor='#40E0D0'" onmouseleave="this.style.borderColor='#4B5563'">
+                            <div style="position: relative; height: 160px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); display: flex; align-items: center; justify-content: center;">
+                                <div style="font-size: 4rem;">📱</div>
+                                <div style="position: absolute; top: 1rem; right: 1rem;">
+                                    <span style="background: rgba(168, 85, 247, 0.9); color: #fff; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">DEVELOPING</span>
+                                </div>
+                            </div>
+                            
+                            <div style="padding: 1.5rem;">
+                                <h3 style="color: #40E0D0; font-size: 1.25rem; margin-bottom: 0.5rem;">Social Media Scheduler</h3>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 1rem; line-height: 1.6;">All-in-one social media management tool with scheduling, analytics, and AI-powered content suggestions for multiple platforms.</p>
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+                                    <div>
+                                        <p style="color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem;">Progress</p>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <div style="flex: 1; height: 6px; background: #374151; border-radius: 3px; overflow: hidden;">
+                                                <div style="width: 45%; height: 100%; background: linear-gradient(90deg, #A855F7, #9333EA);"></div>
+                                            </div>
+                                            <span style="color: #A855F7; font-size: 0.875rem; font-weight: 600;">45%</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p style="color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem;">Est. Value</p>
+                                        <p style="color: #FBB624; font-weight: 600; font-size: 1.125rem;">$65,000</p>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                                    <span style="background: #111827; color: #40E0D0; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">Vue.js</span>
+                                    <span style="background: #111827; color: #40E0D0; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">Firebase</span>
+                                    <span style="background: #111827; color: #40E0D0; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">APIs</span>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.75rem; padding-top: 1rem; border-top: 1px solid #374151;">
+                                    <button onclick="viewClippitProject('proj-social-001')" style="flex: 1; padding: 0.5rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; cursor: pointer; font-size: 0.875rem;">View Details</button>
+                                    <button onclick="editClippitProject('proj-social-001')" style="flex: 1; padding: 0.5rem; background: #111827; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; cursor: pointer; font-size: 0.875rem;">✏️ Edit</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Project Card 4 - CRM System (Development, Published) -->
+                        <div class="clippit-project-card" data-status="development" data-published="true" style="background: #1F2937; border-radius: 12px; border: 1px solid #4B5563; overflow: hidden; transition: all 0.3s;" onmouseenter="this.style.borderColor='#40E0D0'" onmouseleave="this.style.borderColor='#4B5563'">
+                            <div style="position: relative; height: 160px; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); display: flex; align-items: center; justify-content: center;">
+                                <div style="font-size: 4rem;">💼</div>
+                                <div style="position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem;">
+                                    <span style="background: rgba(168, 85, 247, 0.9); color: #fff; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">DEVELOPING</span>
+                                    <span style="background: rgba(16, 185, 129, 0.9); color: #fff; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">PUBLISHED</span>
+                                </div>
+                            </div>
+                            
+                            <div style="padding: 1.5rem;">
+                                <h3 style="color: #40E0D0; font-size: 1.25rem; margin-bottom: 0.5rem;">Custom CRM System</h3>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 1rem; line-height: 1.6;">Fully-featured customer relationship management system with pipeline tracking, automation, and integration capabilities.</p>
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+                                    <div>
+                                        <p style="color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem;">Progress</p>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <div style="flex: 1; height: 6px; background: #374151; border-radius: 3px; overflow: hidden;">
+                                                <div style="width: 80%; height: 100%; background: linear-gradient(90deg, #A855F7, #9333EA);"></div>
+                                            </div>
+                                            <span style="color: #A855F7; font-size: 0.875rem; font-weight: 600;">80%</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p style="color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem;">Asking Price</p>
+                                        <p style="color: #FBB624; font-weight: 600; font-size: 1.125rem;">$95,000</p>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                                    <span style="background: #111827; color: #40E0D0; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">React</span>
+                                    <span style="background: #111827; color: #40E0D0; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">Django</span>
+                                    <span style="background: #111827; color: #40E0D0; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">MongoDB</span>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.75rem; padding-top: 1rem; border-top: 1px solid #374151;">
+                                    <button onclick="viewClippitProject('proj-crm-001')" style="flex: 1; padding: 0.5rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; cursor: pointer; font-size: 0.875rem;">View Details</button>
+                                    <button onclick="togglePublishProject('proj-crm-001', true)" style="flex: 1; padding: 0.5rem; background: linear-gradient(135deg, #FBB624, #F59E0B); color: #111827; border: none; border-radius: 8px; cursor: pointer; font-size: 0.875rem; font-weight: 600;">📊 12 views • 6 offers</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Project Card 5 - Task Management (Concept) -->
+                        <div class="clippit-project-card" data-status="concept" data-published="false" style="background: #1F2937; border-radius: 12px; border: 1px solid #4B5563; overflow: hidden; transition: all 0.3s;" onmouseenter="this.style.borderColor='#40E0D0'" onmouseleave="this.style.borderColor='#4B5563'">
+                            <div style="position: relative; height: 160px; background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); display: flex; align-items: center; justify-content: center;">
+                                <div style="font-size: 4rem;">✅</div>
+                                <div style="position: absolute; top: 1rem; right: 1rem;">
+                                    <span style="background: rgba(107, 114, 128, 0.9); color: #fff; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">CONCEPT</span>
+                                </div>
+                            </div>
+                            
+                            <div style="padding: 1.5rem;">
+                                <h3 style="color: #40E0D0; font-size: 1.25rem; margin-bottom: 0.5rem;">Team Task Manager</h3>
+                                <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 1rem; line-height: 1.6;">Collaborative task management with Kanban boards, time tracking, team chat, and project roadmaps.</p>
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+                                    <div>
+                                        <p style="color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem;">Progress</p>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <div style="flex: 1; height: 6px; background: #374151; border-radius: 3px; overflow: hidden;">
+                                                <div style="width: 10%; height: 100%; background: linear-gradient(90deg, #6B7280, #4B5563);"></div>
+                                            </div>
+                                            <span style="color: #6B7280; font-size: 0.875rem; font-weight: 600;">10%</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p style="color: #9CA3AF; font-size: 0.75rem; margin-bottom: 0.25rem;">Est. Value</p>
+                                        <p style="color: #FBB624; font-weight: 600; font-size: 1.125rem;">$45,000</p>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                                    <span style="background: #111827; color: #40E0D0; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">Angular</span>
+                                    <span style="background: #111827; color: #40E0D0; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">Socket.io</span>
+                                    <span style="background: #111827; color: #40E0D0; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.75rem;">Redis</span>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.75rem; padding-top: 1rem; border-top: 1px solid #374151;">
+                                    <button onclick="viewClippitProject('proj-task-001')" style="flex: 1; padding: 0.5rem; background: transparent; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; cursor: pointer; font-size: 0.875rem;">View Details</button>
+                                    <button onclick="editClippitProject('proj-task-001')" style="flex: 1; padding: 0.5rem; background: #111827; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; cursor: pointer; font-size: 0.875rem;">✏️ Edit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- End Clippit Projects Section -->
+
             <!-- Support/Tickets Section -->
             <div id="section-tickets" class="dashboard-section" style="display: none;">
                 <section class="tickets-admin-section">
@@ -2758,6 +3031,9 @@
     <!-- Project Management -->
     <script type="module" src="projects.js"></script>
     <script type="module" src="admin-projects.js"></script>
+    
+    <!-- Clippit Projects Management -->
+    <script src="clippit-projects.js"></script>
     
     <script src="admin-dashboard.js"></script>
     <script>

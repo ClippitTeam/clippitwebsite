@@ -74,6 +74,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else if (href === '#investor-listings') {
                     const investorListingsSection = document.getElementById('section-investor-listings');
                     if (investorListingsSection) investorListingsSection.style.display = 'block';
+                } else if (href === '#clippit-projects') {
+                    const clippitProjectsSection = document.getElementById('section-clippit-projects');
+                    if (clippitProjectsSection) clippitProjectsSection.style.display = 'block';
                 } else if (href === '#integrations') {
                     const integrationsSection = document.getElementById('section-integrations');
                     if (integrationsSection) integrationsSection.style.display = 'block';
