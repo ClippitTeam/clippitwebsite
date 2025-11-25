@@ -68,6 +68,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else if (href === '#tickets') {
                     const ticketsSection = document.getElementById('section-tickets');
                     if (ticketsSection) ticketsSection.style.display = 'block';
+                } else if (href === '#investors') {
+                    const investorsSection = document.getElementById('section-investors');
+                    if (investorsSection) investorsSection.style.display = 'block';
                 } else if (href === '#investor-listings') {
                     const investorListingsSection = document.getElementById('section-investor-listings');
                     if (investorListingsSection) investorListingsSection.style.display = 'block';
@@ -98,6 +101,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Quick Task button
+    const quickTaskBtn = document.querySelector('button[onclick*="quickTask"]');
+    if (quickTaskBtn) {
+        quickTaskBtn.onclick = showQuickTaskModal;
+    }
+
+    // Log Time button
+    const logTimeBtn = document.querySelector('button[onclick*="logTime"]');
+    if (logTimeBtn) {
+        logTimeBtn.onclick = showLogTimeModal;
+    }
 
     // Notification icon
     const notificationIcon = document.querySelector('.notification-icon');
@@ -859,91 +874,8 @@ async function sendWelcomeNotifications(clientName, email, phone, username, pass
     
     if (sendEmail) {
         notifications.push('email');
-        showNotification('📧 Sending welcome email to ' + email + '...', 'info');
-        
-        const loginUrl = window.location.origin + '/customer-dashboard.html';
-        
-        // Create HTML email content
-        const htmlContent = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <style>
-                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                    .header { background: linear-gradient(135deg, #40E0D0, #36B8A8); padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-                    .header h1 { color: white; margin: 0; }
-                    .content { background: #f9f9f9; padding: 30px; }
-                    .credentials { background: white; padding: 20px; border-left: 4px solid #40E0D0; margin: 20px 0; border-radius: 5px; }
-                    .credentials p { margin: 10px 0; }
-                    .warning { background: #fff3cd; padding: 15px; border-left: 4px solid #FBB624; margin: 20px 0; border-radius: 5px; }
-                    .button { display: inline-block; padding: 12px 30px; background: #40E0D0; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
-                    .footer { background: #333; color: #999; padding: 20px; text-align: center; font-size: 12px; border-radius: 0 0 10px 10px; }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <div class="header">
-                        <h1>🎉 Welcome to Clippit!</h1>
-                    </div>
-                    <div class="content">
-                        <h2>Hi ${clientName},</h2>
-                        <p>Welcome to Clippit! Your client account has been created and is ready to use.</p>
-                        
-                        <div class="credentials">
-                            <h3>Your Login Credentials:</h3>
-                            <p><strong>Username:</strong> ${username}</p>
-                            <p><strong>Temporary Password:</strong> <code>${password}</code></p>
-                            <p><strong>Login URL:</strong> <a href="${loginUrl}">${loginUrl}</a></p>
-                        </div>
-                        
-                        <div class="warning">
-                            <p><strong>⚠️ Important:</strong> You'll be required to change your password when you first log in for security purposes.</p>
-                        </div>
-                        
-                        <h3>What You Can Do:</h3>
-                        <ul>
-                            <li>View and track your projects in real-time</li>
-                            <li>Access invoices and payment history</li>
-                            <li>Communicate directly with our team</li>
-                            <li>Download project files and resources</li>
-                            <li>Submit support requests</li>
-                        </ul>
-                        
-                        <a href="${loginUrl}" class="button">Login to Your Account</a>
-                        
-                        <p>If you have any questions or need assistance, feel free to reach out to our support team.</p>
-                        
-                        <p>Best regards,<br><strong>The Clippit Team</strong></p>
-                    </div>
-                    <div class="footer">
-                        <p>Need help? Contact us at support@clippit.com or +61 2 1234 5678</p>
-                    </div>
-                </div>
-            </body>
-            </html>
-        `;
-        
-        try {
-            // Call Supabase Edge Function to send email via Resend
-            const { data, error } = await supabase.functions.invoke('send-email', {
-                body: {
-                    to: email,
-                    subject: 'Welcome to Clippit - Your Account is Ready! 🎉',
-                    html: htmlContent,
-                    from: 'Clippit <admin@clippit.today>'
-                }
-            });
-            
-            if (error) throw error;
-            
-            console.log('Email sent successfully:', data);
-            showNotification('✅ Welcome email sent successfully to ' + email, 'success');
-        } catch (error) {
-            console.error('Email send failed:', error);
-            showNotification('⚠️ Failed to send email: ' + error.message, 'error');
-            return; // Stop here if email fails
-        }
+        // Note: Email was already sent by the send-customer-invite Edge Function
+        showNotification('✅ Welcome email has been sent to ' + email, 'success');
     }
     
     if (sendSMS && phone) {
@@ -3921,14 +3853,13 @@ async function sendInvestorInvitation(e) {
             throw new Error('Supabase client not initialized');
         }
 
-        // Call the edge function to create account and send invitation
-        const { data, error } = await supabase.functions.invoke('send-invitation', {
+        // Call the send-investor-invite edge function
+        const { data, error } = await supabase.functions.invoke('send-investor-invite', {
             body: {
                 name: fullName,
                 email: email,
                 phone: phone,
                 company: company,
-                role: 'investor',
                 packageType: packageType,
                 personalMessage: message
             }
@@ -3940,26 +3871,363 @@ async function sendInvestorInvitation(e) {
         }
 
         if (!data || !data.success) {
-            throw new Error(data?.error || 'Failed to create investor account');
+            throw new Error(data?.error || 'Failed to create investor invitation');
         }
 
         closeModal();
 
-        // Generate invitation code and link for display
-        const invitationCode = 'INV-' + Date.now().toString(36).toUpperCase();
-        const invitationLink = window.location.origin + '/investor-dashboard.html';
-
-        // Show success modal
-        showInvestorInvitationSuccess(fullName, email, invitationCode, invitationLink, packageType);
+        // Show success modal with invitation details from response
+        showInvestorInvitationSuccess(
+            fullName,
+            email,
+            data.data.invitationCode,
+            data.data.loginUrl,
+            packageType
+        );
 
     } catch (error) {
-        console.error('Error creating investor:', error);
+        console.error('Error inviting investor:', error);
         alert(`Error: ${error.message || 'Failed to send investor invitation. Please try again.'}`);
 
         // Re-enable submit button
         submitButton.disabled = false;
         submitButton.textContent = originalButtonText;
     }
+}
+
+// Load Real Investors from Database
+async function loadInvestors() {
+    try {
+        // Check if supabase is available
+        if (typeof supabase === 'undefined') {
+            console.error('Supabase client not initialized');
+            showNotification('Database connection unavailable', 'error');
+            return;
+        }
+
+        // Show loading state
+        const investorsTableBody = document.querySelector('#investors-list-container table tbody');
+        if (investorsTableBody) {
+            investorsTableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 3rem; color: #9CA3AF;">Loading investors...</td></tr>';
+        }
+
+        // Fetch investors from database with their subscription info
+        const { data: investors, error } = await supabase
+            .from('investors')
+            .select(`
+                *,
+                investor_subscriptions (
+                    package_type,
+                    status,
+                    price,
+                    billing_cycle
+                )
+            `)
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('Error fetching investors:', error);
+            throw error;
+        }
+
+        if (!investors || investors.length === 0) {
+            if (investorsTableBody) {
+                investorsTableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 3rem; color: #9CA3AF;">No investors found. Invite your first investor to get started!</td></tr>';
+            }
+            return;
+        }
+
+        // Display investors
+        displayInvestors(investors);
+
+        // Update stats
+        updateInvestorStats(investors);
+
+        showNotification(`Loaded ${investors.length} investor${investors.length !== 1 ? 's' : ''}`, 'success');
+    } catch (error) {
+        console.error('Error loading investors:', error);
+        showNotification('Failed to load investors: ' + error.message, 'error');
+    }
+}
+
+// Display investors in the table
+function displayInvestors(investors) {
+    const investorsTableBody = document.querySelector('#investors-list-container table tbody');
+    
+    if (!investorsTableBody) return;
+
+    if (!investors || investors.length === 0) {
+        investorsTableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 3rem; color: #9CA3AF;">No investors found</td></tr>';
+        return;
+    }
+
+    let html = '';
+    
+    investors.forEach(investor => {
+        const subscription = investor.investor_subscriptions?.[0];
+        const initials = investor.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        const joinedDate = new Date(investor.created_at).toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            year: 'numeric' 
+        });
+
+        // Determine subscription status
+        let subscriptionHtml = '';
+        let statusColor = '#6B7280'; // Gray for no subscription
+        
+        if (subscription) {
+            const isActive = subscription.status === 'active';
+            statusColor = isActive ? '#10B981' : '#6B7280';
+            
+            const packageNames = {
+                'vip_free': 'VIP Free',
+                'exclusive_pass': 'Exclusive Pass'
+            };
+            
+            subscriptionHtml = `
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                    <span style="background: ${isActive ? 'rgba(16, 185, 129, 0.2)' : 'rgba(107, 114, 128, 0.2)'}; color: ${isActive ? '#10B981' : '#9CA3AF'}; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">${isActive ? 'ACTIVE' : subscription.status.toUpperCase()}</span>
+                    <span style="color: #9CA3AF; font-size: 0.75rem;">${packageNames[subscription.package_type] || subscription.package_type} - $${subscription.price}/${subscription.billing_cycle}</span>
+                </div>
+            `;
+        } else {
+            subscriptionHtml = `
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                    <span style="background: rgba(107, 114, 128, 0.2); color: #9CA3AF; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">NO SUBSCRIPTION</span>
+                    <span style="color: #9CA3AF; font-size: 0.75rem;">Limited access</span>
+                </div>
+            `;
+        }
+
+        // Generate random gradient color for avatar
+        const colors = [
+            ['#F59E0B', '#D97706'],
+            ['#A855F7', '#9333EA'],
+            ['#6B7280', '#4B5563'],
+            ['#10B981', '#059669'],
+            ['#FBB624', '#F59E0B']
+        ];
+        const colorPair = colors[Math.floor(Math.random() * colors.length)];
+
+        html += `
+            <tr onclick="viewInvestorDetail('${investor.id}')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                <td style="padding: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, ${colorPair[0]}, ${colorPair[1]}); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: ${colorPair[0] === '#6B7280' ? '#fff' : '#111827'};">${initials}</div>
+                        <div>
+                            <p style="color: #fff; font-weight: 600;">${investor.name}</p>
+                            <p style="color: #9CA3AF; font-size: 0.875rem;">${investor.company || 'Individual Investor'}</p>
+                        </div>
+                    </div>
+                </td>
+                <td style="padding: 1rem;">
+                    <p style="color: #fff; margin-bottom: 0.25rem;">${investor.email}</p>
+                    <p style="color: #9CA3AF; font-size: 0.875rem;">${investor.phone || 'No phone'}</p>
+                </td>
+                <td style="padding: 1rem; text-align: center;">
+                    ${subscriptionHtml}
+                </td>
+                <td style="padding: 1rem; text-align: center;">
+                    <span style="color: #40E0D0; font-weight: 600; font-size: 1.125rem;">${investor.questions_asked || 0}</span>
+                </td>
+                <td style="padding: 1rem; text-align: center;">
+                    <span style="color: #FBB624; font-weight: 600; font-size: 1.125rem;">${investor.offers_made || 0}</span>
+                </td>
+                <td style="padding: 1rem; color: #9CA3AF;">${joinedDate}</td>
+                <td style="padding: 1rem; text-align: center;">
+                    <span style="color: ${statusColor}; font-size: 1.25rem;" title="${subscription?.status === 'active' ? 'Active' : 'Inactive'}">●</span>
+                </td>
+                <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                    <button onclick="showInvestorMenu('${investor.id}')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                </td>
+            </tr>
+        `;
+    });
+
+    investorsTableBody.innerHTML = html;
+}
+
+// Update investor stats
+function updateInvestorStats(investors) {
+    if (!investors) return;
+
+    const totalInvestors = investors.length;
+    const activeSubscriptions = investors.filter(inv => 
+        inv.investor_subscriptions?.[0]?.status === 'active'
+    ).length;
+    const totalQuestions = investors.reduce((sum, inv) => sum + (inv.questions_asked || 0), 0);
+    const totalOffers = investors.reduce((sum, inv) => sum + (inv.offers_made || 0), 0);
+
+    // Calculate total revenue from subscriptions
+    const weeklyRevenue = investors
+        .filter(inv => inv.investor_subscriptions?.[0]?.status === 'active')
+        .reduce((sum, inv) => sum + (parseFloat(inv.investor_subscriptions[0].price) || 0), 0);
+    const monthlyRevenue = weeklyRevenue * 4.33; // Average weeks per month
+
+    // Update the stats cards if they exist
+    const statsCards = document.querySelectorAll('.investors-admin-section .admin-metrics > div, .investors-admin-section > div:first-child + div > div');
+    
+    if (statsCards.length >= 4) {
+        // Total Investors
+        statsCards[0].querySelector('h3').textContent = totalInvestors;
+        
+        // Active Subscriptions
+        statsCards[1].querySelector('h3').textContent = activeSubscriptions;
+        statsCards[1].querySelector('p:last-child').textContent = `$${weeklyRevenue.toFixed(2)}/week total`;
+        
+        // Total Investment Inquiries
+        statsCards[2].querySelector('h3').textContent = totalQuestions;
+        
+        // Monthly Revenue
+        statsCards[3].querySelector('h3').textContent = `$${Math.round(monthlyRevenue)}`;
+    }
+}
+
+// Search and filter investors
+function filterInvestors() {
+    const searchTerm = document.getElementById('investor-search')?.value.toLowerCase() || '';
+    const statusFilter = document.getElementById('investor-subscription-filter')?.value || 'all';
+    
+    const rows = document.querySelectorAll('#investors-list-container table tbody tr');
+    
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        const matchesSearch = text.includes(searchTerm);
+        
+        // Get subscription status from the row
+        const subscriptionCell = row.cells[2]; // Subscription column
+        let matchesFilter = true;
+        
+        if (statusFilter !== 'all' && subscriptionCell) {
+            const cellText = subscriptionCell.textContent;
+            switch(statusFilter) {
+                case 'active':
+                    matchesFilter = cellText.includes('ACTIVE');
+                    break;
+                case 'inactive':
+                    matchesFilter = cellText.includes('NO SUBSCRIPTION') || cellText.includes('CANCELLED');
+                    break;
+                case 'trial':
+                    matchesFilter = cellText.includes('TRIAL');
+                    break;
+                case 'cancelled':
+                    matchesFilter = cellText.includes('CANCELLED');
+                    break;
+            }
+        }
+        
+        row.style.display = (matchesSearch && matchesFilter) ? '' : 'none';
+    });
+}
+
+// Add event listeners for search and filter when investors section is shown
+document.addEventListener('DOMContentLoaded', function() {
+    // Existing code...
+    
+    // Add search/filter listeners for investors
+    const investorSearch = document.getElementById('investor-search');
+    if (investorSearch) {
+        investorSearch.addEventListener('input', filterInvestors);
+    }
+    
+    const investorFilter = document.getElementById('investor-subscription-filter');
+    if (investorFilter) {
+        investorFilter.addEventListener('change', filterInvestors);
+    }
+    
+    // Load investors when the investors tab is clicked
+    const investorsNavItem = document.querySelector('[href="#investors"]');
+    if (investorsNavItem) {
+        investorsNavItem.addEventListener('click', function() {
+            // Small delay to ensure the section is visible
+            setTimeout(() => {
+                loadInvestors();
+            }, 100);
+        });
+    }
+});
+
+// Export Investors
+function exportInvestors() {
+    showNotification('Exporting investors to CSV...', 'info');
+    
+    // Get current table data
+    const rows = document.querySelectorAll('#investors-list-container table tbody tr');
+    const csvData = [];
+    
+    // Add headers
+    csvData.push(['Name', 'Company', 'Email', 'Phone', 'Subscription', 'Questions Asked', 'Offers Made', 'Joined Date', 'Status'].join(','));
+    
+    // Add data rows
+    rows.forEach(row => {
+        if (row.style.display !== 'none') {
+            const cells = row.cells;
+            const name = cells[0].querySelector('p').textContent;
+            const company = cells[0].querySelectorAll('p')[1].textContent;
+            const email = cells[1].querySelector('p').textContent;
+            const phone = cells[1].querySelectorAll('p')[1].textContent;
+            const subscription = cells[2].textContent.trim().replace(/\s+/g, ' ');
+            const questions = cells[3].textContent;
+            const offers = cells[4].textContent;
+            const joined = cells[5].textContent;
+            const status = cells[6].textContent.includes('●') ? 'Active' : 'Inactive';
+            
+            csvData.push([name, company, email, phone, subscription, questions, offers, joined, status].join(','));
+        }
+    });
+    
+    // Create and download CSV
+    const csv = csvData.join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `investors_export_${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    
+    setTimeout(() => {
+        showNotification('Investors exported successfully!', 'success');
+    }, 500);
+}
+
+// View Investor Detail Modal
+function viewInvestorDetail(investorId) {
+    showNotification('Loading investor details...', 'info');
+    // This will be implemented to show full investor profile
+    // For now, show a placeholder
+    setTimeout(() => {
+        const content = `
+            <div style="text-align: center; padding: 2rem;">
+                <p style="color: #9CA3AF; margin-bottom: 1rem;">Full investor profile view coming soon!</p>
+                <p style="color: #40E0D0; font-size: 0.875rem;">Investor ID: ${investorId}</p>
+            </div>
+        `;
+        showModal('Investor Profile', content);
+    }, 300);
+}
+
+// Investor Menu Actions
+function showInvestorMenu(investorId) {
+    const content = `
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <button onclick="investorMenuAction('${investorId}', 'View Profile')" style="width: 100%; padding: 0.75rem; background: #111827; color: #fff; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer; text-align: left;">👁️ View Full Profile</button>
+            <button onclick="investorMenuAction('${investorId}', 'Send Message')" style="width: 100%; padding: 0.75rem; background: #111827; color: #fff; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer; text-align: left;">📧 Send Message</button>
+            <button onclick="investorMenuAction('${investorId}', 'View Activity')" style="width: 100%; padding: 0.75rem; background: #111827; color: #fff; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer; text-align: left;">📊 View Activity</button>
+            <button onclick="investorMenuAction('${investorId}', 'Manage Subscription')" style="width: 100%; padding: 0.75rem; background: #111827; color: #fff; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer; text-align: left;">💳 Manage Subscription</button>
+            <button onclick="investorMenuAction('${investorId}', 'Add Note')" style="width: 100%; padding: 0.75rem; background: #111827; color: #fff; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer; text-align: left;">📝 Add Note</button>
+            <button onclick="investorMenuAction('${investorId}', 'Deactivate')" style="width: 100%; padding: 0.75rem; background: #111827; color: #EF4444; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer; text-align: left;">⚠️ Deactivate Account</button>
+        </div>
+    `;
+    showModal('Investor Actions', content);
+}
+
+function investorMenuAction(investorId, action) {
+    closeModal();
+    showNotification(`${action} for investor ${investorId}`, 'info');
 }
 
 // Load pending investor listings from localStorage
@@ -4030,6 +4298,162 @@ function loadPendingInvestorListings() {
         
         listingsContainer.innerHTML = listingsHTML;
     }
+}
+
+// Quick Task Modal
+function showQuickTaskModal() {
+    const content = `
+        <form onsubmit="saveQuickTask(event)" style="display: flex; flex-direction: column; gap: 1rem;">
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Task Title *</label>
+                <input type="text" id="quick-task-title" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;" placeholder="Quick task description">
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Assign To</label>
+                <select id="quick-task-assignee" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                    <option value="">Myself</option>
+                    <option value="sarah">Sarah Chen</option>
+                    <option value="marcus">Marcus Rodriguez</option>
+                    <option value="emily">Emily Watson</option>
+                    <option value="alex">Alex Thompson</option>
+                </select>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Priority</label>
+                    <select id="quick-task-priority" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                        <option value="urgent">Urgent</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Due Date</label>
+                    <input type="date" id="quick-task-due" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" style="flex: 1; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; padding: 0.75rem 1.5rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Create Task</button>
+                <button type="button" onclick="closeModal()" style="flex: 1; background: transparent; color: #40E0D0; border: 2px solid #40E0D0; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer;">Cancel</button>
+            </div>
+        </form>
+    `;
+    showModal('Quick Task', content);
+}
+
+function saveQuickTask(e) {
+    e.preventDefault();
+    const title = document.getElementById('quick-task-title').value;
+    const assignee = document.getElementById('quick-task-assignee').value;
+    const priority = document.getElementById('quick-task-priority').value;
+    
+    // Save to localStorage
+    const tasks = JSON.parse(localStorage.getItem('quickTasks') || '[]');
+    tasks.push({
+        id: Date.now(),
+        title: title,
+        assignee: assignee || 'self',
+        priority: priority,
+        dueDate: document.getElementById('quick-task-due').value,
+        status: 'pending',
+        createdDate: new Date().toISOString()
+    });
+    localStorage.setItem('quickTasks', JSON.stringify(tasks));
+    
+    closeModal();
+    showNotification(`Task "${title}" created successfully!`, 'success');
+}
+
+// Log Time Modal
+function showLogTimeModal() {
+    const content = `
+        <form onsubmit="saveTimeLog(event)" style="display: flex; flex-direction: column; gap: 1rem;">
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Project *</label>
+                <select id="time-log-project" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                    <option value="">Select Project</option>
+                    <option value="proj-001">E-Commerce Platform</option>
+                    <option value="proj-002">Mobile App Redesign</option>
+                    <option value="proj-003">Corporate Website</option>
+                    <option value="general">General/Administrative</option>
+                </select>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Date *</label>
+                    <input type="date" id="time-log-date" value="${new Date().toISOString().split('T')[0]}" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Hours *</label>
+                    <input type="number" id="time-log-hours" min="0.25" max="24" step="0.25" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;" placeholder="2.5">
+                </div>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Description *</label>
+                <textarea id="time-log-description" rows="3" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; resize: vertical;" placeholder="What did you work on?"></textarea>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Type</label>
+                <select id="time-log-type" style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                    <option value="development">Development</option>
+                    <option value="design">Design</option>
+                    <option value="meeting">Meeting</option>
+                    <option value="planning">Planning</option>
+                    <option value="testing">Testing</option>
+                    <option value="documentation">Documentation</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <div style="background: #111827; padding: 1rem; border-radius: 8px; border: 1px solid #4B5563;">
+                <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
+                    <input type="checkbox" id="time-log-billable" checked style="width: 20px; height: 20px;">
+                    <label for="time-log-billable" style="color: #fff;">Billable hours</label>
+                </div>
+                <p style="color: #9CA3AF; font-size: 0.75rem; margin: 0;">Check if these hours should be billed to the client</p>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" style="flex: 1; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; padding: 0.75rem 1.5rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Log Time</button>
+                <button type="button" onclick="closeModal()" style="flex: 1; background: transparent; color: #40E0D0; border: 2px solid #40E0D0; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer;">Cancel</button>
+            </div>
+        </form>
+    `;
+    showModal('Log Time', content);
+}
+
+function saveTimeLog(e) {
+    e.preventDefault();
+    const project = document.getElementById('time-log-project').selectedOptions[0].text;
+    const hours = document.getElementById('time-log-hours').value;
+    const description = document.getElementById('time-log-description').value;
+    const date = document.getElementById('time-log-date').value;
+    const type = document.getElementById('time-log-type').value;
+    const billable = document.getElementById('time-log-billable').checked;
+    
+    // Save to localStorage
+    const timeLogs = JSON.parse(localStorage.getItem('timeLogs') || '[]');
+    timeLogs.push({
+        id: Date.now(),
+        project: project,
+        hours: parseFloat(hours),
+        description: description,
+        date: date,
+        type: type,
+        billable: billable,
+        loggedDate: new Date().toISOString()
+    });
+    localStorage.setItem('timeLogs', JSON.stringify(timeLogs));
+    
+    closeModal();
+    showNotification(`${hours} hours logged for ${project}`, 'success');
 }
 
 function showInvestorInvitationSuccess(investorName, email, invitationCode, invitationLink, packageType) {

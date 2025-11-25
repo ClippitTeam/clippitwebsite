@@ -393,8 +393,7 @@ window.closeModal = function(modalId) {
 // View project details (admin view)
 window.viewAdminProjectDetails = async function(projectId) {
     console.log('Loading admin view for project:', projectId);
-    // TODO: Implement detailed admin project view
-    showNotification('Project details view coming soon!', 'info');
+    showManageTeamModal(projectId);
 };
 
 // Edit project
@@ -409,6 +408,202 @@ window.showProjectMenu = function(projectId) {
     console.log('Show menu for project:', projectId);
     // TODO: Implement context menu
     showNotification('Project menu coming soon!', 'info');
+};
+
+// Show manage team modal
+async function showManageTeamModal(projectId) {
+    try {
+        // Load project details and current team members
+        const { data: project, error: projectError } = await window.supabaseClient
+            .from('projects')
+            .select(`
+                *,
+                customer:profiles!projects_customer_id_fkey(full_name, email),
+                team_members(
+                    *,
+                    profiles!team_members_user_id_fkey(
+                        id,
+                        full_name,
+                        email,
+                        avatar_url
+                    )
+                )
+            `)
+            .eq('id', projectId)
+            .single();
+            
+        if (projectError) throw projectError;
+        
+        // Load all staff members
+        const { data: allStaff, error: staffError } = await window.supabaseClient
+            .from('profiles')
+            .select('id, full_name, email, avatar_url, role')
+            .in('role', ['admin', 'staff'])
+            .order('full_name');
+            
+        if (staffError) throw staffError;
+        
+        // Filter out already assigned members
+        const currentMemberIds = project.team_members?.map(m => m.user_id) || [];
+        const availableStaff = allStaff.filter(s => !currentMemberIds.includes(s.id));
+        
+        const modal = document.createElement('div');
+        modal.id = 'manage-team-modal';
+        modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 10000; overflow-y: auto; padding: 2rem;';
+        
+        modal.innerHTML = `
+            <div style="background: #1F2937; border-radius: 16px; padding: 2rem; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto; border: 1px solid #374151;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <div>
+                        <h3 style="color: #40E0D0; font-size: 1.5rem; margin-bottom: 0.5rem;">Manage Team</h3>
+                        <p style="color: #9CA3AF; font-size: 0.875rem;">${project.title}</p>
+                    </div>
+                    <button onclick="closeModal('manage-team-modal')" style="background: transparent; border: none; color: #9CA3AF; font-size: 1.5rem; cursor: pointer; padding: 0.5rem;">&times;</button>
+                </div>
+                
+                <!-- Add Team Member Section -->
+                <div style="background: #111827; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; border: 1px solid #374151;">
+                    <h4 style="color: #fff; font-size: 1.125rem; margin-bottom: 1rem;">Add Team Member</h4>
+                    
+                    ${availableStaff.length > 0 ? `
+                        <form id="add-team-member-form" onsubmit="handleAddTeamMember(event, '${projectId}')" style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 1rem; align-items: end;">
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; color: #9CA3AF; font-size: 0.875rem;">Staff Member</label>
+                                <select name="user_id" required style="width: 100%; padding: 0.75rem; background: #1F2937; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                                    <option value="">Select member...</option>
+                                    ${availableStaff.map(staff => `
+                                        <option value="${staff.id}">${staff.full_name || staff.email} ${staff.role === 'admin' ? '(Admin)' : ''}</option>
+                                    `).join('')}
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; color: #9CA3AF; font-size: 0.875rem;">Role</label>
+                                <select name="role" required style="width: 100%; padding: 0.75rem; background: #1F2937; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                                    <option value="developer">Developer</option>
+                                    <option value="designer">Designer</option>
+                                    <option value="project_manager">Project Manager</option>
+                                    <option value="qa_tester">QA Tester</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; color: #9CA3AF; font-size: 0.875rem;">Involvement %</label>
+                                <input type="number" name="involvement_percentage" min="1" max="100" value="100" required style="width: 100%; padding: 0.75rem; background: #1F2937; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                            </div>
+                            
+                            <button type="submit" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap;">Add Member</button>
+                        </form>
+                    ` : `
+                        <p style="color: #9CA3AF; text-align: center; padding: 1rem;">All available staff members are already assigned to this project.</p>
+                    `}
+                </div>
+                
+                <!-- Current Team Members -->
+                <div>
+                    <h4 style="color: #fff; font-size: 1.125rem; margin-bottom: 1rem;">Current Team (${project.team_members?.length || 0})</h4>
+                    
+                    <div id="team-members-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        ${project.team_members && project.team_members.length > 0 ? 
+                            project.team_members.map(member => `
+                                <div style="background: #111827; border-radius: 12px; padding: 1rem; border: 1px solid #374151; display: flex; align-items: center; justify-content: space-between;">
+                                    <div style="display: flex; align-items: center; gap: 1rem; flex: 1;">
+                                        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #40E0D0, #36B8A8); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 700; color: #111827;">
+                                            ${member.profiles?.full_name?.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || '??'}
+                                        </div>
+                                        <div style="flex: 1;">
+                                            <p style="color: #fff; font-weight: 600;">${member.profiles?.full_name || 'Unknown'}</p>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">${member.profiles?.email || ''}</p>
+                                        </div>
+                                        <div style="text-align: center; padding: 0 1rem;">
+                                            <p style="color: #40E0D0; font-size: 0.75rem; text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem;">${member.role.replace('_', ' ')}</p>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">${member.involvement_percentage}% Involvement</p>
+                                        </div>
+                                    </div>
+                                    <button onclick="handleRemoveTeamMember('${projectId}', '${member.id}')" style="padding: 0.5rem 1rem; background: transparent; color: #EF4444; border: 1px solid #EF4444; border-radius: 8px; cursor: pointer; font-size: 0.875rem; white-space: nowrap;" title="Remove from project">Remove</button>
+                                </div>
+                            `).join('')
+                            : 
+                            '<p style="color: #9CA3AF; text-align: center; padding: 2rem; background: #111827; border-radius: 12px; border: 1px dashed #4B5563;">No team members assigned yet</p>'
+                        }
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+    } catch (error) {
+        console.error('Error loading team management:', error);
+        showNotification('Error loading team management: ' + error.message, 'error');
+    }
+}
+
+// Handle add team member
+window.handleAddTeamMember = async function(event, projectId) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const formData = new FormData(form);
+    const submitBtn = form.querySelector('[type="submit"]');
+    
+    // Disable submit button
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Adding...';
+    
+    try {
+        const memberData = {
+            project_id: projectId,
+            user_id: formData.get('user_id'),
+            role: formData.get('role'),
+            involvement_percentage: parseInt(formData.get('involvement_percentage'))
+        };
+        
+        const result = await addTeamMember(memberData);
+        
+        if (result.success) {
+            showNotification('Team member added successfully!', 'success');
+            // Close and reopen modal to refresh
+            closeModal('manage-team-modal');
+            setTimeout(() => showManageTeamModal(projectId), 300);
+            // Reload projects list
+            await loadAdminProjects();
+        } else {
+            throw new Error(result.error || 'Failed to add team member');
+        }
+        
+    } catch (error) {
+        console.error('Error adding team member:', error);
+        showNotification('Error adding team member: ' + error.message, 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Add Member';
+    }
+};
+
+// Handle remove team member
+window.handleRemoveTeamMember = async function(projectId, memberId) {
+    if (!confirm('Are you sure you want to remove this team member from the project?')) {
+        return;
+    }
+    
+    try {
+        const result = await removeTeamMember(memberId);
+        
+        if (result.success) {
+            showNotification('Team member removed successfully!', 'success');
+            // Close and reopen modal to refresh
+            closeModal('manage-team-modal');
+            setTimeout(() => showManageTeamModal(projectId), 300);
+            // Reload projects list
+            await loadAdminProjects();
+        } else {
+            throw new Error(result.error || 'Failed to remove team member');
+        }
+        
+    } catch (error) {
+        console.error('Error removing team member:', error);
+        showNotification('Error removing team member: ' + error.message, 'error');
+    }
 };
 
 // Setup project filters

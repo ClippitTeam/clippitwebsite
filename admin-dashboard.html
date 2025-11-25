@@ -73,6 +73,11 @@
                     <span class="nav-label">Invoices</span>
                     <span class="nav-badge">3</span>
                 </a>
+                <a href="#investors" class="nav-item">
+                    <span class="nav-icon">💰</span>
+                    <span class="nav-label">Investors</span>
+                    <span class="nav-badge">12</span>
+                </a>
                 <a href="#investor-listings" class="nav-item">
                     <span class="nav-icon">📋</span>
                     <span class="nav-label">Investor Listings</span>
@@ -1459,6 +1464,271 @@
             </div>
             <!-- End Invoices Section -->
 
+            <!-- Investors Section -->
+            <div id="section-investors" class="dashboard-section" style="display: none;">
+                <section class="investors-admin-section">
+                    <!-- Investors Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <div>
+                            <h2 style="color: #40E0D0; font-size: 1.75rem; margin-bottom: 0.5rem;">Investor Management</h2>
+                            <p style="color: #9CA3AF;">Manage investor accounts, subscriptions, and activity</p>
+                        </div>
+                        <button onclick="showInviteInvestorModal()" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">+ Invite Investor</button>
+                    </div>
+
+                    <!-- Investor Stats Cards -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                        <div style="background: linear-gradient(135deg, rgba(64, 224, 208, 0.1), rgba(54, 184, 168, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(64, 224, 208, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Total Investors</p>
+                            <h3 style="color: #40E0D0; font-size: 2rem; font-weight: 800;">12</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">+3 this month</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Active Subscriptions</p>
+                            <h3 style="color: #10B981; font-size: 2rem; font-weight: 800;">9</h3>
+                            <p style="color: #9CA3AF; font-size: 0.875rem;">$134.55/week total</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Total Investment Inquiries</p>
+                            <h3 style="color: #FBB624; font-size: 2rem; font-weight: 800;">47</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">+8 this week</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(147, 51, 234, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(168, 85, 247, 0.3);">
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 0.5rem;">Monthly Revenue (Subscriptions)</p>
+                            <h3 style="color: #A855F7; font-size: 2rem; font-weight: 800;">$538</h3>
+                            <p style="color: #10B981; font-size: 0.875rem;">+12% growth</p>
+                        </div>
+                    </div>
+
+                    <!-- Search and Filters -->
+                    <div style="background: #1F2937; padding: 1.5rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 2rem;">
+                        <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 1rem; align-items: center;">
+                            <div style="position: relative;">
+                                <input type="text" id="investor-search" placeholder="Search investors by name, email, company..." style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                                <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #9CA3AF;">🔍</span>
+                            </div>
+                            
+                            <select id="investor-subscription-filter" style="padding: 0.75rem 1rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; cursor: pointer;">
+                                <option value="all">All Status</option>
+                                <option value="active">Active Subscription</option>
+                                <option value="inactive">No Subscription</option>
+                                <option value="trial">Trial Period</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                            
+                            <button onclick="exportInvestors()" style="padding: 0.75rem 1rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff; cursor: pointer;">📥 Export</button>
+                        </div>
+                    </div>
+
+                    <!-- Investors List -->
+                    <div id="investors-list-container" style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151;">
+                        <h3 style="color: #40E0D0; font-size: 1.5rem; margin-bottom: 1.5rem;">All Investors</h3>
+                        
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid #374151;">
+                                        <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Investor</th>
+                                        <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Contact</th>
+                                        <th style="padding: 1rem; text-align: center; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Subscription</th>
+                                        <th style="padding: 1rem; text-align: center; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Questions Asked</th>
+                                        <th style="padding: 1rem; text-align: center; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Offers Made</th>
+                                        <th style="padding: 1rem; text-align: left; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Joined</th>
+                                        <th style="padding: 1rem; text-align: center; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Status</th>
+                                        <th style="padding: 1rem; text-align: right; color: #9CA3AF; font-weight: 600; font-size: 0.875rem;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Investor 1 - Active -->
+                                    <tr onclick="viewInvestorDetail('inv-001')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                        <td style="padding: 1rem;">
+                                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #F59E0B, #D97706); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: #111827;">RJ</div>
+                                                <div>
+                                                    <p style="color: #fff; font-weight: 600;">Robert Johnson</p>
+                                                    <p style="color: #9CA3AF; font-size: 0.875rem;">Investment Capital LLC</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #fff; margin-bottom: 0.25rem;">robert.j@investcap.com</p>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">+1 555 123 4567</p>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                                                <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">ACTIVE</span>
+                                                <span style="color: #9CA3AF; font-size: 0.75rem;">Weekly - $14.95</span>
+                                            </div>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="color: #40E0D0; font-weight: 600; font-size: 1.125rem;">8</span>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="color: #FBB624; font-weight: 600; font-size: 1.125rem;">3</span>
+                                        </td>
+                                        <td style="padding: 1rem; color: #9CA3AF;">Sep 15, 2025</td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="color: #10B981; font-size: 1.25rem;" title="Active">●</span>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                            <button onclick="showInvestorMenu('inv-001')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Investor 2 - Active -->
+                                    <tr onclick="viewInvestorDetail('inv-002')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                        <td style="padding: 1rem;">
+                                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #A855F7, #9333EA); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: #fff;">EP</div>
+                                                <div>
+                                                    <p style="color: #fff; font-weight: 600;">Emily Parker</p>
+                                                    <p style="color: #9CA3AF; font-size: 0.875rem;">Tech Ventures Group</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #fff; margin-bottom: 0.25rem;">emily@techventures.com</p>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">+1 555 234 5678</p>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                                                <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">ACTIVE</span>
+                                                <span style="color: #9CA3AF; font-size: 0.75rem;">Weekly - $14.95</span>
+                                            </div>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="color: #40E0D0; font-weight: 600; font-size: 1.125rem;">12</span>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="color: #FBB624; font-weight: 600; font-size: 1.125rem;">5</span>
+                                        </td>
+                                        <td style="padding: 1rem; color: #9CA3AF;">Aug 22, 2025</td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="color: #10B981; font-size: 1.25rem;" title="Active">●</span>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                            <button onclick="showInvestorMenu('inv-002')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Investor 3 - No Subscription -->
+                                    <tr onclick="viewInvestorDetail('inv-003')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                        <td style="padding: 1rem;">
+                                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #6B7280, #4B5563); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: #fff;">DM</div>
+                                                <div>
+                                                    <p style="color: #fff; font-weight: 600;">David Martinez</p>
+                                                    <p style="color: #9CA3AF; font-size: 0.875rem;">Solo Investor</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #fff; margin-bottom: 0.25rem;">david.m@email.com</p>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">+1 555 345 6789</p>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                                                <span style="background: rgba(107, 114, 128, 0.2); color: #9CA3AF; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">NO SUBSCRIPTION</span>
+                                                <span style="color: #9CA3AF; font-size: 0.75rem;">Limited access</span>
+                                            </div>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="color: #40E0D0; font-weight: 600; font-size: 1.125rem;">2</span>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="color: #FBB624; font-weight: 600; font-size: 1.125rem;">0</span>
+                                        </td>
+                                        <td style="padding: 1rem; color: #9CA3AF;">Nov 10, 2025</td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="color: #6B7280; font-size: 1.25rem;" title="Inactive">●</span>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                            <button onclick="showInvestorMenu('inv-003')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Investor 4 - Active -->
+                                    <tr onclick="viewInvestorDetail('inv-004')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                        <td style="padding: 1rem;">
+                                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #10B981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: #fff;">SW</div>
+                                                <div>
+                                                    <p style="color: #fff; font-weight: 600;">Sarah Wilson</p>
+                                                    <p style="color: #9CA3AF; font-size: 0.875rem;">Wilson Capital Partners</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #fff; margin-bottom: 0.25rem;">sarah@wilsoncap.com</p>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">+1 555 456 7890</p>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                                                <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">ACTIVE</span>
+                                                <span style="color: #9CA3AF; font-size: 0.75rem;">Weekly - $14.95</span>
+                                            </div>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="color: #40E0D0; font-weight: 600; font-size: 1.125rem;">15</span>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="color: #FBB624; font-weight: 600; font-size: 1.125rem;">7</span>
+                                        </td>
+                                        <td style="padding: 1rem; color: #9CA3AF;">Jul 5, 2025</td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="color: #10B981; font-size: 1.25rem;" title="Active">●</span>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                            <button onclick="showInvestorMenu('inv-004')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Investor 5 - Trial -->
+                                    <tr onclick="viewInvestorDetail('inv-005')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
+                                        <td style="padding: 1rem;">
+                                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #FBB624, #F59E0B); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: #111827;">JL</div>
+                                                <div>
+                                                    <p style="color: #fff; font-weight: 600;">James Lee</p>
+                                                    <p style="color: #9CA3AF; font-size: 0.875rem;">Angel Investor</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style="padding: 1rem;">
+                                            <p style="color: #fff; margin-bottom: 0.25rem;">james.lee@email.com</p>
+                                            <p style="color: #9CA3AF; font-size: 0.875rem;">+1 555 567 8901</p>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                                                <span style="background: rgba(251, 191, 36, 0.2); color: #FBB624; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">TRIAL</span>
+                                                <span style="color: #9CA3AF; font-size: 0.75rem;">3 days remaining</span>
+                                            </div>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="color: #40E0D0; font-weight: 600; font-size: 1.125rem;">4</span>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="color: #FBB624; font-weight: 600; font-size: 1.125rem;">1</span>
+                                        </td>
+                                        <td style="padding: 1rem; color: #9CA3AF;">Nov 20, 2025</td>
+                                        <td style="padding: 1rem; text-align: center;">
+                                            <span style="color: #FBB624; font-size: 1.25rem;" title="Trial">●</span>
+                                        </td>
+                                        <td style="padding: 1rem; text-align: right;" onclick="event.stopPropagation()">
+                                            <button onclick="showInvestorMenu('inv-005')" style="padding: 0.25rem 0.5rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 6px; cursor: pointer;">⋯</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- End Investors Section -->
+
             <!-- Investor Listings Section -->
             <div id="section-investor-listings" class="dashboard-section" style="display: none;">
                 <section class="investor-listings-admin-section">
@@ -2481,6 +2751,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Supabase Configuration -->
     <script src="supabase-config.js"></script>
+    
+    <!-- Tickets & Tasks Management -->
+    <script src="tickets-tasks.js"></script>
     
     <!-- Project Management -->
     <script type="module" src="projects.js"></script>

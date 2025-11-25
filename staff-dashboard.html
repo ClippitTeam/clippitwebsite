@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Clippit Staff Dashboard - Manage your assigned projects and tasks.">
+    <title>Staff Dashboard - Clippit</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <!-- Dashboard Header -->
+    <header class="dashboard-header">
+        <div class="dashboard-header-content">
+            <div class="dashboard-logo">
+                <img src="images/logo2.png" alt="Clippit Logo" class="logo-icon" style="width: 40px; height: 40px; object-fit: contain;">
+                <span class="logo-text">Clippit Staff</span>
+            </div>
+            <div class="dashboard-quick-actions">
+                <button class="quick-action-btn" onclick="showNotification('Quick task feature coming soon', 'info')" title="Quick Task">
+                    <span>✅</span> Quick Task
+                </button>
+                <button class="quick-action-btn" onclick="showNotification('Time log feature coming soon', 'info')" title="Log Time">
+                    <span>⏱️</span> Log Time
+                </button>
+            </div>
+            <div class="dashboard-user">
+                <div class="notification-icon">
+                    <span>🔔</span>
+                    <span class="notification-badge">0</span>
+                </div>
+                <div class="user-avatar" id="staff-avatar">ST</div>
+                <span class="user-name" id="staff-name">Staff Member</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dashboard Layout -->
+    <div class="dashboard-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="dashboard-sidebar">
+            <nav class="dashboard-nav">
+                <a href="#dashboard" class="nav-item active" onclick="showSection('dashboard')">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a href="#my-projects" class="nav-item" onclick="showSection('my-projects')">
+                    <span class="nav-icon">💼</span>
+                    <span class="nav-label">My Projects</span>
+                    <span class="nav-badge" id="projects-count">0</span>
+                </a>
+                <a href="#my-tasks" class="nav-item" onclick="showSection('my-tasks')">
+                    <span class="nav-icon">✅</span>
+                    <span class="nav-label">My Tasks</span>
+                    <span class="nav-badge" id="tasks-count">0</span>
+                </a>
+                <a href="#time-tracking" class="nav-item" onclick="showSection('time-tracking')">
+                    <span class="nav-icon">⏱️</span>
+                    <span class="nav-label">Time Tracking</span>
+                </a>
+                <a href="#settings" class="nav-item" onclick="showSection('settings')">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-label">Settings</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="login.html" class="logout-btn" onclick="handleLogout()">
+                    <span>🚪</span> Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="dashboard-main">
+            <!-- Dashboard Section -->
+            <section id="section-dashboard" class="dashboard-section">
+                <!-- Welcome Section -->
+                <div class="dashboard-welcome">
+                    <h1 id="welcome-message">Welcome back! 👋</h1>
+                    <p>Here's what you're working on today.</p>
+                </div>
+
+                <!-- Stats Overview -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                    <div style="background: linear-gradient(135deg, rgba(64, 224, 208, 0.1), rgba(54, 184, 168, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(64, 224, 208, 0.3);">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                            <p style="color: #9CA3AF; font-size: 0.875rem;">Active Projects</p>
+                            <span style="font-size: 1.5rem;">💼</span>
+                        </div>
+                        <h3 id="stat-projects" style="color: #40E0D0; font-size: 2rem; font-weight: 800;">0</h3>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(147, 51, 234, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(168, 85, 247, 0.3);">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                            <p style="color: #9CA3AF; font-size: 0.875rem;">Tasks This Week</p>
+                            <span style="font-size: 1.5rem;">✅</span>
+                        </div>
+                        <h3 id="stat-tasks" style="color: #A855F7; font-size: 2rem; font-weight: 800;">0</h3>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                            <p style="color: #9CA3AF; font-size: 0.875rem;">Hours This Week</p>
+                            <span style="font-size: 1.5rem;">⏱️</span>
+                        </div>
+                        <h3 id="stat-hours" style="color: #FBB624; font-size: 2rem; font-weight: 800;">0h</h3>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05)); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                            <p style="color: #9CA3AF; font-size: 0.875rem;">Completed Today</p>
+                            <span style="font-size: 1.5rem;">🎉</span>
+                        </div>
+                        <h3 id="stat-completed" style="color: #10B981; font-size: 2rem; font-weight: 800;">0</h3>
+                    </div>
+                </div>
+
+                <!-- My Projects -->
+                <div style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151; margin-bottom: 2rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 style="color: #40E0D0; font-size: 1.5rem;">My Projects</h2>
+                        <button onclick="showSection('my-projects')" style="color: #40E0D0; background: transparent; border: none; cursor: pointer;">View All →</button>
+                    </div>
+                    
+                    <div id="dashboard-projects-list" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <!-- Loading state -->
+                        <div style="text-align: center; padding: 2rem; color: #9CA3AF;">
+                            <div style="font-size: 2rem; margin-bottom: 1rem;">⏳</div>
+                            <p>Loading your projects...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Today's Tasks -->
+                <div style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 style="color: #40E0D0; font-size: 1.5rem;">Today's Tasks</h2>
+                        <button onclick="showSection('my-tasks')" style="color: #40E0D0; background: transparent; border: none; cursor: pointer;">View All →</button>
+                    </div>
+                    
+                    <div id="dashboard-tasks-list" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <!-- Will be populated by JS -->
+                        <div style="text-align: center; padding: 2rem; color: #9CA3AF;">
+                            <div style="font-size: 2rem; margin-bottom: 1rem;">✅</div>
+                            <p>No tasks assigned yet</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- My Projects Section -->
+            <section id="section-my-projects" class="dashboard-section" style="display: none;">
+                <div style="margin-bottom: 2rem;">
+                    <h2 style="color: #40E0D0; font-size: 1.75rem; margin-bottom: 0.5rem;">My Projects</h2>
+                    <p style="color: #9CA3AF;">Projects you're currently assigned to</p>
+                </div>
+
+                <div id="my-projects-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 1.5rem;">
+                    <!-- Will be populated by JS -->
+                    <div style="text-align: center; padding: 3rem; color: #9CA3AF; grid-column: 1 / -1;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">💼</div>
+                        <p>Loading your projects...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- My Tasks Section -->
+            <section id="section-my-tasks" class="dashboard-section" style="display: none;">
+                <div style="margin-bottom: 2rem;">
+                    <h2 style="color: #40E0D0; font-size: 1.75rem; margin-bottom: 0.5rem;">My Tasks</h2>
+                    <p style="color: #9CA3AF;">Tasks and tickets assigned to you</p>
+                </div>
+
+                <!-- Task filters -->
+                <div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+                    <button class="task-filter active" data-filter="all" style="padding: 0.5rem 1rem; background: rgba(64, 224, 208, 0.2); color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; cursor: pointer; font-weight: 600;">All</button>
+                    <button class="task-filter" data-filter="todo" style="padding: 0.5rem 1rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer;">To Do</button>
+                    <button class="task-filter" data-filter="in-progress" style="padding: 0.5rem 1rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer;">In Progress</button>
+                    <button class="task-filter" data-filter="completed" style="padding: 0.5rem 1rem; background: transparent; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer;">Completed</button>
+                </div>
+
+                <div id="my-tasks-list" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <!-- Will be populated by JS -->
+                    <div style="text-align: center; padding: 3rem; color: #9CA3AF;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
+                        <p>No tasks assigned yet</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Time Tracking Section -->
+            <section id="section-time-tracking" class="dashboard-section" style="display: none;">
+                <div style="margin-bottom: 2rem;">
+                    <h2 style="color: #40E0D0; font-size: 1.75rem; margin-bottom: 0.5rem;">Time Tracking</h2>
+                    <p style="color: #9CA3AF;">Track time spent on projects and tasks</p>
+                </div>
+
+                <!-- Coming Soon -->
+                <div style="background: #1F2937; padding: 3rem; border-radius: 12px; border: 1px solid #374151; text-align: center;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">⏱️</div>
+                    <h3 style="color: #40E0D0; margin-bottom: 1rem;">Time Tracking Coming Soon</h3>
+                    <p style="color: #9CA3AF;">Track hours worked, generate timesheets, and manage your workload.</p>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="section-settings" class="dashboard-section" style="display: none;">
+                <div style="margin-bottom: 2rem;">
+                    <h2 style="color: #40E0D0; font-size: 1.75rem; margin-bottom: 0.5rem;">Settings</h2>
+                    <p style="color: #9CA3AF;">Manage your profile and preferences</p>
+                </div>
+
+                <div style="background: #1F2937; padding: 2rem; border-radius: 12px; border: 1px solid #374151;">
+                    <h3 style="color: #40E0D0; font-size: 1.5rem; margin-bottom: 1.5rem;">Profile Information</h3>
+                    
+                    <form id="profile-form" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Full Name</label>
+                                <input type="text" id="profile-name" required style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #fff;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Email</label>
+                                <input type="email" id="profile-email" disabled style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #6B7280;">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: #fff;">Role</label>
+                            <input type="text" id="profile-role" disabled style="width: 100%; padding: 0.75rem; background: #111827; border: 1px solid #4B5563; border-radius: 8px; color: #6B7280;">
+                        </div>
+
+                        <button type="submit" style="align-self: flex-start; padding: 0.75rem 2rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Save Changes</button>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Supabase Configuration -->
+    <script type="module" src="supabase-config.js"></script>
+    <script type="module" src="projects.js"></script>
+    <script src="tickets-tasks.js"></script>
+    <script type="module" src="staff-dashboard.js"></script>
+    
+    <style>
+        .task-filter.active {
+            background: rgba(64, 224, 208, 0.2) !important;
+            color: #40E0D0 !important;
+            border-color: #40E0D0 !important;
+        }
+        
+        .nav-item.active {
+            background: rgba(64, 224, 208, 0.2);
+            color: #40E0D0;
+        }
+    </style>
+</body>
+</html>
