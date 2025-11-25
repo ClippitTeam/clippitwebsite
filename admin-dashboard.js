@@ -3917,7 +3917,7 @@ async function loadInvestors() {
             .select(`
                 *,
                 investor_subscriptions (
-                    package_type,
+                    subscription_tier,
                     status,
                     price,
                     billing_cycle
@@ -3965,7 +3965,8 @@ function displayInvestors(investors) {
     
     investors.forEach(investor => {
         const subscription = investor.investor_subscriptions?.[0];
-        const initials = investor.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        const investorName = investor.investor_name || 'Unknown';
+        const initials = investorName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
         const joinedDate = new Date(investor.created_at).toLocaleDateString('en-US', { 
             month: 'short', 
             day: 'numeric', 
@@ -3981,14 +3982,14 @@ function displayInvestors(investors) {
             statusColor = isActive ? '#10B981' : '#6B7280';
             
             const packageNames = {
-                'vip_free': 'VIP Free',
-                'exclusive_pass': 'Exclusive Pass'
+                'vip-free': 'VIP Free',
+                'exclusive-pass': 'Exclusive Pass'
             };
             
             subscriptionHtml = `
                 <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
                     <span style="background: ${isActive ? 'rgba(16, 185, 129, 0.2)' : 'rgba(107, 114, 128, 0.2)'}; color: ${isActive ? '#10B981' : '#9CA3AF'}; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">${isActive ? 'ACTIVE' : subscription.status.toUpperCase()}</span>
-                    <span style="color: #9CA3AF; font-size: 0.75rem;">${packageNames[subscription.package_type] || subscription.package_type} - $${subscription.price}/${subscription.billing_cycle}</span>
+                    <span style="color: #9CA3AF; font-size: 0.75rem;">${packageNames[subscription.subscription_tier] || subscription.subscription_tier} - $${subscription.price}/${subscription.billing_cycle}</span>
                 </div>
             `;
         } else {
@@ -4014,9 +4015,9 @@ function displayInvestors(investors) {
             <tr onclick="viewInvestorDetail('${investor.id}')" style="border-bottom: 1px solid #374151; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#111827'" onmouseleave="this.style.background='transparent'">
                 <td style="padding: 1rem;">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, ${colorPair[0]}, ${colorPair[1]}); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: ${colorPair[0] === '#6B7280' ? '#fff' : '#111827'};">${initials}</div>
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, ${colorPair[0]}, ${colorPair[1]}); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: ${colorPair[0] === '#6B7280' ? '#fff' : '#111827'};">${initials}</div>
                         <div>
-                            <p style="color: #fff; font-weight: 600;">${investor.name}</p>
+                            <p style="color: #fff; font-weight: 600;">${investorName}</p>
                             <p style="color: #9CA3AF; font-size: 0.875rem;">${investor.company || 'Individual Investor'}</p>
                         </div>
                     </div>
