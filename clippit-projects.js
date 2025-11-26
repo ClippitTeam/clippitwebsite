@@ -824,9 +824,7 @@ async function deleteClippitProject(id) {
 }
 
 // Filter Clippit Projects by Status
-function filterClippitProjects(status) {
-    currentView = status === 'ideas' ? 'ideas' : 'projects';
-    
+async function filterClippitProjects(status) {
     // Update filter button styling
     const filterButtons = document.querySelectorAll('.clippit-project-filter-btn');
     filterButtons.forEach(btn => {
@@ -845,53 +843,57 @@ function filterClippitProjects(status) {
     
     // If switching to ideas view, show project ideas
     if (status === 'ideas') {
+        currentView = 'ideas';
         showProjectIdeas();
+        updateHeaderButton();
         return;
     }
     
-    // Otherwise filter project cards
-    const projectCards = document.querySelectorAll('.clippit-project-card');
-    
-    projectCards.forEach(card => {
-        const cardStatus = card.getAttribute('data-status');
-        const isPublished = card.getAttribute('data-published') === 'true';
-        
-        let shouldShow = false;
-        
-        switch(status) {
-            case 'all':
-                shouldShow = true;
-                break;
-            case 'development':
-                shouldShow = cardStatus === 'development';
-                break;
-            case 'completed':
-                shouldShow = cardStatus === 'completed';
-                break;
-            case 'published':
-                shouldShow = isPublished;
-                break;
-            case 'for-sale':
-                shouldShow = cardStatus === 'completed' && isPublished;
-                break;
-        }
-        
-        card.style.display = shouldShow ? 'block' : 'none';
-    });
-    
-    // Update header button based on view
+    // Otherwise load filtered projects from database
+    currentView = 'projects';
     updateHeaderButton();
     
-    // Show notification
-    const statusLabels = {
-        'all': 'All Projects',
-        'development': 'In Development',
-        'completed': 'Completed Projects',
-        'published': 'Published Projects',
-        'for-sale': 'Projects For Sale'
-    };
-    
-    showNotification(`Filtered by: ${statusLabels[status]}`, 'info');
+    try {
+        const container = document.getElementById('clippit-projects-grid');
+        if (container) container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:#9CA3AF">Loading...</div>';
+
+        let query = supabase.from('clippit_projects').select('*').order('created_at', { ascending: false });
+        
+        // Apply status filter
+        if (status !== 'all') {
+            switch(status) {
+                case 'development':
+                case 'completed':
+                    query = query.eq('status', status);
+                    break;
+                case 'published':
+                    query = query.eq('status', 'published');
+                    break;
+                case 'for-sale':
+                    query = query.eq('status', 'published'); // For sale items are published
+                    break;
+            }
+        }
+
+        const { data, error } = await query;
+        if (error) throw error;
+
+        displayClippitProjects(data || []);
+        
+        // Show notification
+        const statusLabels = {
+            'all': 'All Projects',
+            'development': 'In Development',
+            'completed': 'Completed Projects',
+            'published': 'Published Projects',
+            'for-sale': 'Projects For Sale'
+        };
+        
+        showNotification(`Filtered by: ${statusLabels[status]}`, 'info');
+    } catch (error) {
+        console.error('Filter error:', error);
+        showNotification('Failed to filter projects', 'error');
+    }
 }
 
 // Project Ideas Management
