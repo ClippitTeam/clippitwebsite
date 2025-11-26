@@ -1,9 +1,18 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
+// Microsoft Graph API Configuration
+const TENANT_ID = Deno.env.get('MSGRAPH_TENANT_ID') || ''
+const CLIENT_ID = Deno.env.get('MSGRAPH_CLIENT_ID') || ''
+const CLIENT_SECRET = Deno.env.get('MSGRAPH_CLIENT_SECRET') || ''
+const SENDER_EMAIL = Deno.env.get('SENDER_EMAIL') || ''
+
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+
+// Token cache
+let accessToken: string | null = null
+let tokenExpiry: number = 0
 
 interface EmailQueueItem {
   id: string
@@ -128,38 +137,87 @@ serve(async (req) => {
   }
 })
 
-async function sendEmail(email: EmailQueueItem): Promise<{ success: boolean; error?: string }> {
-  try {
-    if (!RESEND_API_KEY) {
-      console.error('RESEND_API_KEY not configured')
-      return { success: false, error: 'Email service not configured' }
-    }
+/**
+ * Get OAuth 2.0 access token from Microsoft Graph
+ */
+async function getAccessToken(): Promise<string> {
+  const now = Date.now()
+  if (accessToken && tokenExpiry > now) {
+    return accessToken
+  }
 
-    const response = await fetch('https://api.resend.com/emails', {
+  const tokenEndpoint = `https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token`
+  const params = new URLSearchParams({
+    client_id: CLIENT_ID,
+    scope: 'https://graph.microsoft.com/.default',
+    client_secret: CLIENT_SECRET,
+    grant_type: 'client_credentials',
+  })
+
+  try {
+    const response = await fetch(tokenEndpoint, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: 'Clippit <notifications@clippit.online>',
-        to: [email.recipient_email],
-        subject: email.subject,
-        html: email.html_body,
-        text: email.text_body || stripHtml(email.html_body),
-      }),
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params,
     })
 
     if (!response.ok) {
-      const errorData = await response.json()
-      return {
-        success: false,
-        error: errorData.message || `HTTP ${response.status}`
-      }
+      const errorText = await response.text()
+      console.error('Token acquisition failed:', response.status, errorText)
+      throw new Error(`Failed to get access token: ${response.status}`)
     }
 
     const data = await response.json()
-    console.log('Resend response:', data)
+    accessToken = data.access_token
+    tokenExpiry = now + ((data.expires_in - 300) * 1000)
+    return accessToken
+  } catch (error) {
+    console.error('Error getting access token:', error)
+    throw error
+  }
+}
+
+async function sendEmail(email: EmailQueueItem): Promise<{ success: boolean; error?: string }> {
+  try {
+    const token = await getAccessToken()
+
+    const message = {
+      subject: email.subject,
+      body: {
+        contentType: 'HTML',
+        content: email.html_body,
+      },
+      toRecipients: [{
+        emailAddress: {
+          address: email.recipient_email,
+        },
+      }],
+    }
+
+    const emailContent = {
+      message: message,
+      saveToSentItems: true,
+    }
+
+    const graphEndpoint = `https://graph.microsoft.com/v1.0/users/${SENDER_EMAIL}/sendMail`
+
+    const response = await fetch(graphEndpoint, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(emailContent),
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('Email sending failed:', response.status, errorText)
+      return {
+        success: false,
+        error: `Failed to send email: ${response.status}`
+      }
+    }
 
     return { success: true }
   } catch (error) {
