@@ -1,7 +1,8 @@
 // Admin Investor Listings Management
-// Handles reviewing, approving, and managing investor listings
+// Handles admin review, approval, and management of investor listings
 
-import { supabase } from './supabase-config.js';
+// Get supabase from window object (loaded via supabase-config.js)
+const supabase = window.supabase;
 
 /**
  * Get all listings for admin review (with filters)

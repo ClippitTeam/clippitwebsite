@@ -1,7 +1,8 @@
 // Customer Investor Listings - Database Integration
 // Handles creating, viewing, and managing investor opportunity listings
 
-import { supabase } from './supabase-config.js';
+// Get supabase from window object (loaded via supabase-config.js)
+const supabase = window.supabase;
 
 // Storage bucket names
 const LISTINGS_BUCKET = 'investor-listings';

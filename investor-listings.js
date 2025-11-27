@@ -1,7 +1,8 @@
 // Investor Listings Viewing
 // Handles browsing and inquiring about approved investor listings
 
-import { supabase } from './supabase-config.js';
+// Get supabase from window object (loaded via supabase-config.js)
+const supabase = window.supabase;
 
 /**
  * Get all approved listings for investors to browse

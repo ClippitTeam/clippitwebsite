@@ -1,7 +1,8 @@
 // Projects Helper Functions - Supabase Integration
 // This file provides functions to interact with the projects database
 
-import { supabase } from './supabase-config.js';
+// Get supabase from window object (loaded via supabase-config.js)
+const supabase = window.supabase;
 
 /**
  * Get all projects for the current logged-in user (customer view)
