@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - Clippit</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <style>
+        .success-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0A0E27 0%, #1a1f3a 100%);
+            padding: 2rem;
+        }
+        
+        .success-card {
+            background: #1F2937;
+            border: 2px solid #40E0D0;
+            border-radius: 24px;
+            padding: 3rem;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(64, 224, 208, 0.3);
+            animation: slideUp 0.6s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #40E0D0, #36B8A8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            animation: checkmark 0.8s ease-in-out 0.3s both;
+        }
+        
+        @keyframes checkmark {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .success-icon svg {
+            width: 60px;
+            height: 60px;
+            stroke: #111827;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(64, 224, 208, 0.3);
+            border-radius: 50%;
+            border-top-color: #40E0D0;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-card" id="success-card">
+            <div id="loading-state">
+                <div class="loading"></div>
+                <h2 style="color: #40E0D0; margin: 2rem 0 1rem;">Processing Payment...</h2>
+                <p style="color: #9CA3AF;">Please wait while we confirm your payment</p>
+            </div>
+            
+            <div id="success-state" style="display: none;">
+                <div class="success-icon">
+                    <svg viewBox="0 0 52 52">
+                        <path d="M14 27l8 8 16-16"/>
+                    </svg>
+                </div>
+                
+                <h1 style="color: #40E0D0; font-size: 2.5rem; margin: 0 0 1rem 0;">Payment Successful!</h1>
+                <p style="color: #9CA3AF; font-size: 1.125rem; margin-bottom: 2rem;">Thank you for your payment</p>
+                
+                <div style="background: #111827; padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+                    <div id="payment-details" style="text-align: left;">
+                        <!-- Payment details will be inserted here -->
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="customer-dashboard.html" style="padding: 1rem 2rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; text-decoration: none; border-radius: 12px; font-weight: 600; transition: all 0.2s; display: inline-block;">
+                        Go to Dashboard
+                    </a>
+                    <button onclick="downloadReceipt()" style="padding: 1rem 2rem; background: #374151; color: #fff; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                        Download Receipt
+                    </button>
+                </div>
+            </div>
+            
+            <div id="error-state" style="display: none;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">⚠️</div>
+                <h2 style="color: #EF4444; margin: 0 0 1rem 0;">Payment Verification Issue</h2>
+                <p style="color: #9CA3AF; margin-bottom: 2rem;" id="error-message">
+                    We're having trouble verifying your payment. Please check your dashboard or contact support.
+                </p>
+                <a href="customer-dashboard.html" style="padding: 1rem 2rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; text-decoration: none; border-radius: 12px; font-weight: 600; display: inline-block;">
+                    Go to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let invoiceId = null;
+        let sessionId = null;
+
+        async function verifyPayment() {
+            try {
+                // Get URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                sessionId = urlParams.get('session_id');
+                invoiceId = urlParams.get('invoice_id');
+
+                if (!sessionId || !invoiceId) {
+                    throw new Error('Missing payment information');
+                }
+
+                // Wait a moment for webhook to process
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                // Check invoice status
+                const { data: invoice, error } = await supabase
+                    .from('invoices')
+                    .select('*, transactions:payment_transactions(*)')
+                    .eq('id', invoiceId)
+                    .single();
+
+                if (error) throw error;
+
+                // Display payment details
+                displayPaymentSuccess(invoice);
+
+            } catch (error) {
+                console.error('Payment verification error:', error);
+                showError(error.message);
+            }
+        }
+
+        function displayPaymentSuccess(invoice) {
+            const successState = document.getElementById('success-state');
+            const loadingState = document.getElementById('loading-state');
+            const detailsContainer = document.getElementById('payment-details');
+
+            const latestTransaction = invoice.transactions?.[0];
+
+            detailsContainer.innerHTML = `
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #40E0D0; font-size: 1.25rem; margin: 0 0 1rem 0;">Payment Details</h3>
+                    
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #374151;">
+                        <span style="color: #9CA3AF;">Invoice Number:</span>
+                        <span style="color: #fff; font-weight: 600;">${invoice.invoice_number}</span>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #374151;">
+                        <span style="color: #9CA3AF;">Amount Paid:</span>
+                        <span style="color: #10B981; font-weight: 700; font-size: 1.25rem;">$${parseFloat(invoice.total_amount).toFixed(2)}</span>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #374151;">
+                        <span style="color: #9CA3AF;">Payment Method:</span>
+                        <span style="color: #fff; font-weight: 600;">Credit Card (Stripe)</span>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #374151;">
+                        <span style="color: #9CA3AF;">Date:</span>
+                        <span style="color: #fff; font-weight: 600;">${new Date().toLocaleDateString('en-AU', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        })}</span>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem 0;">
+                        <span style="color: #9CA3AF;">Status:</span>
+                        <span style="color: #10B981; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="width: 8px; height: 8px; background: #10B981; border-radius: 50%; display: inline-block;"></span>
+                            ${invoice.status === 'paid' ? 'Paid' : 'Processing'}
+                        </span>
+                    </div>
+                </div>
+                
+                <div style="background: #D1FAE5; padding: 1rem; border-radius: 8px; border-left: 4px solid #10B981; margin-top: 1rem;">
+                    <p style="color: #065F46; margin: 0; font-size: 0.875rem;">
+                        📧 A receipt has been sent to your email address. You can also download it from your dashboard.
+                    </p>
+                </div>
+            `;
+
+            loadingState.style.display = 'none';
+            successState.style.display = 'block';
+        }
+
+        function showError(message) {
+            document.getElementById('loading-state').style.display = 'none';
+            document.getElementById('error-state').style.display = 'block';
+            document.getElementById('error-message').textContent = message;
+        }
+
+        function downloadReceipt() {
+            alert('Receipt download feature coming soon! You can view your invoice in the dashboard.');
+            window.location.href = 'customer-dashboard.html';
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', verifyPayment);
+    </script>
+</body>
+</html>
