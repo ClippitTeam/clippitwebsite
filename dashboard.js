@@ -1,4 +1,17 @@
 // Dashboard Interactive Features
+// Import customer listings functions
+import { 
+    createInvestorListing, 
+    getUserListings, 
+    getListingById,
+    updateListing,
+    toggleListingStatus,
+    deleteListing,
+    formatCurrency,
+    formatDate,
+    getStatusColor,
+    getStatusLabel
+} from './customer-listings.js';
 
 // Authentication Check - Redirect if not logged in
 if (!sessionStorage.getItem('isLoggedIn') || sessionStorage.getItem('loginType') !== 'customer') {
@@ -1779,162 +1792,228 @@ function editListing() {
     }, 500);
 }
 
-function submitListing() {
-    // Get the listing data from sessionStorage (stored during submitProposal)
-    const storedData = sessionStorage.getItem('currentListingData');
-    const savedData = storedData ? JSON.parse(storedData) : {};
-    
-    // Create the listing data with unique ID and metadata
-    const listingData = {
-        id: 'listing-' + Date.now(), // Add unique ID for admin dashboard to reference
-        projectName: savedData.projectName || 'Untitled Project',
-        category: savedData.category || 'tech',
-        investmentType: savedData.investmentType || 'equity',
-        seekingAmount: savedData.seekingAmount || '0',
-        valuation: savedData.valuation || null,
-        overview: savedData.overview || '',
-        useOfFunds: savedData.useOfFunds || '',
-        submittedDate: new Date().toISOString(),
-        status: 'pending', // pending, approved, rejected, needs_revision
-        views: 0,
-        inquiries: 0,
-        offers: 0
-    };
-    
-    // Store in localStorage (in a real app, this would be sent to a server)
-    let listings = JSON.parse(localStorage.getItem('investorListings') || '[]');
-    listings.push(listingData);
-    localStorage.setItem('investorListings', JSON.stringify(listings));
-    
-    // Clear the session storage since we're done
-    sessionStorage.removeItem('currentListingData');
-    
-    closeModal();
-    showNotification('Listing submitted for admin review!', 'success');
-    setTimeout(() => {
-        showNotification('You\'ll receive an email once approved (24-48 hours)', 'info');
-        // Refresh the listings display
-        displayUserListings();
-    }, 2000);
+async function submitListing() {
+    try {
+        // Get the listing data from sessionStorage
+        const storedData = sessionStorage.getItem('currentListingData');
+        const savedData = storedData ? JSON.parse(storedData) : {};
+        
+        // Collect all uploaded files
+        const files = {
+            verificationDocs: [],
+            images: [],
+            pitchDeck: null,
+            video: null
+        };
+        
+        // Get verification documents
+        const idUpload = document.getElementById('id-upload');
+        const businessUpload = document.getElementById('business-upload');
+        
+        if (idUpload?.files[0]) {
+            files.verificationDocs.push({
+                type: 'id',
+                file: idUpload.files[0]
+            });
+        }
+        
+        if (businessUpload?.files[0]) {
+            files.verificationDocs.push({
+                type: 'business_registration',
+                file: businessUpload.files[0]
+            });
+        }
+        
+        // Get uploaded assets from global storage
+        if (window.uploadedFiles.images && window.uploadedFiles.images.length > 0) {
+            files.images = window.uploadedFiles.images;
+        }
+        
+        if (window.uploadedFiles.pitch) {
+            files.pitchDeck = window.uploadedFiles.pitch;
+        }
+        
+        if (window.uploadedFiles.video) {
+            files.video = window.uploadedFiles.video;
+        }
+        
+        // Show loading state
+        closeModal();
+        showNotification('Submitting your listing...', 'info');
+        
+        // Create the listing in database
+        const result = await createInvestorListing(savedData, files);
+        
+        if (result.success) {
+            // Clear session storage and uploaded files
+            sessionStorage.removeItem('currentListingData');
+            window.uploadedFiles = { images: [], pitch: null, video: null };
+            
+            showNotification('Listing submitted successfully!', 'success');
+            
+            setTimeout(() => {
+                showNotification('Admin will review within 24-48 hours', 'info');
+                // Refresh the listings display
+                displayUserListings();
+            }, 2000);
+        } else {
+            showNotification('Error: ' + result.error, 'error');
+        }
+        
+    } catch (error) {
+        console.error('Error submitting listing:', error);
+        showNotification('Failed to submit listing. Please try again.', 'error');
+    }
 }
 
-function displayUserListings() {
-    const listings = JSON.parse(localStorage.getItem('investorListings') || '[]');
-    const listingsContainer = document.getElementById('active-listings-section');
-    
-    if (!listingsContainer) return;
-    
-    if (listings.length === 0) {
-        listingsContainer.innerHTML = `
-            <div style="text-align: center; padding: 3rem 1rem;">
-                <div style="font-size: 4rem; margin-bottom: 1rem;">📋</div>
-                <h4 style="color: #fff; margin-bottom: 0.5rem;">No Active Listings</h4>
-                <p style="color: #9CA3AF; margin-bottom: 1.5rem;">Create your first listing to attract investors</p>
-                <button onclick="showListingModal()" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Create Your First Listing</button>
-            </div>
-        `;
-    } else {
+async function displayUserListings() {
+    try {
+        const listings = await getUserListings();
+        const listingsContainer = document.getElementById('active-listings-section');
+        
+        if (!listingsContainer) return;
+        
+        if (listings.length === 0) {
+            listingsContainer.innerHTML = `
+                <div style="text-align: center; padding: 3rem 1rem;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">📋</div>
+                    <h4 style="color: #fff; margin-bottom: 0.5rem;">No Active Listings</h4>
+                    <p style="color: #9CA3AF; margin-bottom: 1.5rem;">Create your first listing to attract investors</p>
+                    <button onclick="showListingModal()" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Create Your First Listing</button>
+                </div>
+            `;
+            return;
+        }
+        
         let listingsHTML = '';
-        listings.forEach((listing, index) => {
-            const statusColor = listing.status === 'active' ? '#10B981' : listing.status === 'paused' ? '#FBB624' : '#A855F7';
-            const statusText = listing.status === 'active' ? 'ACTIVE' : listing.status === 'paused' ? 'PAUSED' : 'PENDING REVIEW';
-            const daysAgo = Math.floor((new Date() - new Date(listing.submittedDate)) / (1000 * 60 * 60 * 24));
+        
+        listings.forEach((listing) => {
+            const statusColor = getStatusColor(listing.status);
+            const statusLabel = getStatusLabel(listing.status);
+            const imageCount = listing.listing_assets?.filter(a => a.asset_type === 'image').length || 0;
+            const hasPitch = listing.listing_assets?.some(a => a.asset_type === 'pitch_deck') || false;
+            const hasVideo = listing.listing_assets?.some(a => a.asset_type === 'video') || false;
             
             listingsHTML += `
                 <div style="background: #111827; padding: 1.5rem; border-radius: 8px; border: 1px solid #40E0D0; margin-bottom: 1rem;">
                     <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
                         <div style="flex: 1;">
                             <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 0.5rem;">
-                                <h4 style="color: #40E0D0; font-size: 1.25rem;">${listing.projectName}</h4>
-                                <span style="background: rgba(${statusColor === '#10B981' ? '16, 185, 129' : statusColor === '#FBB624' ? '251, 191, 36' : '168, 85, 247'}, 0.2); color: ${statusColor}; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">${statusText}</span>
+                                <h4 style="color: #40E0D0; font-size: 1.25rem;">${listing.project_name}</h4>
+                                <span style="background: ${statusColor}20; color: ${statusColor}; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">${statusLabel.toUpperCase()}</span>
                             </div>
-                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 1rem;">Seeking: $${parseFloat(listing.seekingAmount).toLocaleString()} AUD • ${listing.investmentType.replace('-', ' ').charAt(0).toUpperCase() + listing.investmentType.replace('-', ' ').slice(1)}</p>
+                            <p style="color: #9CA3AF; font-size: 0.875rem; margin-bottom: 1rem;">
+                                Seeking: ${formatCurrency(listing.seeking_amount)} • ${listing.investment_type.replace('-', ' ').charAt(0).toUpperCase() + listing.investment_type.replace('-', ' ').slice(1)}
+                            </p>
                             
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1.5rem;">
                                 <div>
                                     <p style="color: #6B7280; font-size: 0.75rem;">Views</p>
-                                    <p style="color: #fff; font-weight: 600; font-size: 1.25rem;">${listing.views}</p>
+                                    <p style="color: #fff; font-weight: 600; font-size: 1.25rem;">${listing.views || 0}</p>
                                 </div>
                                 <div>
                                     <p style="color: #6B7280; font-size: 0.75rem;">Inquiries</p>
-                                    <p style="color: #fff; font-weight: 600; font-size: 1.25rem;">${listing.inquiries}</p>
+                                    <p style="color: #fff; font-weight: 600; font-size: 1.25rem;">${listing.inquiries || 0}</p>
                                 </div>
                                 <div>
                                     <p style="color: #6B7280; font-size: 0.75rem;">Offers</p>
-                                    <p style="color: #fff; font-weight: 600; font-size: 1.25rem;">${listing.offers}</p>
+                                    <p style="color: #fff; font-weight: 600; font-size: 1.25rem;">${listing.offers || 0}</p>
                                 </div>
                                 <div>
                                     <p style="color: #6B7280; font-size: 0.75rem;">Listed</p>
-                                    <p style="color: #fff; font-weight: 600;">${daysAgo === 0 ? 'Today' : daysAgo === 1 ? 'Yesterday' : daysAgo + ' days ago'}</p>
+                                    <p style="color: #fff; font-weight: 600;">${formatDate(listing.created_at)}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <div style="display: flex; gap: 0.75rem; padding-top: 1rem; border-top: 1px solid #4B5563; flex-wrap: wrap;">
-                        ${listing.status === 'active' ? `<button onclick="viewListingAnalytics(${index})" style="flex: 1; min-width: 150px; padding: 0.5rem 1rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">View Analytics</button>` : ''}
-                        ${listing.status === 'active' && listing.inquiries > 0 ? `<button onclick="viewListingOffers(${index})" style="padding: 0.5rem 1rem; background: #111827; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; font-weight: 600; cursor: pointer;">View Inquiries (${listing.inquiries})</button>` : ''}
-                        <button onclick="editUserListing(${index})" style="padding: 0.5rem 1rem; background: #111827; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer; font-weight: 600;">✏️ Edit</button>
-                        <button onclick="pauseListing(${index})" style="padding: 0.5rem 1rem; background: #111827; color: ${listing.status === 'paused' ? '#10B981' : '#FBB624'}; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer; font-weight: 600;">${listing.status === 'paused' ? '▶️ Activate' : '⏸️ Pause'}</button>
+                        ${listing.status === 'approved' ? `<button onclick="viewListingAnalytics('${listing.id}')" style="flex: 1; min-width: 150px; padding: 0.5rem 1rem; background: linear-gradient(135deg, #40E0D0, #36B8A8); color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">View Analytics</button>` : ''}
+                        ${listing.status === 'approved' && listing.inquiries > 0 ? `<button onclick="viewListingInquiries('${listing.id}')" style="padding: 0.5rem 1rem; background: #111827; color: #40E0D0; border: 1px solid #40E0D0; border-radius: 8px; font-weight: 600; cursor: pointer;">View Inquiries (${listing.inquiries})</button>` : ''}
+                        ${listing.status === 'needs_revision' ? `<button onclick="editListingFromDB('${listing.id}')" style="padding: 0.5rem 1rem; background: #F59E0B; color: #111827; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">✏️ Revise</button>` : ''}
+                        <button onclick="viewListingDetails('${listing.id}')" style="padding: 0.5rem 1rem; background: #111827; color: #9CA3AF; border: 1px solid #4B5563; border-radius: 8px; cursor: pointer; font-weight: 600;">👁️ View</button>
                     </div>
                 </div>
             `;
         });
         
         listingsContainer.innerHTML = listingsHTML;
+        
+    } catch (error) {
+        console.error('Error loading listings:', error);
+        showNotification('Failed to load listings', 'error');
     }
 }
 
-function editUserListing(index) {
-    const listings = JSON.parse(localStorage.getItem('investorListings') || '[]');
-    const listing = listings[index];
-    
-    if (!listing) {
-        showNotification('Listing not found', 'error');
-        return;
-    }
-    
-    // Store the index being edited
-    sessionStorage.setItem('editingListingIndex', index);
-    
-    // Show the proposal modal with pre-filled data
-    showProposalModal();
-    
-    // Pre-fill the form fields after a short delay to ensure modal is rendered
-    setTimeout(() => {
-        if (document.getElementById('project-name')) document.getElementById('project-name').value = listing.projectName;
-        if (document.getElementById('project-category')) document.getElementById('project-category').value = listing.category;
-        if (document.getElementById('investment-type')) document.getElementById('investment-type').value = listing.investmentType;
-        if (document.getElementById('seeking-amount')) document.getElementById('seeking-amount').value = listing.seekingAmount;
-        if (document.getElementById('valuation') && listing.valuation) document.getElementById('valuation').value = listing.valuation;
-        if (document.getElementById('project-overview')) document.getElementById('project-overview').value = listing.overview;
-        if (document.getElementById('use-of-funds')) document.getElementById('use-of-funds').value = listing.useOfFunds;
-    }, 100);
-}
-
-function pauseListing(index) {
-    const listings = JSON.parse(localStorage.getItem('investorListings') || '[]');
-    if (listings[index]) {
-        listings[index].status = listings[index].status === 'paused' ? 'active' : 'paused';
-        localStorage.setItem('investorListings', JSON.stringify(listings));
-        showNotification(`Listing ${listings[index].status === 'paused' ? 'paused' : 'activated'} successfully`, 'success');
-        displayUserListings();
+async function editListingFromDB(listingId) {
+    try {
+        const result = await getListingById(listingId);
+        if (!result.success) {
+            showNotification('Failed to load listing', 'error');
+            return;
+        }
+        
+        const listing = result.listing;
+        
+        // Store for editing
+        sessionStorage.setItem('editingListingId', listingId);
+        sessionStorage.setItem('currentListingData', JSON.stringify({
+            projectName: listing.project_name,
+            category: listing.category,
+            investmentType: listing.investment_type,
+            seekingAmount: listing.seeking_amount,
+            valuation: listing.valuation,
+            overview: listing.overview,
+            useOfFunds: listing.use_of_funds
+        }));
+        
+        showProposalModal();
+    } catch (error) {
+        console.error('Error editing listing:', error);
+        showNotification('Failed to edit listing', 'error');
     }
 }
 
-function viewListingAnalytics(index) {
+function viewListingAnalytics(listingId) {
     showNotification('Analytics feature coming soon - track views, clicks, and engagement', 'info');
 }
 
-function viewListingOffers(index) {
+async function viewListingInquiries(listingId) {
     showNotification('Inquiries & offers feature coming soon - all communication handled by Clippit Admin', 'info');
+}
+
+async function viewListingDetails(listingId) {
+    try {
+        const result = await getListingById(listingId);
+        if (!result.success) {
+            showNotification('Failed to load listing details', 'error');
+            return;
+        }
+        
+        const listing = result.listing;
+        showNotification(`Viewing details for: ${listing.project_name}`, 'info');
+    } catch (error) {
+        console.error('Error viewing listing:', error);
+        showNotification('Failed to load listing details', 'error');
+    }
 }
 
 // Initialize listings display when the investor opportunities section is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Display user listings if we're on the investor opportunities page
+    // Display user listings when investor opportunities tab is clicked
+    const investorTab = document.querySelector('a[href="#investor-opportunities"]');
+    if (investorTab) {
+        investorTab.addEventListener('click', () => {
+            setTimeout(displayUserListings, 100);
+        });
+    }
+    
+    // Load listings on initial page load if on investor opportunities tab
     setTimeout(() => {
-        displayUserListings();
+        const hash = window.location.hash;
+        if (hash === '#investor-opportunities' || !hash) {
+            displayUserListings();
+        }
     }, 500);
 });
 
