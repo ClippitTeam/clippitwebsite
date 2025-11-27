@@ -18,6 +18,70 @@ if (!sessionStorage.getItem('isLoggedIn') || sessionStorage.getItem('loginType')
     window.location.href = 'login.html';
 }
 
+// IMPORTANT: Expose functions to global scope for HTML onclick handlers
+// Since dashboard.js is loaded as a module, functions need to be attached to window
+window.closeModal = closeModal;
+window.showNotification = showNotification;
+window.viewProjectDetails = viewProjectDetails;
+window.hideProjectDetails = hideProjectDetails;
+window.viewTicketDetails = viewTicketDetails;
+window.hideTicketDetails = hideTicketDetails;
+window.submitTicketResponse = submitTicketResponse;
+window.attachFile = attachFile;
+window.payInvoice = payInvoice;
+window.viewInvoiceDetails = viewInvoiceDetails;
+window.downloadInvoicePDF = downloadInvoicePDF;
+window.downloadReceipt = downloadReceipt;
+window.addPaymentMethod = addPaymentMethod;
+window.updateBillingInfo = updateBillingInfo;
+window.requestMeeting = requestMeeting;
+window.switchSettingsTab = switchSettingsTab;
+window.showListingModal = showListingModal;
+window.startVerification = startVerification;
+window.submitVerification = submitVerification;
+window.submitProposal = submitProposal;
+window.submitAssets = submitAssets;
+window.handleFileUpload = handleFileUpload;
+window.handleAssetUpload = handleAssetUpload;
+window.removeFile = removeFile;
+window.removeAsset = removeAsset;
+window.editListing = editListing;
+window.submitListing = submitListing;
+window.viewListingAnalytics = viewListingAnalytics;
+window.viewListingInquiries = viewListingInquiries;
+window.viewListingDetails = viewListingDetails;
+window.editListingFromDB = editListingFromDB;
+window.previewImages = previewImages;
+window.previewPitchDeck = previewPitchDeck;
+window.previewVideo = previewVideo;
+window.processPayment = processPayment;
+window.selectPaymentMethod = selectPaymentMethod;
+window.submitPaymentMethod = submitPaymentMethod;
+window.submitBillingInfo = submitBillingInfo;
+window.submitMeetingRequest = submitMeetingRequest;
+window.previousMonth = previousMonth;
+window.nextMonth = nextMonth;
+window.viewEventDetails = viewEventDetails;
+window.joinVideoCall = joinVideoCall;
+window.saveProfileSettings = saveProfileSettings;
+window.uploadProfilePicture = uploadProfilePicture;
+window.changePassword = changePassword;
+window.enable2FA = enable2FA;
+window.revokeSession = revokeSession;
+window.saveNotificationSettings = saveNotificationSettings;
+window.selectTheme = selectTheme;
+window.saveAppearanceSettings = saveAppearanceSettings;
+window.downloadData = downloadData;
+window.exportProjects = exportProjects;
+window.confirmDeleteAccount = confirmDeleteAccount;
+window.executeDeleteAccount = executeDeleteAccount;
+window.submitTicket = submitTicket;
+window.startVideoCall = startVideoCall;
+window.uploadFile = uploadFile;
+window.downloadInvoice = downloadInvoice;
+window.manageDNS = manageDNS;
+window.sendTicketResponse = sendTicketResponse;
+
 document.addEventListener('DOMContentLoaded', function() {
     // Create modal container
     createModalContainer();
